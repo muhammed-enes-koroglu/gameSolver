@@ -1,8 +1,8 @@
-import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.List;
 
 public abstract class Searcher{
 
@@ -10,37 +10,76 @@ public abstract class Searcher{
         throw new IllegalStateException("Utility class");
     }
 
-    // Return the (shortest?) path to goal, 
-    // Path is empty if no solution exists within given timeframe.
-    public static <S> S[] miniMax(S startState, int maxSearchTimeMilli) throws NoSuchMethodException{
-        // S must contain
-        if(Arrays.stream(startState.getClass().getMethods()).
-            noneMatch(m -> "getChildren".equals(m.getName())))
-            throw new NoSuchMethodException("S must contain method 'getChildren'.");
-        if(Arrays.stream(startState.getClass().getMethods())
-            .noneMatch(m -> "isGoal".equals(m.getName())))
-            throw new NoSuchMethodException("S must contain method 'isGoal'.");
-        if(Arrays.stream(startState.getClass().getMethods())
-            .noneMatch(m -> "estimatedCost".equals(m.getName())))
-            throw new NoSuchMethodException("S must contain method 'estimatedCost'.");
+    // Return the path with best score for maxPlayer. 
+    public static <S extends TwoPersonGameState> List<S> findBestPathForMax(S startState, int maxSearchTimeMilli){
 
         Instant startTime = Instant.now();
-        Instant now = Instant.now();
-        long timePassed = Duration.between(startTime, now).toSeconds();    
+        Instant now;
+        long timePassed = 0;
+        float bestScore = -Float.MAX_VALUE;
+        ArrayList<S> bestPath = new ArrayList<>();
+        ArrayList<S> resultPath;
         for(int depth=1; timePassed < maxSearchTimeMilli; depth++){
-            S[] resultPath = depthFirstSearch(startState, depth);
-            if(resultPath != null) 
-                return resultPath;
+            resultPath = miniMax(
+                new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
+            if(resultPath.get(resultPath.size()-1).score() > bestScore){
+                bestScore = resultPath.get(resultPath.size()-1).score();
+                bestPath = resultPath;
+            }
 
             now = Instant.now();
             timePassed = Duration.between(startTime, now).toMillis();    
         }
-        return (S[]) new Object[0];
+        return bestPath;
     }
 
-    // Return the (shortest?) path to goal, 
-    // Path is empty if no solution exists within given maxDepth.
-    private static <S> S[] depthFirstSearch(S startState, int maxDepth){
-        
+    // Return the path with best score for maxPlayer within given maxDepth.
+    private static <S extends TwoPersonGameState> ArrayList<S> miniMax(ArrayList<S> path, int maxDepth, float alpha, float beta){
+        if(maxDepth <= 0)
+            return path;
+
+        S currentState = path.get(path.size()-1);
+        if(currentState.isMaxPlayer()){
+            float bestValue = -Float.MAX_VALUE;
+            ArrayList<S> bestPath = path; // So `path` is returned if no child nodes left.
+            S[] children = (S[]) currentState.children();
+            for(S child: children){
+                ArrayList<S> copyPath = (ArrayList<S>) path.clone();
+                copyPath.add(child);
+
+                ArrayList<S> resultPath = miniMax(copyPath, maxDepth-1, alpha, beta);
+                S resultState = resultPath.get(resultPath.size()-1);
+                if(resultState.score() > bestValue){
+                    bestValue = resultState.score();
+                    bestPath = resultPath;
+                }
+
+                alpha = alpha > bestValue ? alpha : bestValue;
+                if(beta <= alpha)
+                    break;
+            }
+            return bestPath;
+        }
+        else{
+            float bestValue = Float.MAX_VALUE;
+            ArrayList<S> bestPath = path; // So `path` is returned if no child nodes left.
+            S[] children = (S[]) currentState.children();
+            for(S child: children){
+                ArrayList<S> copyPath = (ArrayList<S>) path.clone();
+                copyPath.add(child);
+
+                ArrayList<S> resultPath = miniMax(copyPath, maxDepth-1, alpha, beta);
+                S resultState = resultPath.get(resultPath.size()-1);
+                if(resultState.score() < bestValue){
+                    bestValue = resultState.score();
+                    bestPath = resultPath;
+                }
+
+                alpha = alpha < bestValue ? alpha : bestValue;
+                if(beta <= alpha)
+                    break;
+            }
+            return bestPath;
+        }        
     }
 }
