@@ -1,32 +1,25 @@
-import java.util.Arrays;
+import java.util.List;
 
 public class TestSuite{
 
     public static void main(String[] args){
-        testTicTacToeState();
+        TestTicTacToeState.testTicTacToeState();
+        testBasicSearch();
 
-        System.out.println("All tests succeeded!");
+        System.out.println("ALL TESTS SUCCESSFULL!");
     }
     
-    private static void testTicTacToeState(){
-        int[] board = new int[]{0,0,0, 0,0,0, 0,0,0};
-        boolean xTurn = true;
-        TicTacToeState game = new TicTacToeState(board, xTurn);
-        System.out.println(game);
+    public static void testBasicSearch(){
+        // int[] board = new int[]{1,0,1, -1,-1,0, 0,0,0};
+        int[] board = new int[]{0,1,0, 1,0,-1, 0,-1,0}; // Tricky
+        // int[] board = new int[]{0,0,0, 0,0,0, 0,0,0};
 
-        assert Arrays.stream(game.children()).allMatch(g -> !g.isXTurn());
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), 1) == 1);
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), -1) == 0);
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), 0) == 8);
+        TwoPersonGameState ticState = new TicTacToeState(board);
+
+        List<TwoPersonGameState> solution = Searcher.findBestPathForMax(ticState, 3);
+        System.out.println(solution);
 
     }
 
-    private static int countElement(int[] arr, int elm){
-        int count = 0;
-        for(int e: arr)
-            if(e == elm)
-                count++;
-        return count;
-    }
 
 }

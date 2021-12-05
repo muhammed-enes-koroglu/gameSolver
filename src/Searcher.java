@@ -11,16 +11,19 @@ public abstract class Searcher{
     }
 
     // Return the path with best score for maxPlayer. 
-    public static <S extends TwoPersonGameState> List<S> findBestPathForMax(S startState, int maxSearchTimeMilli){
-        Instant startTime = Instant.now();
-        Instant now;
+    public static <S extends TwoPersonGameState> List<S> findBestPathForMax(S startState, int maxSearchTime){
+        long maxSearchTimeMilli = maxSearchTime * 1000;
+        long startTime = System.currentTimeMillis();
+        long now;
         long timePassed = 0;
 
         float bestScore = -Float.MAX_VALUE;
         ArrayList<S> bestPath = new ArrayList<>();
         ArrayList<S> resultPath;
 
-        for(int depth=1; timePassed < maxSearchTimeMilli; depth++){
+        System.out.println("Searching..");
+        for(int depth=1; depth<3; depth++){
+            System.out.println("####################\nDepth: " + depth);
             resultPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
             if(resultPath.get(resultPath.size()-1).score() > bestScore){
@@ -28,14 +31,15 @@ public abstract class Searcher{
                 bestPath = resultPath;
             }
 
-            now = Instant.now();
-            timePassed = Duration.between(startTime, now).toMillis();    
+            now = System.currentTimeMillis();
+            timePassed = now - startTime;    
         }
         return bestPath;
     }
 
     // Return the path with best score for maxPlayer within given maxDepth.
     private static <S extends TwoPersonGameState> ArrayList<S> miniMax(ArrayList<S> path, int maxDepth, float alpha, float beta){
+        System.out.println("\n" + maxDepth + "\n" + path.toString());
         if(maxDepth <= 0) // Leaf node.
             return path;
 
@@ -66,7 +70,7 @@ public abstract class Searcher{
                     bestPath = resultPath;
                 }
 
-                alpha = alpha < bestValue ? alpha : bestValue;
+                beta = beta < bestValue ? beta : bestValue;
                 if(beta <= alpha)
                     break;
             }
