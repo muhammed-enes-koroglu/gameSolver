@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class TicTacToeState implements TwoPersonGameState{
+public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
 
     private final int[] board;
     private final boolean xTurn;

@@ -1,5 +1,5 @@
-public interface TwoPersonGameState{
-    public TwoPersonGameState[] children();
+public interface TwoPersonGameState<C>{
+    public C[] children();
     public float score();
     public boolean isMaxPlayersTurn();
     public boolean equals(Object o);

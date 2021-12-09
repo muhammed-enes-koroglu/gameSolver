@@ -5,7 +5,6 @@ public class TestSuite{
     public static void main(String[] args){
 
         TestTicTacToeState.testTicTacToeState();
-        System.out.println("#######");
         testFindBestPathForMax();
 
         System.out.println("\nALL TESTS SUCCESSFULL!");

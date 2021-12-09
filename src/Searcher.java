@@ -9,7 +9,7 @@ public abstract class Searcher{
     }
 
     // Return a path with the best score for maxPlayer. 
-    public static <S extends TwoPersonGameState> List<S> findBestPathForMax(S startState, int maxSearchTime){
+    public static <S extends TwoPersonGameState<S>> List<S> findBestPathForMax(S startState, int maxSearchTime){
         long maxSearchTimeMilli = maxSearchTime * (long) 1000;
         long startTime = System.currentTimeMillis();
         long now;
@@ -20,7 +20,6 @@ public abstract class Searcher{
         ArrayList<S> resultPath;
 
         for(int depth=1; timePassed < maxSearchTimeMilli; depth++){
-
             resultPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
             float resultScore = resultPath.get(resultPath.size()-1).score();
@@ -36,13 +35,13 @@ public abstract class Searcher{
     }
 
     // Return a path with the best score for maxPlayer within given maxDepth.
-    private static <S extends TwoPersonGameState> ArrayList<S> miniMax(ArrayList<S> path, int maxDepth, float alpha, float beta){
+    private static <S extends TwoPersonGameState<S>> ArrayList<S> miniMax(ArrayList<S> path, int maxDepth, float alpha, float beta){
         if(maxDepth <= 0) // Leaf node.
             return path;
 
         ArrayList<S> bestPath = path; // So `path` is returned if no child nodes left.
         S currentState = path.get(path.size()-1);
-        S[] children = (S[]) currentState.children();
+        S[] children = currentState.children();
 
         if(currentState.isMaxPlayersTurn()){
             return searchIsMaxPlayer(path, maxDepth, alpha, beta, bestPath, children);
@@ -52,7 +51,7 @@ public abstract class Searcher{
         }        
     }
 
-    private static <S extends TwoPersonGameState> ArrayList<S> searchIsMaxPlayer(ArrayList<S> path, int maxDepth, float alpha,
+    private static <S extends TwoPersonGameState<S>> ArrayList<S> searchIsMaxPlayer(ArrayList<S> path, int maxDepth, float alpha,
             float beta, ArrayList<S> bestPath, S[] children) {
         float bestValue = -Float.MAX_VALUE;
         for(S child: children){
@@ -77,7 +76,7 @@ public abstract class Searcher{
         return bestPath;
     }
     
-    private static <S extends TwoPersonGameState> ArrayList<S> searchIsMinPlayer(ArrayList<S> path, int maxDepth, float alpha,
+    private static <S extends TwoPersonGameState<S>> ArrayList<S> searchIsMinPlayer(ArrayList<S> path, int maxDepth, float alpha,
             float beta, ArrayList<S> bestPath, S[] children) {
         float bestValue = Float.MAX_VALUE;
         for(S child: children){
