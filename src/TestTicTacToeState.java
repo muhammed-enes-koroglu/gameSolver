@@ -87,7 +87,7 @@ public abstract class TestTicTacToeState {
             hashcodes.add(c.hashCode());
         });
 
-        System.out.println("testChildren successful");
+        System.out.println("testHashcode successful");
     }
     
     private static int countElement(int[] arr, int elm){

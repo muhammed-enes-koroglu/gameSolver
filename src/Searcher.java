@@ -10,7 +10,7 @@ public abstract class Searcher{
 
     // Return a path with the best score for maxPlayer. 
     public static <S extends TwoPersonGameState> List<S> findBestPathForMax(S startState, int maxSearchTime){
-        long maxSearchTimeMilli = maxSearchTime * 1000;
+        long maxSearchTimeMilli = maxSearchTime * (long) 1000;
         long startTime = System.currentTimeMillis();
         long now;
         long timePassed = 0;
@@ -19,7 +19,6 @@ public abstract class Searcher{
         ArrayList<S> bestPath = new ArrayList<>();
         ArrayList<S> resultPath;
 
-        System.out.println("\nSearching..");
         for(int depth=1; timePassed < maxSearchTimeMilli; depth++){
 
             resultPath = miniMax(
@@ -39,8 +38,6 @@ public abstract class Searcher{
     // Return a path with the best score for maxPlayer within given maxDepth.
     private static <S extends TwoPersonGameState> ArrayList<S> miniMax(ArrayList<S> path, int maxDepth, float alpha, float beta){
         // System.out.println("\n" + maxDepth + "\n" + path.toString());
-        if(path.get(path.size()-1).xWon())
-            System.out.println("Goal!!");
         if(maxDepth <= 0) // Leaf node.
             return path;
 
@@ -67,7 +64,7 @@ public abstract class Searcher{
                 ArrayList<S> resultPath = miniMax(childPath, maxDepth-1, alpha, beta);
                 float resultScore = resultPath.get(resultPath.size()-1).score(); // Score of the last state
                 
-                if(bestValue <= resultScore){
+                if(bestValue < resultScore || bestPath.equals(path)){ // if bestPath is the default or we have a better value
                     bestPath = resultPath;
                     bestValue = resultScore;
                 }
@@ -92,7 +89,7 @@ public abstract class Searcher{
                 ArrayList<S> resultPath = miniMax(childPath, maxDepth-1, alpha, beta);
                 float resultScore = resultPath.get(resultPath.size()-1).score(); // Score of the last state
                 
-                if(bestValue >= resultScore){
+                if(bestValue > resultScore || bestPath.equals(path)){ // if bestPath is the default or we have a better value
                     bestPath = resultPath;
                     bestValue = resultScore;
                 }
