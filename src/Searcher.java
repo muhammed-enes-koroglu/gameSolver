@@ -37,7 +37,6 @@ public abstract class Searcher{
 
     // Return a path with the best score for maxPlayer within given maxDepth.
     private static <S extends TwoPersonGameState> ArrayList<S> miniMax(ArrayList<S> path, int maxDepth, float alpha, float beta){
-        // System.out.println("\n" + maxDepth + "\n" + path.toString());
         if(maxDepth <= 0) // Leaf node.
             return path;
 
@@ -45,7 +44,7 @@ public abstract class Searcher{
         S currentState = path.get(path.size()-1);
         S[] children = (S[]) currentState.children();
 
-        if(currentState.isMaxPlayer()){
+        if(currentState.isMaxPlayersTurn()){
             return searchIsMaxPlayer(path, maxDepth, alpha, beta, bestPath, children);
         }
         else{

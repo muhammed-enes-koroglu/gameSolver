@@ -1,18 +1,17 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.imageio.plugins.bmp.BMPImageWriteParam;
-
 public class TicTacToeState implements TwoPersonGameState{
 
     private final int[] board;
     private final boolean xTurn;
+    private final boolean xIsMaxPlayer;
     private final boolean xWon;
     private final boolean xLost;
     
 
     public int[] getBoard() {
-        return board;
+        return board.clone();
     }
 
     public boolean isXTurn() {
@@ -37,24 +36,25 @@ public class TicTacToeState implements TwoPersonGameState{
             int[] copyBoard = board.clone();
             if(copyBoard[i] == 0){
                 copyBoard[i] = xTurn ? 1 : -1;
-                children.add(new TicTacToeState(copyBoard));
+                children.add(new TicTacToeState(copyBoard, this.xIsMaxPlayer));
             }
         }
         return children.toArray(new TicTacToeState[0]);
     }
 
-    @Override
+    @Override // Should be improved.
     public float score() {
+        int sign = this.xIsMaxPlayer ? +1 : -1;
         if(this.xWon)
-            return Float.MAX_VALUE;
+            return sign * Float.MAX_VALUE;
         if(this.xLost)
-            return -Float.MAX_VALUE;
+            return -sign *  Float.MAX_VALUE;
         return 0;
     }
 
     @Override
-    public boolean isMaxPlayer() {
-        return this.xTurn;
+    public boolean isMaxPlayersTurn() {
+        return !(this.xIsMaxPlayer ^ this.xTurn);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class TicTacToeState implements TwoPersonGameState{
     @Override
     public int hashCode(){
         int hash = 7;
-        hash = 31 * hash + (board == null ? 0 : board.hashCode());
+        hash = 31 * hash + (board == null ? 0 : Arrays.hashCode(board));
         return hash;
     }
 
@@ -93,7 +93,7 @@ public class TicTacToeState implements TwoPersonGameState{
     // 1 in `board` denotes an 'X', max player
     // -1 denotes an 'O', min player
     // 0 denotes blank space.
-    public TicTacToeState(int[] board){
+    public TicTacToeState(int[] board, boolean xIsMaxPlayer){
         if(board.length != 9)
             throw new IllegalArgumentException("`board` must be of length 9");
         if(!Arrays.stream(board).allMatch(i -> (i==-1) || (i==0) || (i==1)))
@@ -106,55 +106,23 @@ public class TicTacToeState implements TwoPersonGameState{
             throw new IllegalArgumentException("impossible `board`: Not X's turn, not O's turn");
 
         int[][] boardMatrix = matrificise(board);
-        boolean xWon = xWon(boardMatrix);
-        boolean xLost = xLost(boardMatrix);
-        if((xWon && this.xTurn)){
+        boolean xHasWon = xWon(boardMatrix);
+        boolean xHasLost = xLost(boardMatrix);
+        if((xHasWon && this.xTurn)){
             System.out.println(Arrays.toString(board));
             throw new IllegalArgumentException("It must be O's turn if X has won.");
         }
-        if(xLost && !this.xTurn)
+        if(xHasLost && !this.xTurn)
             throw new IllegalArgumentException("It must be X's turn if O has won.");
     
-        this.xWon = xWon;
-        this.xLost = xLost;
+        this.xWon = xHasWon;
+        this.xLost = xHasLost;
         this.board = board;
+        this.xIsMaxPlayer = xIsMaxPlayer;
     }
 
     public static boolean xWon(int[][] boardMatrix){
-        
-        // Diagonals
-        boolean winInHeadDiagonal = true;
-        boolean winInSecondDiagonal = true;
-        for(int i=0; i<3; i++){
-            if(boardMatrix[i][i] != 1)
-                winInHeadDiagonal = false;
-            if(boardMatrix[i][2-i] != 1)
-                winInSecondDiagonal = false;
-        }
-        if(winInHeadDiagonal || winInSecondDiagonal)
-            return true;
-
-        // Rows
-        for(int row=0; row<3; row++){
-            boolean winInRow = true;
-            for(int col=0; col<3; col++)
-                if(boardMatrix[row][col] != 1)
-                    winInRow = false;
-            if(winInRow)
-                return true;
-        }
-
-        // Columns
-        for(int col=0; col<3; col++){
-            boolean winInColumn = true;
-            for(int row=0; row<3; row++)
-                if(boardMatrix[row][col] != 1)
-                    winInColumn = false;
-            if(winInColumn)
-                return true;
-        }
-        
-        return false;
+        return winInDiagonals(boardMatrix) || winInRows(boardMatrix) || winInColumns(boardMatrix);
     }
 
     public static boolean xLost(int[][] boardMatrix){
@@ -172,4 +140,41 @@ public class TicTacToeState implements TwoPersonGameState{
                 boardMatrix[i][j] = board[3*i + j];
         return boardMatrix;
     }
+    
+    private static boolean winInDiagonals(int[][] boardMatrix){
+        boolean winInHeadDiagonal = true;
+        boolean winInSecondDiagonal = true;
+        for(int i=0; i<3; i++){
+            if(boardMatrix[i][i] != 1)
+                winInHeadDiagonal = false;
+            if(boardMatrix[i][2-i] != 1)
+                winInSecondDiagonal = false;
+        }
+        return winInHeadDiagonal || winInSecondDiagonal;
+    }
+
+    private static boolean winInRows(int[][] boardMatrix){
+        for(int row=0; row<3; row++){
+            boolean winInRow = true;
+            for(int col=0; col<3; col++)
+                if(boardMatrix[row][col] != 1)
+                    winInRow = false;
+            if(winInRow)
+                return true;
+        }
+        return false;
+    }
+
+    private static boolean winInColumns(int[][] boardMatrix){
+        for(int col=0; col<3; col++){
+            boolean winInColumn = true;
+            for(int row=0; row<3; row++)
+                if(boardMatrix[row][col] != 1)
+                    winInColumn = false;
+            if(winInColumn)
+                return true;
+        }
+        return false;
+    }
+
 }
