@@ -4,9 +4,10 @@ public class TestSuite{
 
     public static void main(String[] args){
 
-        TestTicTacToeState.testTicTacToeState();
-        testFindBestPathForMax();
-
+        // TestTicTacToeState.testTicTacToeState();
+        // testFindBestPathForMax();
+        MangalaState.testMangalaState();
+        
         System.out.println("\nALL TESTS SUCCESSFULL!");
     }
     
