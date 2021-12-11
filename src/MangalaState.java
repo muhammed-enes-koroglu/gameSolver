@@ -11,25 +11,46 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
     private final int[] board;
     private boolean whiteIsMax;
     private boolean whitesTurn;
-    private int sideSize;
+    private static final int BOARD_SIZE = 7;
 
     @Override
     public MangalaState[] children() {
         
         ArrayList<MangalaState> children = new ArrayList<>();
-        int turnBias = whiteIsMax ? 0 : sideSize;
-        for(int trench = turnBias; trench < sideSize + turnBias; trench++){
+        int turnBias = whiteIsMax ? 0 : BOARD_SIZE;
+        boolean childWhitesTurn;
+        for(int trench = turnBias; trench < BOARD_SIZE + turnBias; trench++){
             int[] childBoard = this.board.clone();
             int endedAt = playTrench(childBoard, trench);
+            childWhitesTurn = !this.whitesTurn;
 
-            if(endedAt == this.sideSize-1 + turnBias) // Ended at treasury
-                children.add(new MangalaState(childBoard, this.whitesTurn, this.whiteIsMax));
-            if(childBoard[endedAt] == 1)
-                ;
-            if()
-            
+            if(endedAt == BOARD_SIZE-1 + turnBias) // Ended at treasury
+                childWhitesTurn = this.whitesTurn;
+            else if(turnBias <= endedAt && endedAt < BOARD_SIZE + turnBias){ // Ended at own trench
+                if(childBoard[endedAt] == 1){ // Trench is empty
+                    childBoard[BOARD_SIZE -1 + turnBias] = childBoard[endedAt] + childBoard[oppositeTrenchOf(endedAt)];
+                    childBoard[endedAt] = 0;
+                    childBoard[oppositeTrenchOf(endedAt)] = 0;
+                }
+            }
+            else if(childBoard[endedAt] % 2 == 0){ // Ended at enemy trench and is even
+                childBoard[BOARD_SIZE -1 + turnBias] = childBoard[endedAt];
+                childBoard[endedAt] = 0;
+            }
+            if(Arrays.stream(Arrays.copyOfRange(childBoard, 0, BOARD_SIZE -2)).sum() == 0) // White's side is empty
+                for(int i=BOARD_SIZE; i<= 2*BOARD_SIZE-2; i++){ // Black's side gets slurped
+                    childBoard[BOARD_SIZE-1] = childBoard[i];
+                    childBoard[i] = 0;
+                }
+            else if(Arrays.stream(Arrays.copyOfRange(childBoard, BOARD_SIZE, 2 * BOARD_SIZE -2 + turnBias)).sum() == 0) // Black's side is empty
+                for(int i=0; i<= BOARD_SIZE-2; i++){ // White's side gets slurped
+                    childBoard[2*BOARD_SIZE-1] = childBoard[i];
+                    childBoard[i] = 0;
+                }
+            children.add(new MangalaState(childBoard, childWhitesTurn, this.whiteIsMax));            
         }
 
+        return children.toArray(new MangalaState[0]);
     }
 
     @Override
@@ -37,153 +58,104 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         // TODO Auto-generated method stub
         return 0;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public int hashCode(){
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
     @Override
     public boolean isMaxPlayersTurn() {
-        // TODO Auto-generated method stub
         return (whiteIsMax ^ whitesTurn);
     }
-    
+
+    @Override
+    public String toString(){
+        String str = "\n  ";
+        for(int i= 2*BOARD_SIZE-2; i>BOARD_SIZE-1; i--)
+            str += " " + this.board[i];
+        str += "\n" + this.board[2*BOARD_SIZE-1] + "              " + this.board[BOARD_SIZE-1] + "\n ";
+        for(int i=0; i<BOARD_SIZE-1; i++)
+            str += " " + this.board[i];
+        return str;        
+    }
+
+
     public MangalaState(int[] board, boolean whitesTurn, boolean whiteIsMax){
-        if(board.length != 14)
+        if(board.length != 2 * BOARD_SIZE)
             throw new IllegalArgumentException("`board` must contain 14 trenches");
         if(!Arrays.stream(board).allMatch(i -> i >= 0))
             throw new IllegalArgumentException("number of stones in trenches must be positive");
-        if((Arrays.stream(Arrays.copyOfRange(board, 0, 5)).sum() == 0) ^ 
-        (Arrays.stream(Arrays.copyOfRange(board, 7, 12)).sum() == 0))
+        if((Arrays.stream(Arrays.copyOfRange(board, 0, BOARD_SIZE-2)).sum() == 0) ^ 
+        (Arrays.stream(Arrays.copyOfRange(board, BOARD_SIZE, 2 * BOARD_SIZE - 2)).sum() == 0))
             throw new IllegalArgumentException("If one side is empty, so should the other be");
-        int[] whitesTrenches = Arrays.copyOfRange(board, 0, 6);
-        int[] blacksTrenches = Arrays.copyOfRange(board, 7, 13);
+        int[] whitesTrenches = Arrays.copyOfRange(board, 0, BOARD_SIZE-1);
+        int[] blacksTrenches = Arrays.copyOfRange(board, BOARD_SIZE, 2 * BOARD_SIZE - 1);
         
         this.whiteTrenches = whitesTrenches;
         this.blackTrenches = blacksTrenches;
         this.board = board;
         this.whitesTurn = whitesTurn;
         this.whiteIsMax = whiteIsMax;
-        this.sideSize = this.board.length/2;
-
     }
 
-    // Help Methods
+    // Help Methods..
+
     private static int playTrench(int[] aBoard, int trench){
+        int opponentTreasury = trench < BOARD_SIZE ? 2 * BOARD_SIZE -1 : BOARD_SIZE -1;
         int stones = aBoard[trench] - 1;
         aBoard[trench] = 1;
         trench++;
-        for(; stones > 0; trench++, stones--)
-            aBoard[trench % aBoard.length]++;
-        return --trench;
+        for(; stones > 0; trench++)
+            if(trench % (2 * BOARD_SIZE) != opponentTreasury){
+                stones--;
+                aBoard[trench % aBoard.length]++;
+            }
+        return (--trench) % (2 * BOARD_SIZE);
     }
 
-    private static <T> boolean arrayContains(T[] arr, T value){
-        for(T elm: arr)
-            if(elm.equals(value))
-                return true;
-        return false;
+    private static int oppositeTrenchOf(int trench){
+        return 2 * BOARD_SIZE -1 - trench;
     }
 
-    public static void testMangalaState(){
-        System.out.println("\nTesting MangalaState");
+    public static void testPrivateMethods(){
 
         testPlayTrench();
 
-        System.out.println("\nAll MangalaState tests are Successful.");
     }
 
     private static void testPlayTrench(){
         System.out.println("testPlayTrench..");
 
-        int[] board = new int[]{0, 5, 0, 0, 0, 0};
+        int[] board = new int[]{0,5,0, 0,0,0, 0, 0,0,0, 0,0,0, 0};
         int endedAt = playTrench(board, 1);
-        assert Arrays.equals(board, new int[]{0,1,1, 1,1,1});
+        assert Arrays.equals(board, new int[]{0,1,1, 1,1,1, 0, 0,0,0, 0,0,0, 0});
         assert endedAt == 5;
 
-        board = new int[]{0,6,2, 3,0,0, 0,0};
+        board = new int[]{0,6,2, 3,0,0, 0, 0,0,0, 0,0,0, 0};
         endedAt = playTrench(board, 1);
-        assert Arrays.equals(board, new int[]{0,1,3, 4,1,1, 1,0});
+        assert Arrays.equals(board, new int[]{0,1,3, 4,1,1, 1, 0,0,0, 0,0,0, 0});
         assert endedAt == 6;
 
+        board = new int[]{0,6,2, 3,0,0, 0, 0,0,0, 0,0,0, 0};
+        endedAt = playTrench(board, 1);
+        assert Arrays.equals(board, new int[]{0,1,3, 4,1,1, 1, 0,0,0, 0,0,0, 0});
+        assert endedAt == 6;
+
+        // Doesn't put stone to opponent's treasury on pass
+        board = new int[]{0,0,0, 0,0,10, 0, 0,0,0, 0,0,0, 0};
+        endedAt = playTrench(board, 5);
+        assert Arrays.equals(board, new int[]{1,1,0, 0,0,1, 1, 1,1,1, 1,1,1, 0});
+        assert endedAt == 1;
+                
         System.out.println("testPlayTrench successful");
-    }
-
-    private static void testChildren(){
-        /* Rules:
-            -Play again if ended at own treasury.
-            -Take own and opposite trench if ended at own empty trench.
-            -Take enemy trench if ended at enemy trench and made it even.
-            -Take enemy's all trenches if your side empty.
-        */
-        // One simple move
-        int[] board = new int[]{1,0,0, 0,0,0, 0, 0,0,0, 0,0,0, 0};
-        boolean whitesTurn = true;
-        boolean whiteIsMax = true;
-        MangalaState mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        int[] childBoard = new int[]{0,1,0, 0,0,0, 0, 0,0,0, 0,0,0, 0};
-        MangalaState child = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // lso tests if turn changed.
-        assert Arrays.equals(mState.children(), new MangalaState[]{child}); // not deepEquals ?
-
-        // Doesn't matter who we want to maximize
-        MangalaState m2 = new MangalaState(board, whitesTurn, !whiteIsMax);
-        assert Arrays.equals(mState.children(), m2.children());
-
-        // Play again if ended at treasury
-        board = new int[]{0,0,0, 0,0,1, 0, 0,0,0, 0,0,0, 0};
-        mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 0,0,0, 1, 0,0,0, 0,0,0, 0};
-        child = new MangalaState(childBoard, whitesTurn, whiteIsMax); // AGAIN whitesTurn
-        assert Arrays.equals(mState.children(), new MangalaState[]{child}); // not deepEquals ?
-
-        board = new int[]{0,0,0, 4,0,0, 0, 0,0,0, 0,0,0, 0};
-        mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 1,1,1, 1, 0,0,0, 0,0,0, 0};
-        child = new MangalaState(childBoard, whitesTurn, whiteIsMax); // AGAIN whitesTurn
-        assert Arrays.equals(mState.children(), new MangalaState[]{child}); // not deepEquals ?
-
-        // Takes opposite trench if ended at empty at own side
-        board = new int[]{1,0,0, 0,0,0, 0, 0,0,0, 0,7,0, 0};
-        mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 0,0,0, 8, 0,0,0, 0,0,0, 0};
-        child = new MangalaState(childBoard, !whitesTurn, whiteIsMax);
-        assert Arrays.equals(mState.children(), new MangalaState[]{child}); // not deepEquals ?
-
-        // Doesn't take opposite trench if ended at empty at other side
-        board = new int[]{0,0,0, 0,7,4, 0, 0,0,0, 0,0,0, 0};
-        mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 0,7,1, 1, 1,1,0, 0,0,0, 0};
-        child = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // possibility 1
-        childBoard = new int[]{0,0,0, 0,1,5, 1, 1,1,1, 1,0,0};
-        MangalaState child2 = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // possibility 2
-        assert Arrays.equals(mState.children(), new MangalaState[]{child, child2}); // not deepEquals ?
-
-        // Takes enemy's trench if ended there and made it even
-        board = new int[]{0,0,0, 0,4,0, 0, 3,0,0, 0,7,0, 0};
-        mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 0,1,1, 5, 0,0,0, 0,7,0, 0};
-        child = new MangalaState(childBoard, !whitesTurn, whiteIsMax);
-        assert Arrays.equals(mState.children(), new MangalaState[]{child}); // not deepEquals ?
-
-        // Doesn't take own trench if ended there and made it even
-        board = new int[]{0,0,3, 0,1,0, 0, 0,0,0, 0,0,0, 0};
-        mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,1, 1,0,0, 2, 0,0,0, 0,0,0, 0};
-        child = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // possibility 1
-        childBoard = new int[]{0,0,3, 0,1,0, 0, 0,0,0, 0,0,0};
-        child2 = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // possibility 2
-        assert Arrays.equals(mState.children(), new MangalaState[]{child, child2}); // not deepEquals ?
-
-        // Take all enemy trenches if own side empty
-        board = new int[]{0,0,0, 0,0,1, 0, 3,0,0, 0,7,0, 8};
-        mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard= new int[]{0,0,0, 0,0,0, 11, 0,0,0, 0,0,0, 8};
-        child = new MangalaState(childBoard, whitesTurn, whiteIsMax);
-        assert Arrays.equals(mState.children(), new MangalaState[]{child}); // not deepEquals ?
-
-        // Take all enemy trenches if own side empty, even if enemy ends it
-        board = new int[]{2,0,0, 0,0,0, 3, 3,0,0, 7,1,0, 8};
-        mState = new MangalaState(board, !whitesTurn, whiteIsMax);
-        childBoard= new int[]{0,0,0, 0,0,0, 13, 0,0,0, 0,0,0, 11};
-        child = new MangalaState(childBoard, whitesTurn, whiteIsMax);
-        assert arrayContains(mState.children(), child);
-        
     }
 
 }

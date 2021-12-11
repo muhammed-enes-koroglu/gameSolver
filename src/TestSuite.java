@@ -6,7 +6,7 @@ public class TestSuite{
 
         // TestTicTacToeState.testTicTacToeState();
         // testFindBestPathForMax();
-        MangalaState.testMangalaState();
+        TestMangalaState.testMangalaState();
         
         System.out.println("\nALL TESTS SUCCESSFULL!");
     }

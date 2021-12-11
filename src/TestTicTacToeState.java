@@ -26,17 +26,17 @@ public class TestTicTacToeState {
 
         assert Arrays.stream(game.children()).allMatch(g -> !g.isMaxPlayersTurn());
         assert Arrays.stream(game.children()).allMatch(g -> !g.isXTurn());
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), 1) == 1);
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), -1) == 0);
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), 0) == 8);
+        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 1) == 1);
+        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), -1) == 0);
+        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 0) == 8);
 
         game = new TicTacToeState(board, false); // so it's NOT max's turn.
         // Arrays.stream(game.children()).forEach(g -> System.out.println("\n" + g.toString() + "\nMaxTurn: " + g.isMaxPlayersTurn() + "\nXTurn: " + g.isXTurn()));
         assert Arrays.stream(game.children()).allMatch(g -> g.isMaxPlayersTurn());
         assert Arrays.stream(game.children()).allMatch(g -> !g.isXTurn());
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), 1) == 1);
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), -1) == 0);
-        assert Arrays.stream(game.children()).allMatch(g -> countElement(g.getBoard(), 0) == 8);
+        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 1) == 1);
+        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), -1) == 0);
+        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 0) == 8);
 
         System.out.println("testChildren successful");
     }
@@ -128,14 +128,5 @@ public class TestTicTacToeState {
                
         System.out.println("testScore successful");
     }
-
-    private static int countElement(int[] arr, int elm){
-        int count = 0;
-        for(int e: arr)
-            if(e == elm)
-                count++;
-        return count;
-    }
-
 
 }
