@@ -20,6 +20,8 @@ public abstract class Searcher{
         ArrayList<S> resultPath;
 
         for(int depth=1; timePassed < maxSearchTimeMilli; depth++){
+        // for(int depth=1; depth < 3; depth++){
+            System.out.print(depth + " ");
             resultPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
             float resultScore = resultPath.get(resultPath.size()-1).score();
@@ -29,7 +31,8 @@ public abstract class Searcher{
             }
 
             now = System.currentTimeMillis();
-            timePassed = now - startTime;    
+            timePassed = now - startTime;   
+            System.out.println(timePassed); 
         }
         return bestPath;
     }

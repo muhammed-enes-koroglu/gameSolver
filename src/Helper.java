@@ -1,3 +1,7 @@
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Collections;
+
 public abstract class Helper {
 
     private Helper(){
@@ -17,6 +21,12 @@ public abstract class Helper {
             if(e == elm)
                 count++;
         return count;
+    }
+
+    public static final <T> Set<T> newHashSet(T... objs) {
+        Set<T> set = new HashSet<>();
+        Collections.addAll(set, objs);
+        return set;
     }
 
 }
