@@ -2,6 +2,10 @@ import java.util.Arrays;
 
 public class TestMangalaState {
     
+    private TestMangalaState(){
+        throw new IllegalStateException("Utility class");
+    }
+
     public static void testMangalaState(){
         System.out.println("\nTesting MangalaState");
 

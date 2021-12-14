@@ -1,5 +1,8 @@
 public abstract class Helper {
 
+    private Helper(){
+        throw new IllegalStateException("Utility class");
+    }
     
     public static <T> boolean arrayContains(T[] arr, T value){
         for(T elm: arr)

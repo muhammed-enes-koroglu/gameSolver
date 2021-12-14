@@ -31,7 +31,6 @@ public class TestTicTacToeState {
         assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 0) == 8);
 
         game = new TicTacToeState(board, false); // so it's NOT max's turn.
-        // Arrays.stream(game.children()).forEach(g -> System.out.println("\n" + g.toString() + "\nMaxTurn: " + g.isMaxPlayersTurn() + "\nXTurn: " + g.isXTurn()));
         assert Arrays.stream(game.children()).allMatch(g -> g.isMaxPlayersTurn());
         assert Arrays.stream(game.children()).allMatch(g -> !g.isXTurn());
         assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 1) == 1);
