@@ -12,7 +12,7 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
     public MangalaState[] children() {
         
         ArrayList<MangalaState> children = new ArrayList<>();
-        int turnBias = whitesTurn ? 0 : BOARD_SIZE;
+        int turnBias = getTurnBias(this.whitesTurn);
         boolean childWhitesTurn;
         for(int trench = turnBias; trench < BOARD_SIZE + turnBias; trench++){
             int[] childBoard = this.board.clone();
@@ -33,10 +33,30 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         return children.toArray(new MangalaState[0]);
     }
 
+    private int positionalScore(boolean isWhite){
+        int score = 0;
+        int turnBias = getTurnBias(isWhite);
+        for(int i=0; i<BOARD_SIZE-1; i++){
+            score += this.board[i + turnBias] * (i+1);
+        }
+        return score;
+    }
+
     @Override
     public float score() {
-        // TODO Auto-generated method stub
-        return 0;
+        int score = 0;
+        score += this.board[ownTreasury(getTurnBias(this.whiteIsMax))];
+        score -= this.board[ownTreasury(getTurnBias(!this.whiteIsMax))];
+        
+        float ownPosition = (float) (0.1 * positionalScore(this.whiteIsMax));
+        float opponentPosition = (float) (0.1 * positionalScore(!this.whiteIsMax));
+        
+        if(ownPosition + opponentPosition == 0)
+            return Integer.signum(score) * Float.MAX_VALUE; 
+        score += ownPosition;
+        score -= opponentPosition;
+        // score += 
+        return score;
     }
     
     @Override
@@ -163,6 +183,10 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
 
     private boolean isWhiteSideEmpty(int[] board) {
         return Arrays.stream(Arrays.copyOfRange(board, 0, BOARD_SIZE -1)).sum() == 0;
+    }
+
+    private int getTurnBias(boolean whitesTurn) {
+        return whitesTurn ? 0 : BOARD_SIZE;
     }
 
     public static void testPrivateMethods(){
