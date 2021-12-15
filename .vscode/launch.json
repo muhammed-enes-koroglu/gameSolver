@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TestSuite",
+            "request": "launch",
+            "mainClass": "TestSuite",
+            "projectName": "mangalaSolver_ab2a4d8"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}",

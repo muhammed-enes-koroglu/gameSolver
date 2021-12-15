@@ -2,13 +2,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Searcher{
+public abstract class GameSolver{
 
-    private Searcher(){
+    private GameSolver(){
         throw new IllegalStateException("Utility class");
     }
 
-    // Return a path with the best score for maxPlayer. 
+    // Return a path with the best score for maxPlayer after searching at least for `maxSearchTime` seconds. 
     public static <S extends TwoPersonGameState<S>> List<S> findBestPathForMax(S startState, int maxSearchTime){
         long maxSearchTimeMilli = maxSearchTime * (long) 1000;
         long startTime = System.currentTimeMillis();
@@ -20,7 +20,6 @@ public abstract class Searcher{
         ArrayList<S> resultPath;
 
         for(int depth=1; timePassed < maxSearchTimeMilli; depth++){
-        // for(int depth=1; depth < 3; depth++){
             System.out.print(depth + " ");
             resultPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
@@ -32,7 +31,7 @@ public abstract class Searcher{
 
             now = System.currentTimeMillis();
             timePassed = now - startTime;   
-            System.out.println(timePassed); 
+            System.out.println(timePassed/1000); 
         }
         return bestPath;
     }
