@@ -13,7 +13,7 @@ public class TestSuite{
     public static void testMangalaSearcher(){
         boolean whitesTurn = true;
         boolean whiteIsMax = true;
-        int searchFor = 30;
+        int searchFor = 3;
         // int[] board = new int[]{4,4,4, 4,4,4, 0, 4,4,4, 4,4,4, 0};
         int[] board = newStartingBoard();
         MangalaState mState = new MangalaState(board, whitesTurn, whiteIsMax);
