@@ -1,6 +1,34 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
+/*  #MangalaState
+Mangala, from game family mancala, is a two person game featuring 
+6 trenches and 1 treasury on each side. Game starts with all trenches 
+filled with 4 stones and follows the rules stated below. The game ends 
+when a player's trenches are all empty. Player with most stones in 
+their treasury wins.
+
+    1-The game is turn based.
+    2-Each player must play one trench at their turn. 
+    3-It is then the other player's turn. Except for rule 5.
+    4-To play a trench, one takes ALL the stones in that trench and 
+        starts placing them in trenches one by one in counter-clockwise
+        rotation, starting from the trench they are taken from (Yes, 
+        this means that the starting trench will have 1 stone left in 
+        it after being played.). It is important where the last stone is placed.
+    
+    5-Play again if ended at own treasury.
+    6-Place stone in your treasury on pass, but not in enemy's treasury.
+    7-Take own and trench opposite to it if ended at own empty trench.
+    8-Take enemy trench if ended at enemy trench and made it even.
+    9-Take enemy's all trenches if your side is empty.
+
+The rules seem complicated, but the game clears itself after a few games.
+
+A playing interface is not yet implemented. This class only describes 
+how the game after any given turn can look like.  
+*/
 public class MangalaState implements TwoPersonGameState<MangalaState>{
 
     private final int[] board;

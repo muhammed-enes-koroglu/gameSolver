@@ -3,4 +3,5 @@ public interface TwoPersonGameState<C>{
     public float score();
     public boolean isMaxPlayersTurn();
     public boolean equals(Object o);
+    public String toString();
 }

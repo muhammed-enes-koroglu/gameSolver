@@ -2,9 +2,9 @@ public class TestSuite{
 
     public static void main(String[] args){
 
-        TestTicTacToeState.testTicTacToeState();
-        TestGameSolver.testFindBestPathForMax();
-        TestMangalaState.testMangalaState();
+        // TestTicTacToeState.testTicTacToeState();
+        // TestGameSolver.testFindBestPathForMax();
+        // TestMangalaState.testMangalaState();
         testMangalaSearcher();
 
         System.out.println("\nALL TESTS SUCCESSFULL!");
@@ -17,6 +17,7 @@ public class TestSuite{
         // int[] board = new int[]{4,4,4, 4,4,4, 0, 4,4,4, 4,4,4, 0};
         int[] board = newStartingBoard();
         MangalaState mState = new MangalaState(board, whitesTurn, whiteIsMax);
+        System.out.println("Search starting from: " + mState.toString());
         System.out.println(GameSolver.findBestPathForMax(mState, searchFor));
     }
     
