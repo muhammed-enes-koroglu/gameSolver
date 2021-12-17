@@ -114,6 +114,9 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         return str + "\n";        
     }
 
+    public int[] getBoard(){
+        return this.board.clone();
+    }
 
     public MangalaState(int[] board, boolean whitesTurn, boolean whiteIsMax){
         if(board.length != 2 * BOARD_SIZE)
