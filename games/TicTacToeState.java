@@ -1,5 +1,6 @@
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
 
@@ -27,11 +28,11 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
     }
 
     @Override
-    public TicTacToeState[] children() {
+    public Set<TicTacToeState> children() {
         if(xWon || xLost)
-            return new TicTacToeState[0];
+            return new HashSet<>();
     
-        ArrayList<TicTacToeState> children = new ArrayList<>();
+        HashSet<TicTacToeState> children = new HashSet<>();
         for(int i=0; i<board.length; i++){
             int[] copyBoard = board.clone();
             if(copyBoard[i] == 0){
@@ -39,7 +40,7 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
                 children.add(new TicTacToeState(copyBoard, this.xIsMaxPlayer));
             }
         }
-        return children.toArray(new TicTacToeState[0]);
+        return children;
     }
 
     @Override // Should be improved.

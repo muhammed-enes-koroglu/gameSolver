@@ -1,5 +1,5 @@
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Set;
 
 public class TestTicTacToeState {
 
@@ -23,19 +23,20 @@ public class TestTicTacToeState {
         System.out.println("testChildren..");
         int[] board = new int[]{0,0,0, 0,0,0, 0,0,0};
         TicTacToeState game = new TicTacToeState(board, true); // so it's max's turn.
-
-        assert Arrays.stream(game.children()).allMatch(g -> !g.isMaxPlayersTurn());
-        assert Arrays.stream(game.children()).allMatch(g -> !g.isXTurn());
-        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 1) == 1);
-        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), -1) == 0);
-        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 0) == 8);
+        Set<TicTacToeState> children = game.children();
+        assert children.stream().allMatch(g -> !g.isMaxPlayersTurn());
+        assert children.stream().allMatch(g -> !g.isXTurn());
+        assert children.stream().allMatch(g -> Helper.countElement(g.getBoard(), 1) == 1);
+        assert children.stream().allMatch(g -> Helper.countElement(g.getBoard(), -1) == 0);
+        assert children.stream().allMatch(g -> Helper.countElement(g.getBoard(), 0) == 8);
 
         game = new TicTacToeState(board, false); // so it's NOT max's turn.
-        assert Arrays.stream(game.children()).allMatch(g -> g.isMaxPlayersTurn());
-        assert Arrays.stream(game.children()).allMatch(g -> !g.isXTurn());
-        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 1) == 1);
-        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), -1) == 0);
-        assert Arrays.stream(game.children()).allMatch(g -> Helper.countElement(g.getBoard(), 0) == 8);
+        children = game.children();
+        assert children.stream().allMatch(g -> g.isMaxPlayersTurn());
+        assert children.stream().allMatch(g -> !g.isXTurn());
+        assert children.stream().allMatch(g -> Helper.countElement(g.getBoard(), 1) == 1);
+        assert children.stream().allMatch(g -> Helper.countElement(g.getBoard(), -1) == 0);
+        assert children.stream().allMatch(g -> Helper.countElement(g.getBoard(), 0) == 8);
 
         System.out.println("testChildren successful");
     }
@@ -95,7 +96,7 @@ public class TestTicTacToeState {
         TicTacToeState game = new TicTacToeState(board, true);
         
         ArrayList<Integer> hashcodes = new ArrayList<>();
-        Arrays.stream(game.children()).forEach(c -> {
+        game.children().stream().forEach(c -> {
             assert !hashcodes.contains(c.hashCode());
             hashcodes.add(c.hashCode());
         });
@@ -111,18 +112,18 @@ public class TestTicTacToeState {
         TicTacToeState ticState = new TicTacToeState(board, true);
 
         assert ticState.score() == 0;
-        assert Arrays.stream(ticState.children()).anyMatch(g -> g.score() == Float.MAX_VALUE);
-        assert Arrays.stream(ticState.children()).anyMatch(g -> g.score() == 0);
-        assert Arrays.stream(ticState.children()).noneMatch(g -> g.score() == -Float.MAX_VALUE);
+        assert ticState.children().stream().anyMatch(g -> g.score() == Float.MAX_VALUE);
+        assert ticState.children().stream().anyMatch(g -> g.score() == 0);
+        assert ticState.children().stream().noneMatch(g -> g.score() == -Float.MAX_VALUE);
         
         // O is Max
         board = new int[]{1,0,1, -1,-1,0, 0,0,0};
         ticState = new TicTacToeState(board, false);
 
         assert ticState.score() == 0;
-        assert Arrays.stream(ticState.children()).anyMatch(g -> g.score() == -Float.MAX_VALUE);
-        assert Arrays.stream(ticState.children()).anyMatch(g -> g.score() == 0);
-        assert Arrays.stream(ticState.children()).noneMatch(g -> g.score() == Float.MAX_VALUE);
+        assert ticState.children().stream().anyMatch(g -> g.score() == -Float.MAX_VALUE);
+        assert ticState.children().stream().anyMatch(g -> g.score() == 0);
+        assert ticState.children().stream().noneMatch(g -> g.score() == Float.MAX_VALUE);
         
                
         System.out.println("testScore successful");

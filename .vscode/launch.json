@@ -9,6 +9,20 @@
             "name": "Launch TestSuite",
             "request": "launch",
             "mainClass": "TestSuite",
+            "projectName": "game_solver_d9d3e33c"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestTurkishCheckers",
+            "request": "launch",
+            "mainClass": "TestTurkishCheckers",
+            "projectName": "game_solver_d9d3e33c"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestSuite",
+            "request": "launch",
+            "mainClass": "TestSuite",
             "projectName": "mangalaSolver_ab2a4d8"
         },
         {

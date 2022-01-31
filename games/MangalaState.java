@@ -1,5 +1,6 @@
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /*  #MangalaState
@@ -37,9 +38,9 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
     private static final int BOARD_SIZE = 7;
 
     @Override
-    public MangalaState[] children() {
+    public Set<MangalaState> children() {
         
-        ArrayList<MangalaState> children = new ArrayList<>();
+        HashSet<MangalaState> children = new HashSet<>();
         int turnBias = getTurnBias(this.whitesTurn);
         boolean childWhitesTurn;
         for(int trench = turnBias; trench < BOARD_SIZE + turnBias-1; trench++){
@@ -58,7 +59,7 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
             }
         }
 
-        return children.toArray(new MangalaState[0]);
+        return children;
     }
 
     @Override
@@ -171,7 +172,7 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         return turnBias <= endedAt && endedAt < BOARD_SIZE + turnBias;
     }
     
-    private void resultEndingInTrench(int endedAt, int turnBias, boolean childWhitesTurn, int[] childBoard, ArrayList<MangalaState> children){
+    private void resultEndingInTrench(int endedAt, int turnBias, boolean childWhitesTurn, int[] childBoard, HashSet<MangalaState> children){
         if(endedAtOwnTrench(endedAt, turnBias)){ // Ended at own trench
             if((childBoard[endedAt] == 1) && (childBoard[oppositeTrenchOf(endedAt)] > 0)){ // Trench is empty
                 childBoard[ownTreasury(turnBias)] += childBoard[endedAt] + childBoard[oppositeTrenchOf(endedAt)];

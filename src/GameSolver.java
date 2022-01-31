@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public abstract class GameSolver{
 
@@ -9,8 +10,8 @@ public abstract class GameSolver{
     }
 
     // Return a path with the best score for maxPlayer after searching at least for `maxSearchTime` seconds. 
-    public static <S extends TwoPersonGameState<S>> List<S> findBestPathForMax(S startState, int maxSearchTime){
-        long maxSearchTimeMilli = maxSearchTime * (long) 1000;
+    public static <S extends TwoPersonGameState<S>> List<S> findBestPathForMax(S startState, int minSearchTime){
+        long minSearchTimeMilliSeconds = minSearchTime * (long) 1000;
         long startTime = System.currentTimeMillis();
         long now;
         long timePassed = 0;
@@ -19,8 +20,8 @@ public abstract class GameSolver{
         ArrayList<S> bestPath = new ArrayList<>();
         ArrayList<S> resultPath;
 
-        for(int depth=1; timePassed < maxSearchTimeMilli; depth++){
-            System.out.print(depth + " ");
+        for(int depth=1; timePassed < minSearchTimeMilliSeconds; depth++){
+            // System.out.print(depth + " ");
             resultPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
             float resultScore = resultPath.get(resultPath.size()-1).score();
@@ -31,7 +32,7 @@ public abstract class GameSolver{
 
             now = System.currentTimeMillis();
             timePassed = now - startTime;   
-            System.out.println(timePassed/1000); 
+            // System.out.println(timePassed/1000); 
         }
         return bestPath;
     }
@@ -43,7 +44,7 @@ public abstract class GameSolver{
 
         ArrayList<S> bestPath = path; // So `path` is returned if no child nodes left.
         S currentState = path.get(path.size()-1);
-        S[] children = currentState.children();
+        Set<S> children = currentState.children();
 
         if(currentState.isMaxPlayersTurn()){
             return searchIsMaxPlayer(path, maxDepth, alpha, beta, bestPath, children);
@@ -54,11 +55,11 @@ public abstract class GameSolver{
     }
 
     private static <S extends TwoPersonGameState<S>> ArrayList<S> searchIsMaxPlayer(ArrayList<S> path, int maxDepth, float alpha,
-            float beta, ArrayList<S> bestPath, S[] children) {
+            float beta, ArrayList<S> bestPath, Set<S> children) {
         float bestValue = -Float.MAX_VALUE;
         for(S child: children){
             if(!path.contains(child)){
-                ArrayList<S> childPath = (ArrayList<S>) path.clone();
+                ArrayList<S> childPath = new ArrayList<>(path);
                 childPath.add(child);
 
                 ArrayList<S> resultPath = miniMax(childPath, maxDepth-1, alpha, beta);
@@ -79,11 +80,11 @@ public abstract class GameSolver{
     }
     
     private static <S extends TwoPersonGameState<S>> ArrayList<S> searchIsMinPlayer(ArrayList<S> path, int maxDepth, float alpha,
-            float beta, ArrayList<S> bestPath, S[] children) {
+            float beta, ArrayList<S> bestPath, Set<S> children) {
         float bestValue = Float.MAX_VALUE;
         for(S child: children){
             if(!path.contains(child)){
-                ArrayList<S> childPath = (ArrayList<S>) path.clone();
+                ArrayList<S> childPath = new ArrayList<>(path);
                 childPath.add(child);
 
                 ArrayList<S> resultPath = miniMax(childPath, maxDepth-1, alpha, beta);
