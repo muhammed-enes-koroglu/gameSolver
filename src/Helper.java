@@ -23,6 +23,7 @@ public abstract class Helper {
         return count;
     }
 
+    @SafeVarargs
     public static final <T> Set<T> newHashSet(T... objs) {
         Set<T> set = new HashSet<>();
         Collections.addAll(set, objs);
