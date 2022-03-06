@@ -16,7 +16,8 @@
             "name": "Launch TestTurkishCheckers",
             "request": "launch",
             "mainClass": "TestTurkishCheckers",
-            "projectName": "game_solver_d9d3e33c"
+            "projectName": "game_solver_d9d3e33c",
+            "vmArgs": "-enableassertions"
         },
         {
             "type": "java",
