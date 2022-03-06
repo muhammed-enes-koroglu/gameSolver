@@ -1,10 +1,15 @@
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
     public static final int BOARD_SIZE = 8;
+    private static final int W_MAN = 1;
+    private static final int B_MAN = -1;
+    private static final int W_KING = 2;
+    private static final int B_KING = -2;
+    private static final int EMPTY_SQUARE = 0;
+
     private int[][] board;
     private boolean whitesTurn;
     private boolean maximizeForWhite;
@@ -25,11 +30,8 @@ public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
                     moveManAt(childBoard, row, col);
                 
                 children.add(new TurkishCheckers(childBoard, !this.whitesTurn, this.maximizeForWhite));
-
                 }
         }
-
-
         return children;
     }
 
@@ -74,44 +76,68 @@ public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
     public String toString(){
         StringBuilder str = new StringBuilder();
         
+        // add board elements
         str.append(horizontalLineString());
         for(int rowNb=BOARD_SIZE-1; rowNb>=0; rowNb--){
             int[] row = this.board[rowNb];
-            str.append(rowString(row));
+            str.append(rowString(row, rowNb));
         }
+        // add column numbers
+        str.append(horizontalLineString());
+        str.append(rowString(new int[]{0,1,2,3,4,5,6,7}, -1));
+        
         return str.toString();
     }
 
     private static String horizontalLineString(){
         StringBuilder str = new StringBuilder();
-        for(int i=0; i < 30; i++)
+        for(int i=0; i < 34; i++)
             str.append("_");
         str.append("\n");
         return str.toString();
     }
 
-    private static String rowString(int[] row){
+    private static String rowString(int[] row, int rowNb){
         StringBuilder result = new StringBuilder();
+
+        // add row number
+        if(rowNb == -1){
+            result.append(" ");
+        }
+        else
+            result.append(rowNb);
+        result.append("| ");
+
         for(int piece: row){
-            if(isWhite(piece)){
-                if(isKing(piece))
-                    result.append("W");
-                else
-                    result.append("w");
-            }
-            else if(isBlack(piece)){
-                if(isKing(piece))
-                    result.append("B");
-                else
-                    result.append("b");
-            }
+            // add column number
+            if(rowNb == -1)
+                result.append(piece);
+            // add row elements
             else
-                result.append(" ");
+                appendWithActualPiece(result, piece);
+            
             result.append(" | ");  // seperator
         }
         result.append("\n");
-        // result.append(horizontalLineString());
         return result.toString();
+    }
+
+    private static void appendWithActualPiece(StringBuilder result, int piece){
+
+        if(isWhite(piece)){
+            if(isKing(piece))
+                result.append("W");
+            else
+                result.append("w");
+        }
+        else if(isBlack(piece)){
+            if(isKing(piece))
+                result.append("B");
+            else
+                result.append("b");
+        }
+        else
+            result.append(" ");
     }
     
     /*
@@ -167,29 +193,28 @@ public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
         return nbPieces;
     }
 
-    private static boolean pieceBelongsToPlayer(int piece, boolean isWhitePlayer){
-        int playerSign = isWhitePlayer ? 1 : -1;
+    private static boolean pieceBelongsToPlayer(int piece, boolean checkForWhite){
+        int playerSign = checkForWhite ? 1 : -1;
         return playerSign * piece > 0;
     }
 
     private static boolean isWhite(int piece){
-        return piece > 0;
+        return piece == W_MAN || piece == W_KING;
     }
     
     private static boolean isBlack(int piece){
-        return piece < 0;
+        return piece == B_MAN || piece == B_KING;
     }
     
     private static boolean isKing(int piece){
-        return piece == 2 || piece == -2;
+        return piece == W_KING || piece == B_KING;
     }
 
     private boolean piecesTurn(int piece){
         if(piece == 0)
             throw new IllegalArgumentException("Empty square doesn't have a turn.");
 
-        boolean pieceIsWhite = piece > 0;
-        return (pieceIsWhite && this.whitesTurn) || (!pieceIsWhite && !this.whitesTurn);
+        return (isWhite(piece) && this.whitesTurn) || (!isWhite(piece) && !this.whitesTurn);
     }
 
 }
