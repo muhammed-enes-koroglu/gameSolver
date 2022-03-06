@@ -30,4 +30,31 @@ public abstract class Helper {
         return set;
     }
 
+    // Deep copies board, modifies one square in it and returns it.
+    public static int[][] modifiedCloneOf(int[][] board, int row, int col, int val){
+        // Corrects for overshoots.
+        if(col<0) {
+            col = 0;
+            System.out.println("Col reset!");
+        } else
+        if(col>7) {
+            col = 7;
+            System.out.println("Col reset!");
+        }
+
+        int[][] nBoard = deepCopy(board);
+        nBoard[row][col] = val;
+        return nBoard; 
+    }
+
+    public static int[][] deepCopy(int[][] arr){
+        int[][] newArray = new int[arr.length][arr[0].length];
+
+        for(int row=0; row<arr.length; row++){
+            newArray[row] = arr[row].clone();
+        }
+
+        return newArray;
+    }
+
 }
