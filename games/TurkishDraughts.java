@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
+public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     public static final int BOARD_SIZE = 8;
     private static final int W_MAN = 1;
     private static final int B_MAN = -1;
@@ -15,8 +15,8 @@ public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
     private boolean maximizeForWhite;
 
     @Override
-    public Set<TurkishCheckers> children() {
-        Set<TurkishCheckers> children = new HashSet<>();
+    public Set<TurkishDraughts> children() {
+        Set<TurkishDraughts> children = new HashSet<>();
 
         for(int row=0; row<BOARD_SIZE; row++){
             for(int col=0; col<BOARD_SIZE; col++){
@@ -29,7 +29,7 @@ public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
                 else
                     moveManAt(childBoard, row, col);
                 
-                children.add(new TurkishCheckers(childBoard, !this.whitesTurn, this.maximizeForWhite));
+                children.add(new TurkishDraughts(childBoard, !this.whitesTurn, this.maximizeForWhite));
                 }
         }
         return children;
@@ -56,9 +56,9 @@ public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
 
     @Override
     public boolean equals(Object o){
-        if(!(o instanceof TurkishCheckers))
+        if(!(o instanceof TurkishDraughts))
             return false;
-        TurkishCheckers other = (TurkishCheckers) o;
+        TurkishDraughts other = (TurkishDraughts) o;
         if(this.whitesTurn != other.whitesTurn)
             return false;
         return Arrays.deepEquals(this.board, other.board);
@@ -148,7 +148,7 @@ public class TurkishCheckers implements TwoPersonGameState<TurkishCheckers>{
         2 : white king
         -2: black king
     */
-    public TurkishCheckers(int[][] board, boolean whitesTurn, boolean maximizeForWhite){
+    public TurkishDraughts(int[][] board, boolean whitesTurn, boolean maximizeForWhite){
         if(board.length != BOARD_SIZE)
             throw new IllegalArgumentException("`board` must have " + BOARD_SIZE + " rows.");
         if(board[0].length != BOARD_SIZE)

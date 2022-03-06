@@ -1,24 +1,24 @@
 import java.util.HashSet;
 
-public class TestTurkishCheckers {
-    private static final int BOARD_SIZE = TurkishCheckers.BOARD_SIZE;
+public class TestTurkishDraughts {
+    private static final int BOARD_SIZE = TurkishDraughts.BOARD_SIZE;
     private static final int W_MAN = 1;
     private static final int B_MAN = -1;
     private static final int W_KING = 2;
     private static final int B_KING = -2;
     private static final int EMPTY_SQUARE = 0;
 
-    private TestTurkishCheckers(){
+    private TestTurkishDraughts(){
         throw new IllegalStateException("Utility class");
     }
 
     public static void main(String[] args) {
-        System.out.println("\nTesting TurkishCheckers");
+        System.out.println("\nTesting TurkishDraughts");
 
         testInitialization();
         testChildren();
-
-        System.out.println("\nAll TurkishCheckers tests are Successful.");
+        
+        System.out.println("\nAll TurkishDraughts tests are Successful.");
     }
 
     private static void testInitialization(){
@@ -27,8 +27,7 @@ public class TestTurkishCheckers {
         boolean whitesTurn = true;
         boolean whiteIsMax = true;
         int[][] board = getInitialBoard();
-        TurkishCheckers checkers = new TurkishCheckers(board, whitesTurn, whiteIsMax);
-        // System.out.println(checkers);
+        new TurkishDraughts(board, whitesTurn, whiteIsMax);
 
         System.out.println("testInitialization successful");
     }
@@ -36,20 +35,24 @@ public class TestTurkishCheckers {
     private static void testChildren(){
         System.out.println("testChildren..");
 
-        // testChildrenSimplestCase();
+        testChildrenBasicMoving();
         testChildrenTaking();
+        testChildrenPromotion();
+        
+        testChildrenEnteringSurvivalMode();
+        testChildrenGameOver();
 
         System.out.println("testChildren successful");
     }
 
     // Tests easiest case with no kings, no to be kings and no takes.
     // Adds white men in some squares. Adds each of their children to `expectedChildren`. 
-    private static void testChildrenSimplestCase(){
+    private static void testChildrenBasicMoving(){
         boolean whitesTurn = true;
         boolean maximizeForWhite = true;
         int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
         int[][] childBoard;
-        HashSet<TurkishCheckers> expectedChildren = new HashSet<>();
+        HashSet<TurkishDraughts> expectedChildren = new HashSet<>();
         HashSet<int[][]> expectedChildBoards = new HashSet<>();
         
         board[1][0] = W_MAN;
@@ -76,11 +79,11 @@ public class TestTurkishCheckers {
         expectedChildBoards.add(modifiedCloneOf(childBoard, 5, 5, W_MAN));
         
         for(int[][] childBrd : expectedChildBoards){
-            TurkishCheckers child = new TurkishCheckers(childBrd, !whitesTurn, maximizeForWhite);
+            TurkishDraughts child = new TurkishDraughts(childBrd, !whitesTurn, maximizeForWhite);
             expectedChildren.add(child);
          }
 
-        TurkishCheckers checkers = new TurkishCheckers(board, whitesTurn, maximizeForWhite);
+        TurkishDraughts checkers = new TurkishDraughts(board, whitesTurn, maximizeForWhite);
         assert checkers.children().equals(expectedChildren);
     }
     
@@ -92,7 +95,7 @@ public class TestTurkishCheckers {
         boolean maximizeForWhite = true;
         int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
         int[][] childBoard;
-        HashSet<TurkishCheckers> expectedChildren = new HashSet<>();
+        HashSet<TurkishDraughts> expectedChildren = new HashSet<>();
         HashSet<int[][]> expectedChildBoards = new HashSet<>();
 
         board[1][0] = W_MAN;
@@ -110,7 +113,7 @@ public class TestTurkishCheckers {
 
         board[4][3] = B_MAN;
 
-        System.out.println(new TurkishCheckers(board, whitesTurn, maximizeForWhite));
+        System.out.println(new TurkishDraughts(board, whitesTurn, maximizeForWhite));
 
         //children of man at (1,0) going up 
         childBoard = deepCopy(board);
@@ -155,21 +158,78 @@ public class TestTurkishCheckers {
         // (1,0) or (3,3) MUST take! Can't play anything else.
         
         for(int[][] childBrd : expectedChildBoards){
-            TurkishCheckers child = new TurkishCheckers(childBrd, !whitesTurn, maximizeForWhite);
+            TurkishDraughts child = new TurkishDraughts(childBrd, !whitesTurn, maximizeForWhite);
             expectedChildren.add(child);
         }
 
-        TurkishCheckers checkers = new TurkishCheckers(board, whitesTurn, maximizeForWhite);
+        TurkishDraughts checkers = new TurkishDraughts(board, whitesTurn, maximizeForWhite);
         assert checkers.children().equals(expectedChildren);
     }
-    
+
+    // Tests promotion when reaching the last row. Can keep taking after getting promoted.
+    private static void testChildrenPromotion(){
+        boolean whitesTurn = true;
+        boolean maximizeForWhite = true;
+        int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
+        int[][] childBoard;
+        HashSet<TurkishDraughts> expectedChildren = new HashSet<>();
+        HashSet<int[][]> expectedChildBoards= new HashSet<>();
+        
+        TurkishDraughts checkers;
+
+        // Move forward to promote.
+        board[6][3] = W_MAN;
+
+        childBoard = deepCopy(board);
+        childBoard[6][3] = EMPTY_SQUARE;
+        childBoard[7][3] = W_KING;
+        expectedChildren.add(new TurkishDraughts(childBoard, !whitesTurn, maximizeForWhite));
+
+        checkers = new TurkishDraughts(board, whitesTurn, maximizeForWhite);
+        assert checkers.children().equals(expectedChildren);
+
+        // Takes even if promotion seems possible. Can keep taking after getting promoted.
+        board[2][2] = W_MAN;
+        board[3][2] = B_MAN;
+        board[4][6] = B_KING;
+
+        childBoard = deepCopy(board);
+        childBoard[2][2] = EMPTY_SQUARE;
+        childBoard[3][2] = EMPTY_SQUARE;
+        expectedChildBoards.add(modifiedCloneOf(childBoard, 4, 2, W_KING));
+
+        childBoard[4][6] = EMPTY_SQUARE;
+        expectedChildBoards.add(modifiedCloneOf(childBoard, 4, 7, W_KING));        
+
+        for(int[][] childBrd : expectedChildBoards){
+            TurkishDraughts child = new TurkishDraughts(childBrd, !whitesTurn, maximizeForWhite);
+            expectedChildren.add(child);
+        }
+
+        checkers = new TurkishDraughts(board, whitesTurn, maximizeForWhite);
+        assert checkers.children().equals(expectedChildren);       
+
+    }
+
+    private static void testChildrenEnteringSurvivalMode(){
+
+        // TODO
+        throw new UnsupportedOperationException("Test not yet implemented.");
+
+    }
+
+    private static void testChildrenGameOver(){
+
+        // TODO
+        throw new UnsupportedOperationException("Test not yet implemented.");
+
+    }
+
     // Helper methods
     private static int[][] getInitialBoard(){
-        // int[][] board = new int[][]]{1,1,1,1, 1,1,1,1};
-
 
         int[][] board = new int[8][8];
-        for(int row = 0; row < TurkishCheckers.BOARD_SIZE; row++){
+        for(int row = 0; row < TurkishDraughts.BOARD_SIZE; row++){
             if(row == 1 || row == 2)
                 board[row] = new int[]{-1,-1,-1,-1, -1,-1,-1,-1};
             else if(row == 5 || row == 6)
