@@ -2,11 +2,11 @@ import java.util.HashSet;
 
 public class TestTurkishDraughts {
     private static final int BOARD_SIZE = TurkishDraughts.BOARD_SIZE;
-    private static final int W_MAN = 1;
-    private static final int B_MAN = -1;
-    private static final int W_KING = 2;
-    private static final int B_KING = -2;
-    private static final int EMPTY_SQUARE = 0;
+    private static final int W_MAN = TurkishDraughts.W_MAN;
+    private static final int B_MAN = TurkishDraughts.B_MAN;
+    private static final int W_KING = TurkishDraughts.W_KING;
+    private static final int B_KING = TurkishDraughts.B_KING;
+    private static final int EMPTY_SQUARE = TurkishDraughts.EMPTY_SQUARE;
 
     private TestTurkishDraughts(){
         throw new IllegalStateException("Utility class");
@@ -35,10 +35,10 @@ public class TestTurkishDraughts {
     private static void testChildren(){
         System.out.println("testChildren..");
 
-        testChildrenBasicMoving();
+        // testChildrenBasicMoving();
         testChildrenTaking();
         testChildrenPromotion();
-        
+
         testChildrenEnteringSurvivalMode();
         testChildrenGameOver();
 
@@ -60,23 +60,23 @@ public class TestTurkishDraughts {
         board[5][6] = W_MAN;
 
         // children of (1,0)
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[1][0] = EMPTY_SQUARE;
 
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 2, 0, W_MAN));
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 1, 1, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 2, 0, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 1, 1, W_MAN));
         // children of (3,3)
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[3][3] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 4, 3, W_MAN));
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 3, 4, W_MAN));
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 3, 2, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 4, 3, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 3, 4, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 3, 2, W_MAN));
         // children of (5,6)
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[5][6] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 6, 6, W_MAN));
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 5, 7, W_MAN));
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 5, 5, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 6, 6, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 5, 7, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 5, 5, W_MAN));
         
         for(int[][] childBrd : expectedChildBoards){
             TurkishDraughts child = new TurkishDraughts(childBrd, !whitesTurn, maximizeForWhite);
@@ -116,43 +116,43 @@ public class TestTurkishDraughts {
         System.out.println(new TurkishDraughts(board, whitesTurn, maximizeForWhite));
 
         //children of man at (1,0) going up 
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[1][0] = EMPTY_SQUARE;
         childBoard[2][0] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 3, 0, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 3, 0, W_MAN));
 
         childBoard[4][0] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 5, 0, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 5, 0, W_MAN));
         
         childBoard[5][1] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 5, 2, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 5, 2, W_MAN));
 
         //children of man at (1,0) going right
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[1][0] = EMPTY_SQUARE;
         childBoard[1][1] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 1, 2, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 1, 2, W_MAN));
 
         childBoard[1][3] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 1, 4, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 1, 4, W_MAN));
         
         childBoard[2][4] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 3, 4, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 3, 4, W_MAN));
         
         // child of man at (3,3)
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[3][3] = EMPTY_SQUARE;
         childBoard[4][3] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 5, 3, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 5, 3, W_MAN));
 
         //children of king at (5,4)
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[5][4] = EMPTY_SQUARE;
         childBoard[5][1] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 5, 0, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 5, 0, W_MAN));
 
         childBoard[4][0] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 3, 0, W_MAN));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 3, 0, W_MAN));
         
         // children of (5,6)
         // (1,0) or (3,3) MUST take! Can't play anything else.
@@ -180,7 +180,7 @@ public class TestTurkishDraughts {
         // Move forward to promote.
         board[6][3] = W_MAN;
 
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[6][3] = EMPTY_SQUARE;
         childBoard[7][3] = W_KING;
         expectedChildren.add(new TurkishDraughts(childBoard, !whitesTurn, maximizeForWhite));
@@ -193,13 +193,13 @@ public class TestTurkishDraughts {
         board[3][2] = B_MAN;
         board[4][6] = B_KING;
 
-        childBoard = deepCopy(board);
+        childBoard = Helper.deepCopy(board);
         childBoard[2][2] = EMPTY_SQUARE;
         childBoard[3][2] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 4, 2, W_KING));
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 4, 2, W_KING));
 
         childBoard[4][6] = EMPTY_SQUARE;
-        expectedChildBoards.add(modifiedCloneOf(childBoard, 4, 7, W_KING));        
+        expectedChildBoards.add(Helper.modifiedCloneOf(childBoard, 4, 7, W_KING));        
 
         for(int[][] childBrd : expectedChildBoards){
             TurkishDraughts child = new TurkishDraughts(childBrd, !whitesTurn, maximizeForWhite);
@@ -238,22 +238,6 @@ public class TestTurkishDraughts {
                 board[row] = new int[]{0,0,0,0, 0,0,0,0};
         }
         return board;
-    }
-
-    private static int[][] modifiedCloneOf(int[][] board, int row, int col, int val){
-        int[][] nBoard = deepCopy(board);
-        nBoard[row][col] = val;
-        return nBoard; 
-    }
-
-    private static int[][] deepCopy(int[][] arr){
-        int[][] newArray = new int[arr.length][arr[0].length];
-
-        for(int row=0; row<arr.length; row++){
-            newArray[row] = arr[row].clone();
-        }
-
-        return newArray;
     }
 
 }
