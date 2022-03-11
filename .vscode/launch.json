@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TestTurkishDraughts",
+            "request": "launch",
+            "mainClass": "TestTurkishDraughts",
+            "projectName": "game_solver_d9d3e33c"
+        },
+        {
+            "type": "java",
             "name": "Launch TestSuite",
             "request": "launch",
             "mainClass": "TestSuite",

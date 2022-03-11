@@ -15,8 +15,9 @@ public class TestTurkishDraughts {
     public static void main(String[] args) {
         System.out.println("\nTesting TurkishDraughts");
 
-        testInitialization();
-        testChildren();
+        // testInitialization();
+        TurkishDraughts.testPrivateMethods();
+        // testChildren();
         
         System.out.println("\nAll TurkishDraughts tests are Successful.");
     }
