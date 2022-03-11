@@ -34,6 +34,7 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     public Set<TurkishDraughts> children() {
         Set<TurkishDraughts> children = new HashSet<>();
         HashSet<int[][]> childBoardSet = new HashSet<>();
+        boolean takePossible = false;
 
         for(int currentRow=0; currentRow<BOARD_SIZE; currentRow++){
             for(int currentCol=0; currentCol<BOARD_SIZE; currentCol++){
@@ -42,28 +43,35 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
                 
                 int[][] childBoard = Helper.deepCopy(this.board);
                 if(isKing(piece))
-                    moveKingAt(childBoardSet, childBoard, currentRow, currentCol);
+                    takePossible = takePossible || addChildBoardsForKingAt(childBoardSet, childBoard, currentRow, currentCol, takePossible);
                 else
-                    addChildrenForManAt(childBoardSet, childBoard, currentRow, currentCol);
+                    takePossible = takePossible || addChildBoardsForManAt(childBoardSet, childBoard, currentRow, currentCol, takePossible);
                 
-                children.add(new TurkishDraughts(childBoard, !this.whitesTurn, this.maximizeForWhite));
                 }
+        for(int[][] childBoard: childBoardSet){
+            children.add(new TurkishDraughts(childBoard, !this.whitesTurn, this.maximizeForWhite));
+        }
         }
 
 
         return children;
     }
 
-    private static boolean moveKingAt(HashSet<int[][]> childBoards, int[][] board, int currentRow, int currentCol) {
+    private static boolean addChildBoardsForKingAt(HashSet<int[][]> childBoards, int[][] board, int currentRow, int currentCol, boolean takePossible) {
         //TODO
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
     // Returns true if at least one take was possible.
-    private static boolean addChildrenForManAt(HashSet<int[][]> childBoards, int[][] board, int currentRow, int currentCol){
+    private static boolean addChildBoardsForManAt(HashSet<int[][]> childBoards, int[][] board, int currentRow, int currentCol, boolean takePossible){
         
+        // Should not make a normal move if a take is possible.
         if(manageTakes(childBoards, board, currentRow, currentCol)){ return true; }
         
+        // If a take is possible, but this piece doesn't have any takes; this piece does not move.
+        if(takePossible){ return false; }
+
+        // No takes possible.
         for(int[] direction: getDirectionsList()){
             int rowDirection = direction[0];
             int colDirection = direction[1];
@@ -87,9 +95,9 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
 
     }
 
-    // returns true if at least one take was possible.
+    // Returns true if at least one take was possible.
     private static boolean manageTakes(HashSet<int[][]> childBoards, int[][] board, int currentRow, int currentCol){
-        boolean canTake = false;
+        boolean takePossible = false;
 
         for(int[] direction: getDirectionsList()){
             int rowDirection = direction[0];
@@ -98,14 +106,14 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
             // Take if can take and try taking from there recursively.
             if(!isLocationOutOfBounds(currentRow + rowDirection, currentCol + colDirection) && 
             manCanTakeInDirection(board, currentRow, currentCol, rowDirection, colDirection)){
-                canTake = true;
+                takePossible = true;
                 int[][] childBoard = Helper.deepCopy(board);
                 manTakesInDirection(childBoard, currentRow, currentCol, rowDirection, colDirection);
                 childBoards.add(childBoard);
                 manageTakes(childBoards, childBoard, currentRow + 2*rowDirection, currentCol + 2*colDirection);
             }
         }
-        return canTake;
+        return takePossible;
     }
 
     // Assumes next square in direction is not out of bounds!!
