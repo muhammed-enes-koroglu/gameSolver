@@ -1,8 +1,16 @@
-import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+
+/* TODOs and PROBLEMS
+1- 2 equal states produce different hashcodes due to their arrays returning different hashcodes 
+because they are not identical. Check how we did it in MangalaState.
+2- Promotion
+3- Private Tests
+4- addChildrenForKingAt()
+5- score()
+*/
 public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     public static final int BOARD_SIZE = 8;
     public static final int W_MAN = 1;
@@ -12,8 +20,8 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     public static final int EMPTY_SQUARE = 0;
     public static final int TOP_ROW = BOARD_SIZE-1;
     public static final int BOTTOM_ROW = 0;
-    public static final int RIGHTMOST_COL = TOP_ROW;
-    public static final int LEFTMOST_COL = BOTTOM_ROW;
+    public static final int RIGHTMOST_COL = BOARD_SIZE-1;
+    public static final int LEFTMOST_COL = 0;
     private static final int[] UP = new int[]{1,0};
     private static final int[] DOWN = new int[]{-1,0};
     private static final int[] RIGHT = new int[]{0,1};
@@ -22,6 +30,9 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     private int[][] board;
     private boolean whitesTurn;
     private boolean maximizeForWhite;
+    private int nbWhitePieces;
+    private int nbBlackPieces;
+    private boolean hasTakenLastTurn;
 
     public static int[] up(){return UP.clone();}
     public static int[] down(){return DOWN.clone();}
@@ -32,95 +43,190 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
 
     @Override
     public Set<TurkishDraughts> children() {
-        Set<TurkishDraughts> children = new HashSet<>();
-        HashSet<int[][]> childBoardSet = new HashSet<>();
+        HashSet<TurkishDraughts> childrenSet = new HashSet<>();
         boolean takePossible = false;
 
         for(int currentRow=0; currentRow<BOARD_SIZE; currentRow++){
             for(int currentCol=0; currentCol<BOARD_SIZE; currentCol++){
                 int piece = this.board[currentRow][currentCol];
-                if(piece == EMPTY_SQUARE || !piecesTurn(piece)) continue; // Skip empty spaces and pieces whose turn it is not.
+                if(piece == EMPTY_SQUARE || !piecesTurn(piece))
+                    continue; // Skip empty squares and pieces whose turn it's not.
                 
                 int[][] childBoard = Helper.deepCopy(this.board);
                 if(isKing(piece))
-                    takePossible = takePossible || addChildBoardsForKingAt(childBoardSet, childBoard, currentRow, currentCol, takePossible);
+                    takePossible = addChildrenForKingAt(childrenSet, childBoard, currentRow, currentCol, takePossible) || takePossible;
                 else
-                    takePossible = takePossible || addChildBoardsForManAt(childBoardSet, childBoard, currentRow, currentCol, takePossible);
-                
+                    takePossible = addChildrenForManAt(childrenSet, childBoard, currentRow, currentCol, takePossible) || takePossible;
                 }
-        for(int[][] childBoard: childBoardSet){
-            children.add(new TurkishDraughts(childBoard, !this.whitesTurn, this.maximizeForWhite));
-        }
         }
 
+        if(takePossible)
+            removeNonTakers(childrenSet, takePossible);
 
-        return children;
+        return childrenSet;
     }
 
-    private static boolean addChildBoardsForKingAt(HashSet<int[][]> childBoards, int[][] board, int currentRow, int currentCol, boolean takePossible) {
-        //TODO
+    private void removeNonTakers(HashSet<TurkishDraughts> childrenSet, boolean takePossible){
+        for(TurkishDraughts child : childrenSet)
+            if(!child.hasTakenLastTurn)
+                childrenSet.remove(child);
+    }
+
+    private boolean addChildrenForKingAt(HashSet<TurkishDraughts> childrenSet, int[][] board, int currentRow, int currentCol, boolean takePossible) {
+        
+        // // Should not make a normal move if a take is possible.
+        // int nbEnemyPieces = this.whitesTurn ? this.nbBlackPieces : this.nbWhitePieces;
+        // if(manageTakesForKing(childrenSet, board, currentRow, currentCol, nbEnemyPieces)){
+        //     return true;
+        // }
+        
+        // // If a take is possible, but not for this piece -> this piece does not move. Saves us a TON of calculations.
+        // if(takePossible){
+        //     return false;
+        // }
+
+        // // No takes possible. Move simply.
+        // for(int[] direction: getDirectionsList()){
+        //     int rowDirection = direction[0];
+        //     int colDirection = direction[1];
+            
+        //     if(!locationIsOutOfBounds(currentRow + rowDirection, currentCol + colDirection) &&
+        //     board[currentRow + rowDirection][currentCol + colDirection] == EMPTY_SQUARE){
+        //         int[][] childBoard = Helper.deepCopy(board);
+        //         moveManInDirection(childBoard, currentRow, currentCol, rowDirection, colDirection);
+        //         childrenSet.add(new TurkishDraughts(childBoard, !this.whitesTurn, this.maximizeForWhite, this.nbWhitePieces, this.nbBlackPieces, false));
+        //     }
+        // }
+        return false;
+    }    
+    
+    private boolean manageTakesForKing(HashSet<TurkishDraughts> childrenSet, int[][] board, int currentRow,
+            int currentCol, int nbEnemyPieces) {
         throw new UnsupportedOperationException("Not yet implemented.");
+
+        // boolean takePossible = false;
+        // if(nbEnemyPieces == 0)
+        //     return takePossible;
+
+        // for(int[] direction: getDirectionsList()){
+        //     int rowDirection = direction[0];
+        //     int colDirection = direction[1];
+            
+        //     // Take if can take and try taking from there recursively.
+        //     int[][] childBoard = Helper.deepCopy(board);
+        //     takePossible = kingTryTakeInDirection(childBoard, currentRow, currentCol, rowDirection, colDirection, nbEnemyPieces);
+
+        //     // Check if should enter survival mode.
+        //     if(nbEnemyPieces <= 3)
+        //         enterSurvivalMode(childBoard, !this.whitesTurn);
+
+        //     // Update nbPieces and Add the new child.
+        //     int newNbWhitePieces = this.whitesTurn ? this.nbWhitePieces : nbEnemyPieces;
+        //     int newNbBlackPieces = !this.whitesTurn ? this.nbBlackPieces : nbEnemyPieces;
+        //     childrenSet.add(new TurkishDraughts(childBoard, !this.whitesTurn, this.maximizeForWhite, newNbWhitePieces, newNbBlackPieces, true));
+
+        //     // Note: This implementation enters survival mode mid-taking for performance reasons (see enterSurvivalMode())
+        //     // Move the following line to before checking survival mode to enter it at the end of player's turn.
+        //     manageTakesForKing(childrenSet, childBoard, currentRow + 2*rowDirection, currentCol + 2*colDirection, nbEnemyPieces);
+        
+        // }
+        // return takePossible;
     }
 
-    // Returns true if at least one take was possible.
-    private static boolean addChildBoardsForManAt(HashSet<int[][]> childBoards, int[][] board, int currentRow, int currentCol, boolean takePossible){
+    /** Adds all 
+     * @return true if at least one take was possible.*/
+    private boolean addChildrenForManAt(HashSet<TurkishDraughts> childrenSet, int[][] board, int currentRow, 
+            int currentCol, boolean takePossible){
         
         // Should not make a normal move if a take is possible.
-        if(manageTakes(childBoards, board, currentRow, currentCol)){ return true; }
+        int nbEnemyPieces = this.whitesTurn ? this.nbBlackPieces : this.nbWhitePieces;
+        if(manageTakesForMan(childrenSet, board, currentRow, currentCol, nbEnemyPieces)){
+            return true;
+        }
         
-        // If a take is possible, but this piece doesn't have any takes; this piece does not move.
-        if(takePossible){ return false; }
+        // If a take is possible, but not for this piece -> this piece does not move. Saves us a TON of calculations.
+        if(takePossible){
+            return false;
+        }
 
-        // No takes possible.
+        // No takes possible. Move simply.
         for(int[] direction: getDirectionsList()){
             int rowDirection = direction[0];
             int colDirection = direction[1];
             
-            // Take if can take and try taking from there recursively.
-            if(!isLocationOutOfBounds(currentRow + rowDirection, currentCol + colDirection) &&
+            if(!locationIsOutOfBounds(currentRow + rowDirection, currentCol + colDirection) &&
             board[currentRow + rowDirection][currentCol + colDirection] == EMPTY_SQUARE){
                 int[][] childBoard = Helper.deepCopy(board);
                 moveManInDirection(childBoard, currentRow, currentCol, rowDirection, colDirection);
-                childBoards.add(childBoard);
+                childrenSet.add(new TurkishDraughts(childBoard, !this.whitesTurn, this.maximizeForWhite, this.nbWhitePieces, this.nbBlackPieces, false));
             }
         }
         return false;
     }
 
-    private static void moveManInDirection(int[][] board, int currentRow, int currentCol, int rowDirection, int colDirection){
+    /** Moves man in the given direction by one square.
+     * Promotes if man reaches last row.
+     * Assumes direction to be not blocked.
+     */
+    private static void moveManInDirection(int[][] board, int currentRow, int currentCol, int rowDirection,
+            int colDirection){
         
         int man = board[currentRow][currentCol];
         board[currentRow][currentCol] = EMPTY_SQUARE;
-        board[currentRow + rowDirection][currentCol + colDirection] = man;
 
+        // Check for promotion.
+        if(currentRow + rowDirection == getLastRowForPiece(man))
+            board[currentRow + rowDirection][currentCol + colDirection] = getKingPieceForPiece(man);
+        else
+            board[currentRow + rowDirection][currentCol + colDirection] = man;
     }
 
-    // Returns true if at least one take was possible.
-    private static boolean manageTakes(HashSet<int[][]> childBoards, int[][] board, int currentRow, int currentCol){
+    /** Returns true if at least one take was possible. */
+    private boolean manageTakesForMan(HashSet<TurkishDraughts> childrenSet, int[][] board, int currentRow, 
+            int currentCol, int nbEnemyPieces){
         boolean takePossible = false;
+        if(nbEnemyPieces == 0)
+            return takePossible;
 
         for(int[] direction: getDirectionsList()){
             int rowDirection = direction[0];
             int colDirection = direction[1];
             
             // Take if can take and try taking from there recursively.
-            if(!isLocationOutOfBounds(currentRow + rowDirection, currentCol + colDirection) && 
-            manCanTakeInDirection(board, currentRow, currentCol, rowDirection, colDirection)){
+            if(manCanTakeInDirection(board, currentRow, currentCol, rowDirection, colDirection)){
                 takePossible = true;
                 int[][] childBoard = Helper.deepCopy(board);
-                manTakesInDirection(childBoard, currentRow, currentCol, rowDirection, colDirection);
-                childBoards.add(childBoard);
-                manageTakes(childBoards, childBoard, currentRow + 2*rowDirection, currentCol + 2*colDirection);
+                letManTakeInDirection(childBoard, currentRow, currentCol, rowDirection, colDirection);
+                nbEnemyPieces--;
+
+                // Check if should enter survival mode.
+                if(nbEnemyPieces <= 3)
+                   enterSurvivalMode(childBoard, !this.whitesTurn);
+
+                // Update nbPieces and Add the new child.
+                int newNbWhitePieces = this.whitesTurn ? this.nbWhitePieces : nbEnemyPieces;
+                int newNbBlackPieces = !this.whitesTurn ? this.nbBlackPieces : nbEnemyPieces;
+                childrenSet.add(new TurkishDraughts(childBoard, !this.whitesTurn, this.maximizeForWhite, newNbWhitePieces, newNbBlackPieces, true));
+            
+                // Note: This implementation enters survival mode mid-taking for performance reasons (see enterSurvivalMode())
+                // Move the following line to before checking survival mode to enter it at the end of player's turn.
+                manageTakesForMan(childrenSet, childBoard, currentRow + 2*rowDirection, currentCol + 2*colDirection, nbEnemyPieces);
             }
         }
         return takePossible;
     }
 
-    // Assumes next square in direction is not out of bounds!!
-    // Returns also false if nextNext is out of bounds.
-    private static boolean manCanTakeInDirection(int[][] board,int currentRow, int currentCol, int rowDirection, int colDirection){
+    /** Returns also false if nextNext is out of bounds. */
+    private static boolean manCanTakeInDirection(int[][] board,int currentRow, int currentCol, int rowDirection, 
+            int colDirection){
         int nextRow = currentRow + rowDirection;
         int nextCol = currentCol + colDirection;
+
+
+        // Can not take if next square doesn't exists.
+        if(locationIsOutOfBounds(currentRow + rowDirection, currentCol + colDirection))
+            return false;
+        
         // Can only take if next is enemy == (next not empty) && (next not friendly)
         if(board[nextRow][nextCol] == EMPTY_SQUARE || areSameColor(board[currentRow][currentCol], board[nextRow][nextCol])){
             return false;
@@ -131,13 +237,14 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         int nextNextCol = nextCol + colDirection;
         
         // Can not take if nextNext is out of bounds.
-        if(isLocationOutOfBounds(nextNextRow, nextNextCol)){
+        if(locationIsOutOfBounds(nextNextRow, nextNextCol)){
             return false;
         }
         return board[nextNextRow][nextNextCol] == EMPTY_SQUARE; 
     }
     
-    private static void manTakesInDirection(int[][] board, int currentRow, int currentCol, int rowDirection, int colDirection){
+    private static void letManTakeInDirection(int[][] board, int currentRow, int currentCol, int rowDirection, 
+            int colDirection){
 
         int piece = board[currentRow][currentCol];
         board[currentRow][currentCol] = EMPTY_SQUARE;
@@ -146,6 +253,23 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         
     }
 
+    /** Converts all pieces of the right color to king pieces. 
+     * Throws exception if number of converted pieces is more than 3. 
+     */
+    private static void enterSurvivalMode(int[][] childBoard, boolean doForWhite) {
+        int count = 0;
+        // Turn all pieces of the player to kings.
+        for(int row=0; row<BOARD_SIZE; row++)
+            for(int col=0; col<BOARD_SIZE; col++)
+                if(isWhite(childBoard[row][col]) == doForWhite){
+                    childBoard[row][col] = doForWhite ? W_KING : B_KING;
+                    count++;
+                }
+        
+        if(count > 3)
+            throw new IllegalStateException("Can't enter survival mode if more than 3 pieces are present!");
+    }
+    
     @Override
     public float score() {
         // TODO: return nb pieces left on board of this player.
@@ -170,7 +294,8 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     @Override
     public int hashCode(){
         int hash = 7;
-        hash = 31 * hash + (board == null ? 0 : Arrays.hashCode(board));
+        for(int[] row: board)
+            hash = 31 * hash + (row == null ? 0 : Arrays.hashCode(row));
         hash = 31 * hash + (whitesTurn ? 1 : 0);
         return hash;
     }
@@ -178,80 +303,106 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     @Override
     public String toString(){
         StringBuilder str = new StringBuilder();
-        
+
         // add board elements
-        str.append(rowOfLines());
+        str.append(getHorizontalLine());
         for(int rowNb=BOARD_SIZE-1; rowNb>=0; rowNb--){
             int[] row = this.board[rowNb];
             str.append(rowToString(row, rowNb));
         }
         // add column numbers
-        str.append(rowOfLines());
+        str.append(getHorizontalLine());
         str.append(rowToString(new int[]{0,1,2,3,4,5,6,7}, -1));
         
         return str.toString();
     }
 
-    private static String rowOfLines(){
-        StringBuilder str = new StringBuilder();
-        for(int i=0; i < 34; i++)
-            str.append("_");
-        str.append("\n");
-        return str.toString();
-    }
-
-    private static String rowToString(int[] row, int rowNb){
+    /** Returns a horizontal line of about the same size as a normal row. */
+    private String getHorizontalLine(){
         StringBuilder result = new StringBuilder();
-
-        // add row number
-        if(rowNb == -1){
-            result.append(" ");
-        }
-        else
-            result.append(rowNb);
-        result.append("| ");
-
-        for(int piece: row){
-            // add column number
-            if(rowNb == -1)
-                result.append(piece);
-            // add row elements
-            else
-                result.append(pieceToString(piece));
-            
-            result.append(" | ");  // seperator
-        }
+        for(int i=0; i < 34; i++)
+            result.append("_");
         result.append("\n");
         return result.toString();
     }
 
+    /** Converts the given array of numbers to string. */
+    private String rowToString(int[] row, int rowNb){
+        if(rowNb == -1)
+            return lastRowToString(row) + "\n";
+        else
+            return normalRowToString(row, rowNb) + "\n";    
+    }
+
+    /** Converts the row with rowNb == -1 to string. */
+    private String lastRowToString(int[] row){
+        StringBuilder result = new StringBuilder();
+
+        result.append(" | ");
+        // Add elements, seperated by " | ".
+        for(int element : row){
+            result.append(element + " | ");
+        }
+
+         // Add whose turn it is
+        String turnOfColor = this.whitesTurn ? "WHITE " : "BLACK ";
+        result.append(turnOfColor + this.hashCode());
+
+        return result.toString();
+    }
+
+    /** Converts a normal row to string. */
+    private static String normalRowToString(int[] row, int rowNb){
+        StringBuilder result = new StringBuilder();
+
+        result.append(rowNb + "| ");
+
+        // Add the pieces, seperated by " | ".
+        for(int piece: row){
+            // add row elements
+            result.append(pieceToString(piece) + " | ");
+        }
+        return result.toString();
+    }
+
+    /** Converts the piece number to its approppriate representation.
+     * 
+     * @param piece
+     * @return String representation of the piece.
+    */
     private static String pieceToString(int piece){
 
-        if(isWhite(piece)){
-            if(isKing(piece))
+        switch(piece){
+            case W_KING:
                 return "W";
-            else
+            case W_MAN:
                 return "w";
-        }
-        else if(isBlack(piece)){
-            if(isKing(piece))
+            case B_KING:
                 return "B";
-            else
+            case B_MAN:
                 return "b";
+            case EMPTY_SQUARE:
+                return " ";
+            default:
+                return "?";
         }
-        else
-            return " ";
     }
     
-    /*
-        @param: int[][] board: contains values chosen from {-2, -1, 0, 1, 2}.
-        0 : empty square
-        1 : white man
-        -1: black man
-        2 : white king
-        -2: black king
+    /**
+        @param board 2D array that contains values chosen from {-2, -1, 0, 1, 2}.
+            0 : empty square
+            1 : white man
+            -1: black man
+            2 : white king
+            -2: black king
+        @param whitesTurn whether it is the white player's turn.
+        @param nbWhitePieces number of remaining white pieces on board. Max: 16, Min: 0. 
+            If equal to -1 new exhaustive check is done.
+        @param nbBlackPieces number of remaining black pieces on board. Max: 16, Min: 0. 
+            If equal to -1 new exhaustive check is done.
     */
-    public TurkishDraughts(int[][] board, boolean whitesTurn, boolean maximizeForWhite){
+    public TurkishDraughts(int[][] board, boolean whitesTurn, boolean maximizeForWhite, int nbWhitePieces, 
+            int nbBlackPieces, boolean hasTakenLastTurn){
         if(board.length != BOARD_SIZE)
             throw new IllegalArgumentException("`board` must have " + BOARD_SIZE + " rows.");
         if(board[0].length != BOARD_SIZE)
@@ -277,9 +428,19 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         this.board = board;
         this.whitesTurn = whitesTurn;
         this.maximizeForWhite = maximizeForWhite;
+        this.hasTakenLastTurn = hasTakenLastTurn;
+
+        if(nbWhitePieces == -1 || nbBlackPieces == -1){
+            this.nbWhitePieces = nbPiecesLeftOnBoard(board, true);
+            this.nbBlackPieces = nbPiecesLeftOnBoard(board, false);
+        } else{
+            this.nbWhitePieces = nbWhitePieces;
+            this.nbBlackPieces = nbBlackPieces;
+        }
     }
 
     //Help methods
+    /** Returns a checkers board with 4 White pieces and 6 Black pieces on it. */
     public static int[][] getTestBoard(){
         int[][] board = new int[BOARD_SIZE][BOARD_SIZE];
 
@@ -296,7 +457,7 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         board[1][3] = B_MAN;
         board[2][4] = B_KING;
         
-        return board;
+        return board.clone();
     }
 
     private static int nbPiecesLeftOnBoard(int[][] board, boolean checkForWhite){
@@ -314,6 +475,14 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         return playerSign * piece > 0;
     }
 
+    private static int getLastRowForPiece(int piece){
+        return isWhite(piece) ? TOP_ROW : BOTTOM_ROW;
+    }
+
+    private static int getKingPieceForPiece(int piece){
+        return isWhite(piece) ? W_KING : B_KING;
+    }
+
     private static boolean isWhite(int piece){
         return piece == W_MAN || piece == W_KING;
     }
@@ -327,7 +496,7 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     }
 
     private boolean piecesTurn(int piece){
-        if(piece == 0)
+        if(piece == EMPTY_SQUARE)
             throw new IllegalArgumentException("Empty square doesn't have a turn.");
 
         return (isWhite(piece) && this.whitesTurn) || (!isWhite(piece) && !this.whitesTurn);
@@ -337,12 +506,13 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         return piece1 * piece2 > 0;
     }
 
-    private static boolean isLocationOutOfBounds(int nextRow, int nextCol) {
+    private static boolean locationIsOutOfBounds(int nextRow, int nextCol) {
         return TOP_ROW < nextRow || nextRow < BOTTOM_ROW ||
             RIGHTMOST_COL < nextCol || nextCol < LEFTMOST_COL;
     }
 
-    public static void testPrivateMethods(){
+    // TESTS
+    public void testPrivateMethods(){
         System.out.println("  testPrivateMethods..");
 
         testManCanTakeInDirection();
@@ -368,13 +538,13 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         int[][] board = getTestBoard();
 
         int[][] childBoard = Helper.deepCopy(board);
-        manTakesInDirection(childBoard, 1, 0, 1,  0);
+        letManTakeInDirection(childBoard, 1, 0, 1,  0);
         assert childBoard[1][0] == EMPTY_SQUARE;
         assert childBoard[2][0] == EMPTY_SQUARE;
         assert childBoard[3][0] == W_MAN;
         
         childBoard = Helper.deepCopy(board);
-        manTakesInDirection(childBoard, 1, 0, 0, 1);
+        letManTakeInDirection(childBoard, 1, 0, 0, 1);
         assert childBoard[1][0] == EMPTY_SQUARE;
         assert childBoard[1][1] == EMPTY_SQUARE;
         assert childBoard[1][2] == W_MAN;
@@ -382,17 +552,16 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         System.out.println("    testManTakesInDirection successful");
     }
 
-    private static void testManageTakes(){
+    private void testManageTakes(){
         boolean whitesTurn = true;
         boolean maximizeForWhite= true;
-        HashSet<int[][]> childBoardSet = new HashSet<>();
+        HashSet<TurkishDraughts> childrenSet = new HashSet<>();
         int[][] board = getTestBoard();
 
-        manageTakes(childBoardSet, board, 1, 0);
+        manageTakesForMan(childrenSet, board, 1, 0, 6);
 
-        for(int[][] childBoard : childBoardSet){
-            TurkishDraughts child = new TurkishDraughts(childBoard, !whitesTurn, maximizeForWhite);
+        for(TurkishDraughts child : childrenSet)
             System.out.println(child);
-        }
     }
+
 }
