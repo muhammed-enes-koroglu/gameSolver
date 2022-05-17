@@ -8,8 +8,8 @@
             "type": "java",
             "name": "Launch TestTurkishDraughts",
             "request": "launch",
-            "mainClass": "TestTurkishDraughts",
-            "projectName": "game_solver_d9d3e33c"
+            "mainClass": "game_solver.test.TestTurkishDraughts",
+            "projectName": ""
         },
         {
             "type": "java",
@@ -17,21 +17,6 @@
             "request": "launch",
             "mainClass": "TestSuite",
             "projectName": "game_solver_d9d3e33c"
-        },
-        {
-            "type": "java",
-            "name": "Launch TestTurkishCheckers",
-            "request": "launch",
-            "mainClass": "TestTurkishCheckers",
-            "projectName": "game_solver_d9d3e33c",
-            "vmArgs": "-enableassertions"
-        },
-        {
-            "type": "java",
-            "name": "Launch TestSuite",
-            "request": "launch",
-            "mainClass": "TestSuite",
-            "projectName": "mangalaSolver_ab2a4d8"
         },
         {
             "type": "java",
@@ -42,10 +27,10 @@
         },
         {
             "type": "java",
-            "name": "Launch TestSuite",
+            "name": "Launch TestTurkishDraughts",
             "request": "launch",
-            "mainClass": "TestSuite",
-            "projectName": "mangalaSolver_7ca3b552",
+            "mainClass": "TestTurkishDraughts",
+            "projectName": "game_solver_d9d3e33c",
             "vmArgs": "-enableassertions"
         }
     ]
