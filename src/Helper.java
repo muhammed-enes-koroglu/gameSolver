@@ -31,7 +31,7 @@ public abstract class Helper {
     }
 
     /** Deep copies board, modifies the specified square in it and returns it. */
-    public static int[][] modifiedCloneOf(int[][] board, int row, int col, int val){
+    public static int[][] cloneAndSet(int[][] board, int row, int col, int val){
         // Corrects for overshoots.
         if(col<0) {
             col = 0;
