@@ -23,6 +23,11 @@ public class Board {
     }
 
     @Override
+    public String toString() {
+        return "Board [matrix=" + Arrays.toString(matrix) + "]";
+    }
+
+    @Override
     public boolean equals(Object o){
         if(!(o instanceof Board))
             return false;
