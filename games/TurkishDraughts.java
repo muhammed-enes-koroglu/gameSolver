@@ -10,20 +10,23 @@ import java.util.Set;
 - score()
 */
 public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
-    public static final int BOARD_SIZE = 8;
+    // Constants.
+    public static final int EMPTY_SQUARE = 0;
     public static final int W_MAN = 1;
     public static final int B_MAN = -1;
     public static final int W_KING = 2;
     public static final int B_KING = -2;
-    public static final int EMPTY_SQUARE = 0;
+
+    public static final int BOARD_SIZE = 8;
     public static final int TOP_ROW = BOARD_SIZE-1;
     public static final int BOTTOM_ROW = 0;
     public static final int RIGHTMOST_COL = BOARD_SIZE-1;
     public static final int LEFTMOST_COL = 0;
-    private static final Vector UP = new Vector(1,0);
-    private static final Vector DOWN = new Vector(-1,0);
-    private static final Vector RIGHT = new Vector(0,1);
-    private static final Vector LEFT = new Vector(0, -1);
+
+    public static final Vector UP = new Vector(1,0);
+    public static final Vector DOWN = new Vector(-1,0);
+    public static final Vector RIGHT = new Vector(0,1);
+    public static final Vector LEFT = new Vector(0, -1);
 
     private final Board board;
     private final boolean whitesTurn;
