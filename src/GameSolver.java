@@ -19,13 +19,21 @@ public abstract class GameSolver{
         float bestScore = -Float.MAX_VALUE;
         ArrayList<S> bestPath = new ArrayList<>();
         ArrayList<S> resultPath;
+        
         // System.out.println("minSearchTime: " + minSearchTimeMilliSeconds);
         int depth;
+
+        // Iterative Deepening loop.
         for(depth=1; timePassed < minSearchTimeMilliSeconds; depth++){
             // System.out.print(depth + " ");
             resultPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
             float resultScore = resultPath.get(resultPath.size()-1).score();
+
+            if(resultPath.get(resultPath.size()-1).children().isEmpty()){
+                break;
+            }
+
             if(bestScore < resultScore){
                 bestScore = resultScore;
                 bestPath = resultPath;
