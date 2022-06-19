@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class PlayMangala {
@@ -12,13 +13,17 @@ public class PlayMangala {
 
         MangalaState mangala = getStartingState();
         MangalaState advisedState;
+        List<MangalaState> advisedPath;
 
         // The game loop
         while(!mangala.isGameOver()){
             System.out.println("[CURRENT]" + mangala);
 
-            advisedState = GameSolver.findBestPathForMax(mangala, 1).get(1);
-            System.out.println("[ADVISED]" + advisedState);    
+            advisedPath = GameSolver.findBestPathForMax(mangala, 1);
+            if(!advisedPath.isEmpty()){
+                advisedState = advisedPath.get(1);
+                System.out.println("[ADVISED]" + advisedState);    
+            }
 
             // Get the user's input and update the state.
             int trenchNumber = inputTrenchNumber(mangala);
@@ -35,8 +40,8 @@ public class PlayMangala {
     private static MangalaState getStartingState(){
         boolean whitesTurn = true;
         boolean whiteIsMax = whitesTurn;
-        int[] board = new int[]{4,4,4, 4,4,4, 0, 4,4,4, 4,4,4, 0};
-        // int[] board = new int[]{4,4,4, 4,4,4, 0, 0,0,0, 0,0,1, 0};
+        // int[] board = new int[]{4,4,4, 4,4,4, 0, 4,4,4, 4,4,4, 0};
+        int[] board = new int[]{0,0,0, 0,0,1, 0, 4,4,4, 4,4,4, 0};
 
         return new MangalaState(board, whitesTurn, whiteIsMax);
     }
