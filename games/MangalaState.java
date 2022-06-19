@@ -35,27 +35,30 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
     private final int[] board;
     private boolean whiteIsMax;
     private boolean whitesTurn;
-    private static final int BOARD_SIZE = 7;
+    public static final int BOARD_SIZE = 7;
+    public static final int WHITE_STARTING_TRENCH = 0;
+    public static final int BLACK_STARTING_TRENCH = BOARD_SIZE;
+    
 
     @Override
     public Set<MangalaState> children() {
         
         HashSet<MangalaState> children = new HashSet<>();
-        int turnBias = getTurnBias(this.whitesTurn);
-        boolean childWhitesTurn;
-        for(int trench = turnBias; trench < BOARD_SIZE + turnBias-1; trench++){
+        int colorOffset = getOffsetForColor(this.whitesTurn);
+        boolean nextIsWhitesTurn;
+        for(int trench = colorOffset; trench < BOARD_SIZE + colorOffset-1; trench++){
             if(this.board[trench] != 0){ // Don't play empty trench
                 int[] childBoard = this.board.clone();
                 int endedAt = playTrench(childBoard, trench);
-                childWhitesTurn = !this.whitesTurn;
+                nextIsWhitesTurn = !this.whitesTurn;
 
-                if(endedAtTreasury(endedAt, turnBias)){ // Ended at treasury
-                    childWhitesTurn = this.whitesTurn;
+                if(endedAtTreasury(endedAt, colorOffset)){ // Ended at treasury
+                    nextIsWhitesTurn = this.whitesTurn;
                     checkGameOver(childBoard);
-                    children.add(new MangalaState(childBoard, childWhitesTurn, this.whiteIsMax));
+                    children.add(new MangalaState(childBoard, nextIsWhitesTurn, this.whiteIsMax));
                 }
                 else 
-                    resultEndingInTrench(endedAt, turnBias, childWhitesTurn, childBoard, children);
+                    resultEndingInTrench(endedAt, colorOffset, nextIsWhitesTurn, childBoard, children);
             }
         }
 
@@ -65,8 +68,8 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
     @Override
     public float score() {
         float score = 0;
-        score += this.board[ownTreasury(getTurnBias(this.whiteIsMax))];
-        score -= this.board[ownTreasury(getTurnBias(!this.whiteIsMax))];
+        score += this.board[ownTreasury(getOffsetForColor(this.whiteIsMax))];
+        score -= this.board[ownTreasury(getOffsetForColor(!this.whiteIsMax))];
         
         float ownPosition = (float) (0.1 * positionalScore(this.whiteIsMax));
         float opponentPosition = (float) (0.1 * positionalScore(!this.whiteIsMax));
@@ -104,7 +107,7 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
     @Override
     public String toString(){
         String str = "\n ";
-        String turn = "   <";
+        String turn = "   <<";
         for(int i= 2*BOARD_SIZE-2; i>BOARD_SIZE-1; i--)
             str += " " + this.board[i];
         str += !this.whitesTurn ? turn : "";
@@ -160,28 +163,28 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         return 2 * BOARD_SIZE -2 - trench;
     }
 
-    private static boolean endedAtTreasury(int endedAt, int turnBias){
-        return endedAt == ownTreasury(turnBias);
+    private static boolean endedAtTreasury(int endedAt, int colorOffset){
+        return endedAt == ownTreasury(colorOffset);
     }
 
-    private static int ownTreasury(int turnBias) {
-        return BOARD_SIZE -1 + turnBias;
+    private static int ownTreasury(int colorOffset) {
+        return BOARD_SIZE -1 + colorOffset;
     }
     
-    private static boolean endedAtOwnTrench(int endedAt, int turnBias){
-        return turnBias <= endedAt && endedAt < BOARD_SIZE + turnBias;
+    private static boolean endedAtOwnTrench(int endedAt, int colorOffset){
+        return colorOffset <= endedAt && endedAt < BOARD_SIZE + colorOffset;
     }
     
-    private void resultEndingInTrench(int endedAt, int turnBias, boolean childWhitesTurn, int[] childBoard, HashSet<MangalaState> children){
-        if(endedAtOwnTrench(endedAt, turnBias)){ // Ended at own trench
+    private void resultEndingInTrench(int endedAt, int colorOffset, boolean childWhitesTurn, int[] childBoard, HashSet<MangalaState> children){
+        if(endedAtOwnTrench(endedAt, colorOffset)){ // Ended at own trench
             if((childBoard[endedAt] == 1) && (childBoard[oppositeTrenchOf(endedAt)] > 0)){ // Trench is empty
-                childBoard[ownTreasury(turnBias)] += childBoard[endedAt] + childBoard[oppositeTrenchOf(endedAt)];
+                childBoard[ownTreasury(colorOffset)] += childBoard[endedAt] + childBoard[oppositeTrenchOf(endedAt)];
                 childBoard[endedAt] = 0;
                 childBoard[oppositeTrenchOf(endedAt)] = 0;
             }
         }
         else if(childBoard[endedAt] % 2 == 0){ // Ended at enemy trench and is even
-            childBoard[ownTreasury(turnBias)] += childBoard[endedAt];
+            childBoard[ownTreasury(colorOffset)] += childBoard[endedAt];
             childBoard[endedAt] = 0;
         }
 
@@ -211,15 +214,16 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         return Arrays.stream(Arrays.copyOfRange(board, 0, BOARD_SIZE -1)).sum() == 0;
     }
 
-    private int getTurnBias(boolean whitesTurn) {
-        return whitesTurn ? 0 : BOARD_SIZE;
+    /** Returns the starting trench of the player. */
+    private int getOffsetForColor(boolean isWhite) {
+        return isWhite ? 0 : BOARD_SIZE;
     }
 
     private int positionalScore(boolean isWhite){
         int score = 0;
-        int turnBias = getTurnBias(isWhite);
+        int colorOffset = getOffsetForColor(isWhite);
         for(int i=0; i<BOARD_SIZE-1; i++){
-            score += this.board[i + turnBias] * (i+1);
+            score += this.board[i + colorOffset] * (i+1);
         }
         return score;
     }
@@ -257,4 +261,27 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         System.out.println("testPlayTrench successful");
     }
 
+    public MangalaState makeMove(int trenchNumber) {
+        int colorOffset = getOffsetForColor(this.whitesTurn);
+        int[] childBoard = this.board.clone();
+        int endedAt = playTrench(childBoard, trenchNumber);
+        boolean nextIsWhitesTurn = !this.whitesTurn;
+
+        if(endedAtTreasury(endedAt, colorOffset)){ // Ended at treasury
+            nextIsWhitesTurn = this.whitesTurn;
+            checkGameOver(childBoard);
+        }
+        else 
+            resultEndingInTrench(endedAt, colorOffset, nextIsWhitesTurn, childBoard, new HashSet<MangalaState>());
+
+        return new MangalaState(childBoard, nextIsWhitesTurn, nextIsWhitesTurn);
+    }
+
+    public boolean isGameOver() {
+        return isWhiteSideEmpty(this.board) || isBlackSideEmpty(this.board);
+    }
+
+    public boolean isWhitesTurn() {
+        return this.whitesTurn;
+    }
 }

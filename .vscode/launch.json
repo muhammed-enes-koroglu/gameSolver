@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TestSuite",
+            "request": "launch",
+            "mainClass": "TestSuite",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
+            "name": "Launch PlayMangala",
+            "request": "launch",
+            "mainClass": "PlayMangala",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
             "name": "Launch TestTurkishDraughts",
             "request": "launch",
             "mainClass": "game_solver.test.TestTurkishDraughts",

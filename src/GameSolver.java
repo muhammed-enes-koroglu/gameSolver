@@ -19,8 +19,9 @@ public abstract class GameSolver{
         float bestScore = -Float.MAX_VALUE;
         ArrayList<S> bestPath = new ArrayList<>();
         ArrayList<S> resultPath;
-
-        for(int depth=1; timePassed < minSearchTimeMilliSeconds; depth++){
+        // System.out.println("minSearchTime: " + minSearchTimeMilliSeconds);
+        int depth;
+        for(depth=1; timePassed < minSearchTimeMilliSeconds; depth++){
             // System.out.print(depth + " ");
             resultPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
@@ -34,6 +35,9 @@ public abstract class GameSolver{
             timePassed = now - startTime;   
             // System.out.println(timePassed/1000); 
         }
+        
+        // Print searched depth.
+        System.out.println("Depth: " + depth);
         return bestPath;
     }
 
