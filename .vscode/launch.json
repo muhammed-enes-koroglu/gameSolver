@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TestAlign4",
+            "request": "launch",
+            "mainClass": "TestAlign4",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
             "name": "Launch TestSuite",
             "request": "launch",
             "mainClass": "TestSuite",

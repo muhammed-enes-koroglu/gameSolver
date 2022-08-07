@@ -40,8 +40,8 @@ public class PlayMangala {
     private static MangalaState getStartingState(){
         boolean whitesTurn = true;
         boolean whiteIsMax = whitesTurn;
-        // int[] board = new int[]{4,4,4, 4,4,4, 0, 4,4,4, 4,4,4, 0};
-        int[] board = new int[]{0,0,0, 0,0,1, 0, 4,4,4, 4,4,4, 0};
+        int[] board = new int[]{4,4,4, 4,4,4, 0, 4,4,4, 4,4,4, 0};
+        // int[] board = new int[]{0,0,0, 0,0,1, 0, 4,4,4, 4,4,4, 0};
 
         return new MangalaState(board, whitesTurn, whiteIsMax);
     }
