@@ -1,7 +1,7 @@
 import java.util.HashSet;
 import java.util.Set;
 
-public class Align4 implements TwoPersonGameState<Align4> {
+public class Connect4 implements TwoPersonGameState<Connect4> {
 
     private final Board board;
     private final boolean whitesTurn;
@@ -20,15 +20,15 @@ public class Align4 implements TwoPersonGameState<Align4> {
 
 
     @Override
-    public Set<Align4> children() {
+    public Set<Connect4> children() {
 
-        Set<Align4> children = new HashSet<>();
+        Set<Connect4> children = new HashSet<>();
         int piece = whitesTurn ? WHITE : BLACK;
 
         for (int col = 0; col < BOARD_WIDTH; col++) {
             Board chilBoard = board.copy();
             appendToColumn(chilBoard, col, piece);
-            children.add(new Align4(chilBoard, !whitesTurn, maximizeForWhite));
+            children.add(new Connect4(chilBoard, !whitesTurn, maximizeForWhite));
         }
 
         return children;
@@ -60,9 +60,9 @@ public class Align4 implements TwoPersonGameState<Align4> {
     
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Align4))
+        if(!(o instanceof Connect4))
             return false;
-        Align4 other = (Align4) o;
+        Connect4 other = (Connect4) o;
         if(this.whitesTurn != other.whitesTurn)
             return false;
         return this.board.equals(other.board);
@@ -140,7 +140,7 @@ public class Align4 implements TwoPersonGameState<Align4> {
     }
 
     
-    public Align4(Board board, boolean whitesTurn, boolean maximizeForWhite){
+    public Connect4(Board board, boolean whitesTurn, boolean maximizeForWhite){
         if(board.nbRows != BOARD_HEIGHT)
             throw new IllegalArgumentException("Board height must be " + BOARD_HEIGHT);
         if(board.nbCols != BOARD_WIDTH)
