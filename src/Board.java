@@ -6,12 +6,12 @@ public class Board {
     public final int nbCols;
 
 
-    public int get(Vector position){
-        return matrix[position.row][position.col];
-    }
-
     public int get(int row, int col){
         return matrix[row][col];
+    }
+
+    public int get(Vector position){
+        return matrix[position.row][position.col];
     }
 
     public int[][] getMatrix(){
@@ -59,6 +59,10 @@ public class Board {
         
 
         this.matrix = Helper.deepCopy(matrix);
+    }
+
+    public void set(int row, int col, int value){
+        matrix[row][col] = value;
     }
 
     public void set(Vector position, int value){
