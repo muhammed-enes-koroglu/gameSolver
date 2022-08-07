@@ -10,6 +10,10 @@ public class Board {
         return matrix[position.row][position.col];
     }
 
+    public int get(int row, int col){
+        return matrix[row][col];
+    }
+
     public int[][] getMatrix(){
         return Helper.deepCopy(this.matrix);
     }
@@ -19,7 +23,7 @@ public class Board {
     }
 
     public Board copy(){
-        return new Board(this.matrix);
+        return new Board(this.getMatrix());
     }
 
     @Override
