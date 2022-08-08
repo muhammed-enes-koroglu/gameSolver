@@ -10,8 +10,8 @@ public class TestConnect4 {
     public static void main(String[] args){
 
         // testToString();
-        // testChildren();
-        testPlusWithCeiling();
+        testChildren();
+        // testPlusWithCeiling();
     }
     
     private static void testChildren(){
@@ -48,9 +48,9 @@ public class TestConnect4 {
     }
 
     private static void testPlusWithCeiling(){
-        assrt(Connect4.plusWithCeiling(1, 1) == 1 + 1);
-        assrt(Connect4.plusWithCeiling(MAX_SCORE, 1) == MAX_SCORE);
-        assrt(Connect4.plusWithCeiling(MAX_SCORE, MAX_SCORE) == MAX_SCORE);
+        assrt(Connect4.plusWithOverflow(1, 1) == 1 + 1);
+        assrt(Connect4.plusWithOverflow(MAX_SCORE, 1) == MAX_SCORE);
+        assrt(Connect4.plusWithOverflow(MAX_SCORE, MAX_SCORE) == MAX_SCORE);
 
         System.out.println("OK");
     }
