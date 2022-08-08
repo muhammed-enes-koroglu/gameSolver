@@ -69,4 +69,10 @@ public class Board {
         matrix[position.row][position.col] = value;
     }
 
+    public boolean locationIsOutOfBounds(Vector position) {
+        return this.nbRows <= position.row || position.row < 0 ||
+            this.nbCols <= position.col || position.col < 0;
+    }
+
+
 }
