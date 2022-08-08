@@ -329,8 +329,6 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             }
         }
 
-        // Normally next line should never be executed.
-        // throw new Error("Why is this line executed??");
         return streakToScore(bestChainLength);
     }
 
@@ -376,8 +374,6 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             }
         }
 
-        // Normally next line should never be executed.
-        // throw new Error("Why is this line executed??");
         return streakToScore(bestChainLength);
     }
        
