@@ -6,10 +6,10 @@ public class TestSuite{
 
     public static void main(String[] args){
 
-        // TestTicTacToeState.testTicTacToeState();
-        // TestGameSolver.testFindBestPathForMax();
-        // TestMangalaState.testMangalaState();
-        testMangalaSearcher();
+        TestTicTacToeState.testTicTacToeState();
+        TestGameSolver.testFindBestPathForMax();
+        TestMangalaState.testMangalaState();
+        // testMangalaSearcher();
 
         System.out.println("\nALL TESTS SUCCESSFULL!");
     }
