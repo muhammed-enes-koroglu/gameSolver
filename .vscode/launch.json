@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Play",
+            "request": "launch",
+            "mainClass": "Play",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
             "name": "Launch TestConnect4",
             "request": "launch",
             "mainClass": "TestConnect4",
