@@ -4,70 +4,93 @@ import java.util.Set;
 public class Connect4 implements TwoPersonGameState<Connect4> {
 
     private final Board board;
-    private final boolean whitesTurn;
-    private final boolean maximizeForWhite;
+    protected final boolean whitesTurn;
+    protected final boolean maximizeForWhite;
+    protected final float calculatedScore;
 
     public static final int BOARD_WIDTH = 7;
     public static final int BOARD_HEIGHT = 6;
     public static final int GOAL = 4;
-    public static final int MAX_SCORE = Integer.MAX_VALUE;
+    public static final float MAX_SCORE = Integer.MAX_VALUE;
 
     private static final int HORIZONTAL_LINE_LENGTH = 29;
 
-    private static final int WHITE = 1;
-    private static final int BLACK = -1;
-    private static final int EMPTY = 0;
+    public static final int WHITE = 1;
+    public static final int BLACK = -1;
+    public static final int EMPTY = 0;
 
     @Override
     public Set<Connect4> children() {
 
-        Set<Connect4> children = new HashSet<>();
-        int piece = whitesTurn ? WHITE : BLACK;
+        if(isGameOver()) {
+            return new HashSet<>();
+        }
 
+        Set<Connect4> children = new HashSet<>();
+        final int piece = this.whitesTurn ? WHITE : BLACK;
+        boolean appendSuccesful;
+
+        // For every column, try to append a piece.
         for (int col = 0; col < BOARD_WIDTH; col++) {
             Board chilBoard = board.copy();
-            appendToColumn(chilBoard, col, piece);
-            children.add(new Connect4(chilBoard, !whitesTurn, maximizeForWhite));
+            appendSuccesful = appendToColumn(chilBoard, col, piece);
+            if(appendSuccesful){
+                children.add(new Connect4(chilBoard, !whitesTurn, maximizeForWhite));
+            }
         }
 
         return children;
     }
 
-    /** Appends the given piece to the top of the given column. */
-    private void appendToColumn(Board chilBoard, int col, int piece){
+    /** Appends the given piece to the top of the given column.
+     * Returns true if succesful.
+     */
+    public static boolean appendToColumn(Board chilBoard, int col, int piece){
 
         // Top of the column == heighest row number.
         for(int row=0; row<BOARD_HEIGHT; row++){
+
+            // Check if column is full.
             if(chilBoard.get(row, col) == EMPTY){
                 chilBoard.set(row, col, piece);
-                return;
+                return true;
             }
         }
-        throw new IllegalArgumentException("Column is full!");
+        return false;
     }
 
     @Override
     public float score() {
-        float score = 0;
-        int piece = whitesTurn ? WHITE : BLACK;
+        return calculatedScore;
+    }
 
-        score = plusWithOverflow(score, checkScoreAllColumns(board, piece));
-        if(score == MAX_SCORE){
-            return score;
+    /** Calculates the score at creation to not have to do it a second time for the children(). */
+    private float calculateScore() {
+        float result = 0;
+        int maxPiece = this.maximizeForWhite ? WHITE : BLACK;
+        int minPiece = this.maximizeForWhite ? BLACK : WHITE;
+
+        result = addWithOverflow(result, checkScoreVertically(board, maxPiece));
+        result = subtractWithOverflow(result, checkScoreVertically(board, minPiece));
+        if(result == MAX_SCORE){
+            return result;
         }
 
-        score = plusWithOverflow(score, checkScoreAllRows(board, piece));
-        if(score == MAX_SCORE){
-            return score;
+        result = addWithOverflow(result, checkScoreHorizontally(board, maxPiece));
+        result = subtractWithOverflow(result, checkScoreHorizontally(board, minPiece));
+        if(result == MAX_SCORE){
+            return result;
         }
         
-        score = plusWithOverflow(score, checkScoreAllUpRightDiagonals(board, piece));
-        if(score == MAX_SCORE){
-            return score;
+        result = addWithOverflow(result, checkScoreAllUpRightDiagonals(board, maxPiece));
+        result = subtractWithOverflow(result, checkScoreAllUpRightDiagonals(board, minPiece));
+        if(result == MAX_SCORE){
+            return result;
         }
         
-        score = plusWithOverflow(score, checkScoreAllUpLeftDiagonals(board, piece));
-        return score;
+        result = addWithOverflow(result, checkScoreAllUpLeftDiagonals(board, maxPiece));
+        result = subtractWithOverflow(result, checkScoreAllUpLeftDiagonals(board, minPiece));
+        return result;
     }
 
     @Override
@@ -136,7 +159,6 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         return result.toString();
     }
 
-
     /** Converts the piece number to its approppriate representation.
      * 
      * @param piece
@@ -156,6 +178,9 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         }
     }
 
+    protected Board getBoard() {
+        return board.copy();
+    }
     
     public Connect4(Board board, boolean whitesTurn, boolean maximizeForWhite){
         if(board.nbRows != BOARD_HEIGHT)
@@ -166,33 +191,34 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         this.board = board;
         this.whitesTurn = whitesTurn;
         this.maximizeForWhite = maximizeForWhite;
+        this.calculatedScore = calculateScore();
     }
 
     // HELP Methods
 
     /** Checks the score in all columns. */
-    private float checkScoreAllColumns(Board board, int piece){
+    private float checkScoreVertically(Board board, int piece){
         float result = 0;
         float subResult;
         for(int col=0; col < BOARD_WIDTH; col++){
             subResult = checkScoreColumn(board, col, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = plusWithOverflow(result, subResult);
+            result = addWithOverflow(result, subResult);
         }
 
         return result;
     }
 
     /** Checks the score in all rows. */
-    private float checkScoreAllRows(Board board, int piece){
+    private float checkScoreHorizontally(Board board, int piece){
         float result = 0;
         float subResult;
         for(int row=0; row < BOARD_HEIGHT; row++){
             subResult = checkScoreRow(board, row, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = plusWithOverflow(result, subResult);
+            result = addWithOverflow(result, subResult);
         }
 
         return result;
@@ -213,7 +239,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             subResult = checkScoreDiagonal(board, startingVector, Vector.UP_RIGHT, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = plusWithOverflow(result, subResult);
+            result = addWithOverflow(result, subResult);
         }
 
         // Check all diagonals that start on the BOTTOM of the board. Direction: UP_RIGHT
@@ -224,7 +250,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             subResult = checkScoreDiagonal(board, startingVector, Vector.UP_RIGHT, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = plusWithOverflow(result, subResult);
+            result = addWithOverflow(result, subResult);
         }
 
         return result;
@@ -244,7 +270,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             subResult = checkScoreDiagonal(board, startingVector, Vector.UP_LEFT, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = plusWithOverflow(result, subResult);
+            result = addWithOverflow(result, subResult);
         }
 
         // Check all diagonals that start on the BOTTOM of the board. Direction: UP_LEFTS
@@ -255,7 +281,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             subResult = checkScoreDiagonal(board, startingVector, Vector.UP_LEFT, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = plusWithOverflow(result, subResult);
+            result = addWithOverflow(result, subResult);
         }
 
         return result;
@@ -270,7 +296,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
     private float checkScoreColumn(Board board, int col, int piece){
 
         int chainLength = 0;
-        int maxChainLength = 0;
+        int bestChainLength = 0;
         for(int row=0; row<BOARD_HEIGHT; row++){
 
             /* Check whether it is still possible to 
@@ -281,13 +307,13 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             It is impossible to reach a solution 
             if the chain can not be completed.) */
             if(chainLength + (BOARD_HEIGHT - row) < GOAL){
-                return 0;
+                return streakToScore(bestChainLength);
             }
 
             // Check whether the chain keeps growing.
             if(board.get(row, col) == piece){
                 chainLength++;
-                maxChainLength = Math.max(maxChainLength, chainLength);
+                bestChainLength = Math.max(bestChainLength, chainLength);
 
                 // Check if game is over.
                 if(chainLength == GOAL){
@@ -297,12 +323,15 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             // Back to searching from beginning.
             else{
                 chainLength = 0;
+                if(board.get(row,col) == EMPTY){
+                    bestChainLength += 0.5;
+                }
             }
         }
 
         // Normally next line should never be executed.
-        throw new Error("Why is this line executed??");
-        // return streakToScore(bestChainLength);
+        // throw new Error("Why is this line executed??");
+        return streakToScore(bestChainLength);
     }
 
     /** Checks the score in the given row.
@@ -325,7 +354,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             It is impossible to reach a solution 
             if the chain can not be completed.) */
             if(chainLength + (BOARD_WIDTH - col) < GOAL){
-                return 0;
+                return streakToScore(bestChainLength);
             }
 
             // Check whether the chain keeps growing.
@@ -341,12 +370,15 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             // Back to searching from beginning.
             else{
                 chainLength = 0;
+                if(board.get(row,col) == EMPTY){
+                    bestChainLength += 0.5;
+                }
             }
         }
 
         // Normally next line should never be executed.
-        throw new Error("Why is this line executed??");
-        // return streakToScore(bestChainLength);
+        // throw new Error("Why is this line executed??");
+        return streakToScore(bestChainLength);
     }
        
     /** Checks the score of the right-facing diagonals.
@@ -383,6 +415,9 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             // Back to searching from beginning.
             else{
                 chainLength = 0;
+                if(board.get(position) == EMPTY){
+                    bestChainLength += 0.5;
+                }
             }
         }
 
@@ -398,12 +433,34 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
     }
 
     /** Tries to detect overflow.
-     * @return MAX_SCORE-1 if overflow occurs. */
-    public static float plusWithOverflow(float a, float b){
+     * 
+     * @param a positive number.
+     * @param b positive number.
+     * @return MAX_SCORE-1 if overflow occurs and 
+     * none of the operands is MAX_SCORE.
+     */
+     public static float addWithOverflow(float a, float b){
         if(a == MAX_SCORE || b == MAX_SCORE)
-            return MAX_SCORE-1; // So the only way to reach MAX_SCORE is by winning the game.
+            return MAX_SCORE;
         if(a > 0 && b > 0 && a + b < 0)
             return MAX_SCORE-1; // So the only way to reach MAX_SCORE is by winning the game.
         return a + b;
     }
+
+    /** Tries to detect negative overflow.
+     * 
+     * @param a positive number.
+     * @param b positive number.
+     * @return -MAX_SCORE+1 if overflow occurs and 
+     * none of the operands is MAX_SCORE.
+     */
+    public static float subtractWithOverflow(float a, float b){
+
+        return -1 * addWithOverflow(-a, -b);
+    }
+
+    public boolean isGameOver(){
+        return Math.abs(this.calculatedScore) == MAX_SCORE;
+    }
+
 }
