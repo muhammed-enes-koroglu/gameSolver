@@ -9,7 +9,10 @@ public abstract class GameSolver{
         throw new IllegalStateException("Utility class");
     }
 
-    // Return a path with the best score for maxPlayer after searching at least for `maxSearchTime` seconds. 
+    /** Return a path with the best score for maxPlayer after searching at least for `minSearchTime` seconds.
+     * 
+     * @param minSearchTime in seconds.
+    */
     public static <S extends TwoPersonGameState<S>> List<S> findBestPathForMax(S startState, int minSearchTime){
         long minSearchTimeMilliSeconds = minSearchTime * (long) 1000;
         long startTime = System.currentTimeMillis();
@@ -30,13 +33,13 @@ public abstract class GameSolver{
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
             float resultScore = resultPath.get(resultPath.size()-1).score();
 
-            if(resultPath.get(resultPath.size()-1).children().isEmpty()){
-                break;
-            }
-
             if(bestScore < resultScore){
                 bestScore = resultScore;
                 bestPath = resultPath;
+            }
+
+            if(resultPath.get(resultPath.size()-1).children().isEmpty()){
+                break;
             }
 
             now = System.currentTimeMillis();
