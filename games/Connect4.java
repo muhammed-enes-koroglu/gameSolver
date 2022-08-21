@@ -1,6 +1,10 @@
 import java.util.HashSet;
 import java.util.Set;
 
+/** A working game of Connect4. 
+ * To play, go to the Play.runGame() 
+ * with the parameter an instance of PlayConnect4.
+ * Then run Play.java */
 public class Connect4 implements TwoPersonGameState<Connect4> {
 
     private final Board board;
@@ -178,7 +182,8 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         }
     }
 
-    protected Board getBoard() {
+    // TODO: Change this to protected. And DELETE this method from TwoPersonGameState.
+    public Board getBoard() {
         return board.copy();
     }
     
@@ -452,7 +457,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
      */
     public static float subtractWithOverflow(float a, float b){
 
-        return -1 * addWithOverflow(-a, -b);
+        return -1 * addWithOverflow(-a, b);
     }
 
     public boolean isGameOver(){

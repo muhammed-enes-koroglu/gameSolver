@@ -10,7 +10,6 @@ public class TestConnect4 {
 
         System.out.println("[TESTING] Connect4 class\n");
 
-        // testToString();
         testPlusWithCeiling();
         testEquals();
         testScore();
@@ -63,10 +62,14 @@ public class TestConnect4 {
 
 
 
+        int[][] array = {{1, -1, 0, -1, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}};
+        board1 = new Board(array);
+        state1 = new Connect4(board1, false, false);
+        assrt(state1.score() == -MAX_SCORE);
 
-        // System.out.println(connect4.score());
-        System.out.println(state2);
-        System.out.println(GameSolver.findBestPathForMax(state2, 1));
+        // System.out.println(state1.score());
+        // System.out.println(state1);
+        // System.out.println(GameSolver.findBestPathForMax(state2, 1));
 
 
         System.out.println("Score: OK");
@@ -78,8 +81,8 @@ public class TestConnect4 {
         Board board = getInitialBoard();
         board.set(0, 0, 1);
 
-        Connect4 connect4 = new Connect4(board, true, true);
-        Set<Connect4> children = connect4.children();
+        Connect4 connect4;
+        Set<Connect4> children;
 
         // Board with white wins.
         board = getInitialBoard();
@@ -105,14 +108,6 @@ public class TestConnect4 {
 
         System.out.println("Children: OK");
         
-    }
-
-    private static void testToString(){
-
-        Board board = getInitialBoard();
-        board.set(new Vector(2, 3), 1);
-        Connect4 align4 = new Connect4(board, true, true);
-        System.out.println(align4);
     }
 
     private static Board getInitialBoard(){

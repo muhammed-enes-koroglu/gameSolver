@@ -63,7 +63,7 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4> {
             }
 
             // colNumber should be in [1, BOARD_WIDTH]
-            if(colNumber < 0 || colNumber > BOARD_WIDTH ){
+            if(colNumber < 0 || colNumber >= BOARD_WIDTH ){
                 System.out.println("[ERROR] Column number must be in [1, " + BOARD_WIDTH + "]");
                 validInput = false;
             }
