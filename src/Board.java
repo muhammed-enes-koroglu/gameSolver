@@ -28,7 +28,7 @@ public class Board {
 
     @Override
     public String toString() {
-        return "Board [matrix=" + Arrays.toString(matrix) + "]";
+        return Arrays.deepToString(matrix);
     }
 
     @Override
