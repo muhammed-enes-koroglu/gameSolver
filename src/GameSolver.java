@@ -13,8 +13,8 @@ public abstract class GameSolver{
      * 
      * @param minSearchTime in seconds.
     */
-    public static <S extends TwoPersonGameState<S>> List<S> findBestPathForMax(S startState, int minSearchTime){
-        long minSearchTimeMilliSeconds = minSearchTime * (long) 1000;
+    public static <S extends TwoPersonGameState<S>> List<S> findBestPathForMax(S startState, float minSearchTime){
+        long minSearchTimeMilliSeconds = (long) (minSearchTime *  1000);
         long startTime = System.currentTimeMillis();
         long now;
         long timePassed = 0;
