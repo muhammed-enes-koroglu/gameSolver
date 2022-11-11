@@ -2,16 +2,16 @@ package util;
 
 import java.util.Set;
 
-public interface TwoPersonGameState<C>{
+public interface TwoPersonGameState<S>{
 
     /** @return A set of all possible child states that follow from this one. */
-    public Set<C> children();
+    public Set<S> children();
 
     /** @return A number indicating how close the maxPlayer is to winning. 
-     * The higher the number, the closer this state is to winning. 
+     * The higher the number, the closer maxPlayer in this state is to winning. 
      * Returns Integer.MAX_VALUE if the maxPlayer has won.
      * Returns -Integer.MAX_VALUE if the minPlayer has won.
-     * (!!NOT Integer.MIN_VALUE) */
+     * !! NOT Integer.MIN_VALUE !! */
     public float score();
 
     /** @return Whether it is the of the player for whom we try to maximize. */

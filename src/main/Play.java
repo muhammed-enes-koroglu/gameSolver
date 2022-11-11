@@ -11,7 +11,12 @@ public class Play {
     public static void main(String[] args) {
 
         final float minSearchTime = 0.1f;
-        runGame(new PlayConnect4(), minSearchTime);
+
+        /* Change which TwoPersonPlay class is 
+        assigned to `game` below to choose 
+        which game to play. */
+        TwoPersonPlay game = new PlayConnect4();
+        runGame(game, minSearchTime);
 
     }
 
