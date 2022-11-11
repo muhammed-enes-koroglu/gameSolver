@@ -1,5 +1,13 @@
+package games;
+
 import java.util.HashSet;
 import java.util.Set;
+
+import util.Board;
+import util.Helper;
+import util.TwoPersonGameState;
+import util.Vector;
+
 
 /** A working game of Connect4. 
  * To play, go to the Play.runGame() 
@@ -8,9 +16,9 @@ import java.util.Set;
 public class Connect4 implements TwoPersonGameState<Connect4> {
 
     private final Board board;
-    protected final boolean whitesTurn;
-    protected final boolean maximizeForWhite;
-    protected final float calculatedScore;
+    public final boolean whitesTurn;
+    public final boolean maximizeForWhite;
+    public final float calculatedScore;
 
     public static final int BOARD_WIDTH = 7;
     public static final int BOARD_HEIGHT = 6;
@@ -134,6 +142,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         }
         // add column numbers
         result.append(getHorizontalLine());
+        result.append("Turn: " + pieceToString(this.whitesTurn ? WHITE : BLACK));
         
         return result.toString();
     }
@@ -440,7 +449,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
      * @return MAX_SCORE-1 if overflow occurs and 
      * none of the operands is MAX_SCORE.
      */
-     public static float addWithOverflow(float a, float b){
+    public static float addWithOverflow(float a, float b){
         if(a == MAX_SCORE || b == MAX_SCORE)
             return MAX_SCORE;
         if(a > 0 && b > 0 && a + b < 0)
@@ -464,4 +473,19 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         return Math.abs(this.calculatedScore) == MAX_SCORE;
     }
 
+    public static void testPrivateMethods(){
+
+        testAddWithOverFlow();
+
+    }
+
+    private static void testAddWithOverFlow(){
+
+        Helper.assrt(Connect4.addWithOverflow(1, 1) == 1 + 1);
+        Helper.assrt(Connect4.addWithOverflow(MAX_SCORE, 1) == MAX_SCORE);
+        Helper.assrt(Connect4.addWithOverflow(MAX_SCORE, MAX_SCORE) == MAX_SCORE);
+
+        System.out.println("PlusWithCeiling: OK");
+   
+    }
 }

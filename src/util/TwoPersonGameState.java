@@ -1,3 +1,5 @@
+package util;
+
 import java.util.Set;
 
 public interface TwoPersonGameState<C>{
@@ -20,4 +22,6 @@ public interface TwoPersonGameState<C>{
 
     /** @return A printable form of the game state. */
     public String toString();
+
+    public Object getBoard();
 }

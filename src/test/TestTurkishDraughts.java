@@ -1,3 +1,9 @@
+package test;
+
+import games.TurkishDraughts;
+import util.Helper;
+import util.Board;
+
 import java.util.HashSet;
 import java.util.Set;
 

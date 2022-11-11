@@ -1,3 +1,8 @@
+package test;
+
+import games.TicTacToeState;
+import util.GameSolver;
+
 import java.util.List;
 
 public class TestGameSolver {

@@ -1,3 +1,9 @@
+package test;
+
+import games.Connect4;
+import util.Board;
+import util.Helper;
+
 import java.util.Set;
 
 public class TestConnect4 {
@@ -10,35 +16,27 @@ public class TestConnect4 {
 
         System.out.println("[TESTING] Connect4 class\n");
 
-        testPlusWithCeiling();
         testEquals();
         testScore();
         testChildren();
+        testPrivateMethods();
         
         System.out.println("\n[TESTING] Connect4 class - DONE");
     }
 
-    private static void testPlusWithCeiling(){
-        assrt(Connect4.addWithOverflow(1, 1) == 1 + 1);
-        assrt(Connect4.addWithOverflow(MAX_SCORE, 1) == MAX_SCORE);
-        assrt(Connect4.addWithOverflow(MAX_SCORE, MAX_SCORE) == MAX_SCORE);
-
-        System.out.println("PlusWithCeiling: OK");
-    }
-    
     private static void testEquals(){
         
         Board board1 = getInitialBoard();
         Board board2 = getInitialBoard();
-        assrt(board1.equals(board2));
+        Helper.assrt(board1.equals(board2));
         
         board1.set(0, 0, 1);
         board2.set(0, 0, 1);
-        assrt(board1.equals(board2));
+        Helper.assrt(board1.equals(board2));
         
         Connect4 game1 = new Connect4(board1, true, true);
         Connect4 game2 = new Connect4(board2, true, true);
-        assrt(game1.equals(game2));
+        Helper.assrt(game1.equals(game2));
 
         System.out.println("Equals: OK");
     }
@@ -53,19 +51,19 @@ public class TestConnect4 {
         Board board2 = board1.copy();
         board2.set(0, 2, 1);
         Connect4 state2 = new Connect4(board2, true, true);
-        assrt(state2.score() > state1.score());
+        Helper.assrt(state2.score() > state1.score());
 
         Board board3 = board2.copy();
         board3.set(0, 3, 1);
         Connect4 state3 = new Connect4(board3, true, true);
-        assrt(state3.score() > state2.score());
+        Helper.assrt(state3.score() > state2.score());
 
 
 
         int[][] array = {{1, -1, 0, -1, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}};
         board1 = new Board(array);
         state1 = new Connect4(board1, false, false);
-        assrt(state1.score() == -MAX_SCORE);
+        Helper.assrt(state1.score() == -MAX_SCORE);
 
         // System.out.println(state1.score());
         // System.out.println(state1);
@@ -93,7 +91,7 @@ public class TestConnect4 {
 
         connect4 = new Connect4(board, true, true);
         children = connect4.children();
-        assrt(children.isEmpty());
+        Helper.assrt(children.isEmpty());
 
         // Board with black wins.
         board = getInitialBoard();
@@ -104,7 +102,7 @@ public class TestConnect4 {
 
         connect4 = new Connect4(board, true, true);
         children = connect4.children();
-        assrt(children.isEmpty());
+        Helper.assrt(children.isEmpty());
 
         System.out.println("Children: OK");
         
@@ -113,6 +111,12 @@ public class TestConnect4 {
     private static Board getInitialBoard(){
         int[][] array = new int[BOARD_HEIGHT][BOARD_WIDTH];
         return new Board(array);
+    }
+
+    private static void testPrivateMethods(){
+        
+        Connect4.testPrivateMethods();
+
     }
 
     private static Board getFullBoard(){
@@ -126,12 +130,6 @@ public class TestConnect4 {
         }
 
         return new Board(array);
-    }
-
-    private static void assrt(boolean statament){
-        if(statament)
-            return;
-        throw new AssertionError();
     }
 
 }

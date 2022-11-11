@@ -1,3 +1,9 @@
+package main;
+
+import util.TwoPersonPlay;
+import games.Connect4;
+import util.Board;
+
 import java.util.Scanner;
 
 

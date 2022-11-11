@@ -1,3 +1,8 @@
+package main;
+
+import util.GameSolver;
+import games.MangalaState;
+
 import java.util.List;
 import java.util.Scanner;
 

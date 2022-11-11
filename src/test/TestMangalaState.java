@@ -1,3 +1,8 @@
+package test;
+
+import games.MangalaState;
+import util.Helper;
+
 public class TestMangalaState {
     
     private TestMangalaState(){

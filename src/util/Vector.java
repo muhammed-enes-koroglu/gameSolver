@@ -1,3 +1,5 @@
+package util;
+
 public class Vector {
     public final int row;
     public final int col;

@@ -1,5 +1,11 @@
+package games;
+
 import java.util.HashSet;
 import java.util.Set;
+
+import util.Board;
+import util.TwoPersonGameState;
+import util.Vector;
 
 
 /* TODO's and PROBLEMS
@@ -380,6 +386,11 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         }
     }
     
+    @Override
+    public Board getBoard(){
+        return this.board.copy();
+    }
+
     /**
         @param board Board object that contains values chosen from {-2, -1, 0, 1, 2}.
             0 : empty square

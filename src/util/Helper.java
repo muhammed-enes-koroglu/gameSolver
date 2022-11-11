@@ -1,3 +1,5 @@
+package util;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Collections;
@@ -55,6 +57,12 @@ public abstract class Helper {
         }
 
         return newArray;
+    }
+
+    public static void assrt(boolean statament){
+        if(statament)
+            return;
+        throw new AssertionError();
     }
 
 }
