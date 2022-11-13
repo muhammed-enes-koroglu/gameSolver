@@ -6,17 +6,11 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Launch TestSuite",
+            "name": "Launch RunTests",
             "request": "launch",
-            "mainClass": "test.TestSuite",
-            "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch PlayMangala",
-            "request": "launch",
-            "mainClass": "main.PlayMangala",
-            "projectName": "game_solver_6fa4d118"
+            "mainClass": "test.RunTests",
+            "projectName": "game_solver_6fa4d118",
+            "vmArgs": "-enableassertions"
         },
         {
             "type": "java",
@@ -24,69 +18,6 @@
             "request": "launch",
             "mainClass": "main.Play",
             "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch TestConnect4",
-            "request": "launch",
-            "mainClass": "test.TestConnect4",
-            "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch TestConnect4",
-            "request": "launch",
-            "mainClass": "src.test.TestConnect4",
-            "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch Play",
-            "request": "launch",
-            "mainClass": "Play",
-            "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch TestConnect4",
-            "request": "launch",
-            "mainClass": "TestConnect4",
-            "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch TestAlign4",
-            "request": "launch",
-            "mainClass": "TestAlign4",
-            "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch TestSuite",
-            "request": "launch",
-            "mainClass": "TestSuite",
-            "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch PlayMangala",
-            "request": "launch",
-            "mainClass": "PlayMangala",
-            "projectName": "game_solver_6fa4d118"
-        },
-        {
-            "type": "java",
-            "name": "Launch TestTurkishDraughts",
-            "request": "launch",
-            "mainClass": "game_solver.test.TestTurkishDraughts",
-            "projectName": ""
-        },
-        {
-            "type": "java",
-            "name": "Launch TestSuite",
-            "request": "launch",
-            "mainClass": "TestSuite",
-            "projectName": "game_solver_d9d3e33c"
         },
         {
             "type": "java",

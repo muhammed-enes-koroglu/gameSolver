@@ -8,7 +8,7 @@ import java.util.List;
 
 import games.Mangala.MangalaState;
 
-public class TestSuite{
+public class RunTests{
 
     public static void main(String[] args){
 

@@ -1,10 +1,11 @@
 package test;
 
-import games.TicTacToeState;
 import util.Board;
 import util.GameSolver;
 
 import java.util.List;
+
+import games.TicTacToe.TicTacToeState;
 
 public class TestGameSolver {
 

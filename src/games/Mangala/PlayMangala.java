@@ -14,68 +14,6 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
     
     private static final Scanner sc = new Scanner(System.in);
 
-    // public void main() {
-
-    //     MangalaState mangala = getInitialState(true);
-    //     MangalaState advisedState;
-    //     List<MangalaState> advisedPath;
-
-    //     // The game loop
-    //     while(!mangala.isGameOver()){
-    //         System.out.println("[CURRENT]" + mangala);
-
-    //         advisedPath = GameSolver.findBestPathForMax(mangala, 1);
-    //         if(!advisedPath.isEmpty()){
-    //             advisedState = advisedPath.get(1);
-    //             System.out.println("[ADVISED]" + advisedState);    
-    //         }
-
-    //         // Get the user's input and update the state.
-    //         int trenchNumber = inputTrenchNumber(mangala);
-    //         mangala = mangala.makeMove(trenchNumber);
-    //     }
-
-    //     // Print the final state.
-    //     System.out.println("[GAME OVER]" + mangala);
-    //     // Print the winner.
-    //     System.out.println("[WINNER] " + getWinnersName(mangala) + " player wins!");
-    // }
-
-    /** Scan, parse and validate the trench number player wants to play. */
-    private static int inputTrenchNumber(MangalaState mangala){
-        int offset = mangala.isWhitesTurn() ? WHITE_STARTING_TRENCH : BLACK_STARTING_TRENCH;
-        
-        int trenchNumber = -1;
-        boolean validInput = false;
-        while(!validInput){
-            validInput = true;
-
-            // Ask for input.
-            System.out.print("Enter trench number: ");
-            String line = sc.nextLine();
-
-            // Parse the input.
-            try{
-                trenchNumber = Integer.parseInt(line) - 1;
-            }catch(NumberFormatException e){
-                System.out.println("[ERROR] Input must be an integer");
-                validInput = false;
-            }
-
-            // trenchNumber should be in [0, BOARD_SIZE-1)
-            if(!(trenchNumber >= 0 && trenchNumber < BOARD_SIZE-1 )){
-                System.out.println("[ERROR] Trench number must be in [1, " + (BOARD_SIZE-1) + "]");
-                validInput = false;
-            }
-            // Trench to be played should not be empty.
-            else if(mangala.getBoard().get(0, trenchNumber + offset) == 0){
-                System.out.println("[ERROR] Trench number must be occupied");
-                validInput = false;
-            }
-        }
-        return trenchNumber + offset;
-    }
-
     @Override
     /** Returns winner's name. Assumes game is over. */
     public String getWinnersName(MangalaState mangala){

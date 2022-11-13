@@ -1,4 +1,4 @@
-package games;
+package games.TicTacToe;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -15,10 +15,6 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
     private final boolean xWon;
     private final boolean xLost;
     
-
-    public Board getBoard() {
-        return board.copy();
-    }
 
     public boolean isXTurn() {
         return xTurn;
@@ -95,6 +91,11 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
         str += "\n" + (xTurn ? "X" : "O");
         str += "\n" + "---------";
         return str;
+    }
+
+    @Override
+    public Board getBoard() {
+        return board.copy();
     }
 
     // 1 in `board` denotes an 'X', max player

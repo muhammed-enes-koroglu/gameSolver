@@ -1,11 +1,12 @@
 package test;
 
-import games.TicTacToeState;
 import util.Board;
 import util.Helper;
 
 import java.util.ArrayList;
 import java.util.Set;
+
+import games.TicTacToe.TicTacToeState;
 
 public class TestTicTacToeState {
 
@@ -43,7 +44,7 @@ public class TestTicTacToeState {
         assert children.stream().allMatch(g -> Helper.countElement(g.getBoard().getMatrix()[0], 1) == 1);
         assert children.stream().allMatch(g -> Helper.countElement(g.getBoard().getMatrix()[0], -1) == 0);
         assert children.stream().allMatch(g -> Helper.countElement(g.getBoard().getMatrix()[0], 0) == 8);
-
+                
         System.out.println("testChildren successful");
     }
 
@@ -75,7 +76,7 @@ public class TestTicTacToeState {
         board = new int[]{-1,-1,-1, 0,0,0, 0,0,0}; // Lose in column
         boardMatrix = TicTacToeState.matrificise(board);
         assert !TicTacToeState.xWon(boardMatrix) && TicTacToeState.xLost(boardMatrix);
-
+        
         board = new int[]{-1,0,0, -1,0,0, -1,0,0}; // Lose in row
         boardMatrix = TicTacToeState.matrificise(board);
         assert !TicTacToeState.xWon(boardMatrix) && TicTacToeState.xLost(boardMatrix);
