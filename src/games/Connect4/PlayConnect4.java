@@ -34,19 +34,19 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4> {
     }
 
     @Override
-    public Connect4 makeMove(Connect4 state, int moveNumber) {
+    public Connect4 makeMove(Connect4 state, int[] action) {
         
         final int piece = state.whitesTurn ? WHITE : BLACK;
 
         Board board = state.getBoard();
-        Connect4.appendToColumn(board, moveNumber, piece);
+        Connect4.appendToColumn(board, action[0], piece);
 
         return new Connect4(board, !state.whitesTurn, state.maximizeForWhite);
         
     }
 
     @Override
-    public int scanMoveNumber(Connect4 state) {
+    public int[] scanMoveNumber(Connect4 state) {
         
         int colNumber = -1;
         boolean validInput = false;
@@ -76,7 +76,7 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4> {
                 validInput = false;
             }
         }
-        return colNumber;
+        return new int[]{colNumber};
     }
 
     @Override

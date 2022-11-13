@@ -7,11 +7,11 @@ public interface TwoPersonPlay <C>{
 
     public boolean isGameOver(C state);
 
-    public C makeMove(C state, int moveNumber);
+    public C makeMove(C state, int[] action);
     
     public C getInitialState(boolean maximizeForWhite);
 
-    public int scanMoveNumber(C state);
+    public int[] scanMoveNumber(C state);
 
     /** Scan, parse and validate whether the player wants to be player 1. */
     public static boolean inputWhiteIsMax(){
@@ -43,5 +43,6 @@ public interface TwoPersonPlay <C>{
         return inputNumber == 1;
     }
     
+    /** Returns winner's name. Assumes game is over. */
     public String getWinnersName(C state);
 }

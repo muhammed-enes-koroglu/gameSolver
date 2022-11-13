@@ -10,11 +10,14 @@ import util.TwoPersonGameState;
 public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
 
     private final Board board;
-    private final boolean xTurn;
-    private final boolean xIsMaxPlayer;
+    protected final boolean xTurn;
+    protected final boolean xIsMaxPlayer;
     private final boolean xWon;
     private final boolean xLost;
     
+    protected static final int BOARD_SIZE = 3;
+    protected static final int X = 1;
+    protected static final int O = -1;
 
     public boolean isXTurn() {
         return xTurn;
@@ -98,9 +101,13 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
         return board.copy();
     }
 
-    // 1 in `board` denotes an 'X', max player
-    // -1 denotes an 'O', min player
-    // 0 denotes blank space.
+    /**
+     * @param board The board of the game. Must be a 1x9 board.
+     * @param xTurn True if it is X's turn. 
+     * 
+     * 1 in `board` denotes an 'X', max player
+     * -1 denotes an 'O', min player
+     * 0 denotes blank space. */
     public TicTacToeState(Board board, boolean xIsMaxPlayer){
         if(board.nbRows != 1)
             throw new IllegalArgumentException("`board` must be a 1D array.");
@@ -145,10 +152,10 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
     }
 
     public static int[][] matrificise(int[] board){
-        int[][] boardMatrix = new int[3][3];
-        for(int i=0; i<3; i++)
-            for(int j=0; j<3; j++)
-                boardMatrix[i][j] = board[3*i + j];
+        int[][] boardMatrix = new int[BOARD_SIZE][BOARD_SIZE];
+        for(int i=0; i<BOARD_SIZE; i++)
+            for(int j=0; j<BOARD_SIZE; j++)
+                boardMatrix[i][j] = board[BOARD_SIZE*i + j];
         return boardMatrix;
     }
     

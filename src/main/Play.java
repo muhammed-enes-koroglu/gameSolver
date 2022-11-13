@@ -7,17 +7,19 @@ import util.TwoPersonPlay;
 import java.util.List;
 
 import games.Mangala.PlayMangala;
+import games.TicTacToe.PlayTicTacToe;
+import games.TicTacToe.TicTacToeState;
 
 public class Play {
     
     public static void main(String[] args) {
 
-        final float minSearchTime = 0.1f;
+        final float minSearchTime = 1f;
 
         /* Change which TwoPersonPlay class is 
         assigned to `game` below to choose 
         which game to play. */
-        TwoPersonPlay game = new PlayMangala();
+        TwoPersonPlay<TicTacToeState> game = new PlayTicTacToe();
         runGame(game, minSearchTime);
 
     }
@@ -50,7 +52,7 @@ public class Play {
             // System.out.println(state.getBoard());
 
             // Get the user's input and update the state.
-            int moveNumber = game.scanMoveNumber(state);
+            int[] moveNumber = game.scanMoveNumber(state);
             state = game.makeMove(state, moveNumber);
             System.out.println("\n[CURRENT]" + state);
             System.out.println("Score: " + state.score());

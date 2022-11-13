@@ -1,3 +1,5 @@
+# 0. !! TicTacToe && Connect4 path finding isn't working !!
+
 # 1. Action Space
 Change the `GameSolver` algorithm so it asks not for the child states, but for the action space. Do this so the return type of the algorithm can be an action to achieve the desired state instead of the new state itself.
 

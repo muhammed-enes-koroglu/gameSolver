@@ -16,8 +16,8 @@ import util.Vector;
 public class Connect4 implements TwoPersonGameState<Connect4> {
 
     private final Board board;
-    public final boolean whitesTurn;
-    public final boolean maximizeForWhite;
+    protected final boolean whitesTurn;
+    protected final boolean maximizeForWhite;
     public final float calculatedScore;
 
     public static final int BOARD_WIDTH = 7;

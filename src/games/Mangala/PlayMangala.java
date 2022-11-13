@@ -15,7 +15,6 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
     private static final Scanner sc = new Scanner(System.in);
 
     @Override
-    /** Returns winner's name. Assumes game is over. */
     public String getWinnersName(MangalaState mangala){
         Board board = mangala.getBoard();
         int scoreWhite = board.get(0, BOARD_SIZE-1);
@@ -37,8 +36,9 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
     }
 
     @Override
-    public MangalaState makeMove(MangalaState state, int trenchNumber) {
-
+    public MangalaState makeMove(MangalaState state, int[] action) {
+        
+        int trenchNumber = action[0];
         return state.playTrench(new HashSet<>(), trenchNumber, state.getBoard());
     }
 
@@ -52,7 +52,7 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
     }
 
     @Override
-    public int scanMoveNumber(MangalaState state) {
+    public int[] scanMoveNumber(MangalaState state) {
         
         int trenchNumber = -1;
         boolean validInput = false;
@@ -82,7 +82,7 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
             }
 
         }
-        return trenchNumber + MangalaState.getOffsetForColor(state.isWhitesTurn());
+        return new int[]{trenchNumber + MangalaState.getOffsetForColor(state.isWhitesTurn())};
     }
 
 }

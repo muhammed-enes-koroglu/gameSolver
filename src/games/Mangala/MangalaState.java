@@ -38,8 +38,8 @@ how the game after any given turn can look like.
 public class MangalaState implements TwoPersonGameState<MangalaState>{
 
     private final Board board;
-    private boolean whiteIsMax;
-    private boolean whitesTurn;
+    protected final boolean whiteIsMax;
+    protected final boolean whitesTurn;
     public static final int BOARD_SIZE = 7;
     public static final int WHITE_STARTING_TRENCH = 0;
     public static final int BLACK_STARTING_TRENCH = BOARD_SIZE;
