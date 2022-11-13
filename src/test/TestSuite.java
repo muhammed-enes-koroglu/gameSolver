@@ -12,26 +12,11 @@ public class TestSuite{
 
     public static void main(String[] args){
 
-        // TestTicTacToeState.testTicTacToeState();
+        TestTicTacToeState.testTicTacToeState();
         TestGameSolver.testFindBestPathForMax();
-        // TestMangalaState.testMangalaState();
-        // testMangalaSearcher();
+        TestMangalaState.testMangalaState();
 
         System.out.println("\nALL TESTS SUCCESSFULL!");
     }
 
-    public static void testMangalaSearcher(){
-        boolean whitesTurn = false;
-        boolean whiteIsMax = false;
-        int searchFor = 10;
-        Board board =new Board(  new int[]{0, 0, 2, 3, 0, 0, 17, 0, 3, 1, 0, 0, 0, 22});
-
-        MangalaState mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        System.out.println("Search starting from: " + mState.toString());
-        
-        List<MangalaState> bestPath = GameSolver.findBestPathForMax(mState, searchFor);
-        System.out.println("Best move is:\n" + bestPath.get(1));
-        System.out.println(bestPath.get(1).getBoard());
-    }
- 
 }
