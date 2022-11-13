@@ -1,4 +1,4 @@
-package games;
+package games.Connect4;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,7 +23,6 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
     public static final int BOARD_WIDTH = 7;
     public static final int BOARD_HEIGHT = 6;
     public static final int GOAL = 4;
-    public static final float MAX_SCORE = Integer.MAX_VALUE;
 
     private static final int HORIZONTAL_LINE_LENGTH = 29;
 
@@ -442,7 +441,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         return (float) Math.exp(chainLength);
     }
 
-    /** Tries to detect overflow.
+    /** Prevent overflow.
      * 
      * @param a positive number.
      * @param b positive number.
@@ -457,7 +456,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         return a + b;
     }
 
-    /** Tries to detect negative overflow.
+    /** Prevent negative overflow.
      * 
      * @param a positive number.
      * @param b positive number.
@@ -470,22 +469,42 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
     }
 
     public boolean isGameOver(){
-        return Math.abs(this.calculatedScore) == MAX_SCORE;
+        return (this.calculatedScore == MAX_SCORE) || (this.calculatedScore == -MIN_SCORE);
     }
 
     public static void testPrivateMethods(){
 
         testAddWithOverFlow();
-
+        testSubtractWithOverflow();
+        
     }
 
     private static void testAddWithOverFlow(){
 
-        Helper.assrt(Connect4.addWithOverflow(1, 1) == 1 + 1);
-        Helper.assrt(Connect4.addWithOverflow(MAX_SCORE, 1) == MAX_SCORE);
-        Helper.assrt(Connect4.addWithOverflow(MAX_SCORE, MAX_SCORE) == MAX_SCORE);
+        Helper.assrt(addWithOverflow(2, 1) == 2 + 1);
+        Helper.assrt(addWithOverflow(MAX_SCORE, 1) == MAX_SCORE);
+        Helper.assrt(addWithOverflow(MAX_SCORE, MAX_SCORE) == MAX_SCORE);
 
-        System.out.println("PlusWithCeiling: OK");
+        // Check that the only way to reach `MAX_SCORE` 
+        // is by having it as one of the arguments.            
+        Helper.assrt(addWithOverflow(MAX_SCORE/2 + 1, MAX_SCORE/2 + 1) == MAX_SCORE - 1);
+        Helper.assrt(addWithOverflow(MAX_SCORE - 1, MAX_SCORE - 1) == MAX_SCORE - 1);
+
+        System.out.println("AddWithOverflow: OK");
    
     }
+
+    private static void testSubtractWithOverflow(){
+
+        Helper.assrt(subtractWithOverflow(2, 1) == 2 - 1);
+        Helper.assrt(subtractWithOverflow(MIN_SCORE, 1) == MIN_SCORE);
+        Helper.assrt(subtractWithOverflow(MIN_SCORE, MAX_SCORE) == MIN_SCORE);
+        Helper.assrt(subtractWithOverflow(MIN_SCORE + 1, 1) == MIN_SCORE + 1);
+        Helper.assrt(subtractWithOverflow(MIN_SCORE + 1, 2) == MIN_SCORE + 1);
+
+        System.out.println("SubtractWithOverflow: OK");
+   
+    }
+
+    
 }

@@ -4,19 +4,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import util.Board;
 import util.TwoPersonGameState;
 
 public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
 
-    private final int[] board;
+    private final Board board;
     private final boolean xTurn;
     private final boolean xIsMaxPlayer;
     private final boolean xWon;
     private final boolean xLost;
     
 
-    public int[] getBoard() {
-        return board.clone();
+    public Board getBoard() {
+        return board.copy();
     }
 
     public boolean isXTurn() {
@@ -37,10 +38,11 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
             return new HashSet<>();
     
         HashSet<TicTacToeState> children = new HashSet<>();
-        for(int i=0; i<board.length; i++){
-            int[] copyBoard = board.clone();
-            if(copyBoard[i] == 0){
-                copyBoard[i] = xTurn ? 1 : -1;
+        for(int i=0; i<board.nbCols; i++){
+            Board copyBoard = board.copy();
+            if(copyBoard.get(0, i) == 0){
+                int newVal = xTurn ? 1 : -1;
+                copyBoard.set(0, i, newVal);
                 children.add(new TicTacToeState(copyBoard, this.xIsMaxPlayer));
             }
         }
@@ -73,17 +75,17 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
     @Override
     public int hashCode(){
         int hash = 7;
-        hash = 31 * hash + (board == null ? 0 : Arrays.hashCode(board));
+        hash = 31 * hash + (board == null ? 0 : board.hashCode());
         return hash;
     }
 
     @Override
     public String toString(){
         String str = "\n";
-        for(int i=0; i<board.length; i++){
-            if(board[i] == 1)
+        for(int i=0; i<board.nbCols; i++){
+            if(board.get(0, i) == 1)
                 str += "X ";
-            else if(board[i] == -1)
+            else if(board.get(0, i) == -1)
                 str += "O ";
             else 
                 str += "_ ";
@@ -98,23 +100,26 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
     // 1 in `board` denotes an 'X', max player
     // -1 denotes an 'O', min player
     // 0 denotes blank space.
-    public TicTacToeState(int[] board, boolean xIsMaxPlayer){
-        if(board.length != 9)
+    public TicTacToeState(Board board, boolean xIsMaxPlayer){
+        if(board.nbRows != 1)
+            throw new IllegalArgumentException("`board` must be a 1D array.");
+        if(board.nbCols != 9)
             throw new IllegalArgumentException("`board` must be of length 9");
-        if(!Arrays.stream(board).allMatch(i -> (i==-1) || (i==0) || (i==1)))
+        if(!Arrays.stream(board.getMatrix()[0]
+        ).allMatch(i -> (i==-1) || (i==0) || (i==1)))
             throw new IllegalArgumentException("`board` must only contain -1, 0 or 1");
-        if(Arrays.stream(board).sum() == 0)
+        if(Arrays.stream(board.getMatrix()[0]).sum() == 0)
             this.xTurn = true;
-        else if(Arrays.stream(board).sum() == 1)
+        else if(Arrays.stream(board.getMatrix()[0]).sum() == 1)
             this.xTurn = false;
         else
             throw new IllegalArgumentException("impossible `board`: Not X's turn, not O's turn");
 
-        int[][] boardMatrix = matrificise(board);
+        int[][] boardMatrix = matrificise(board.getMatrix()[0]);
         boolean xHasWon = xWon(boardMatrix);
         boolean xHasLost = xLost(boardMatrix);
         if((xHasWon && this.xTurn)){
-            System.out.println(Arrays.toString(board));
+            System.out.println(board);
             throw new IllegalArgumentException("It must be O's turn if X has won.");
         }
         if(xHasLost && !this.xTurn)

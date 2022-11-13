@@ -1,6 +1,7 @@
 package test;
 
-import games.MangalaState;
+import games.Mangala.MangalaState;
+import util.Board;
 import util.Helper;
 
 public class TestMangalaState {
@@ -29,11 +30,11 @@ public class TestMangalaState {
         */
         // One simple move
         MangalaState child2;
-        int[] board = new int[]{1,0,0, 0,0,0, 0, 1,0,0, 0,0,0, 0};
+        Board board = new Board( new int[]{1,0,0, 0,0,0, 0, 1,0,0, 0,0,0, 0});
         boolean whitesTurn = true;
         boolean whiteIsMax = true;
         MangalaState mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        int[] childBoard = new int[]{0,1,0, 0,0,0, 0, 1,0,0, 0,0,0, 0};
+        Board childBoard = new Board( new int[]{0,1,0, 0,0,0, 0, 1,0,0, 0,0,0, 0});
         MangalaState child = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // lso tests if turn changed.
         assert mState.children().equals(Helper.newHashSet(child)); // not deepEquals ?
 
@@ -42,70 +43,70 @@ public class TestMangalaState {
         assert mState.children().equals(m2.children());
 
         // Play again if ended at treasury
-        board = new int[]{1,0,0, 0,0,1, 0, 1,0,0, 0,0,0, 0};
+        board = new Board( new int[]{1,0,0, 0,0,1, 0, 1,0,0, 0,0,0, 0});
         mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{1,0,0, 0,0,0, 1, 1,0,0, 0,0,0, 0};
+        childBoard = new Board( new int[]{1,0,0, 0,0,0, 1, 1,0,0, 0,0,0, 0});
         child = new MangalaState(childBoard, whitesTurn, whiteIsMax); // AGAIN whitesTurn
-        childBoard = new int[]{0,1,0, 0,0,1, 0, 1,0,0, 0,0,0, 0};
+        childBoard = new Board( new int[]{0,1,0, 0,0,1, 0, 1,0,0, 0,0,0, 0});
         child2 = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // AGAIN whitesTurn
         assert mState.children().equals(Helper.newHashSet(child2, child)); // not deepEquals ?
             // play further trench
-        board = new int[]{0,0,0, 4,0,0, 0, 0,0,0, 0,0,1, 0};
+        board = new Board( new int[]{0,0,0, 4,0,0, 0, 0,0,0, 0,0,1, 0});
         mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 1,1,1, 1, 0,0,0, 0,0,1, 0};
+        childBoard = new Board( new int[]{0,0,0, 1,1,1, 1, 0,0,0, 0,0,1, 0});
         child = new MangalaState(childBoard, whitesTurn, whiteIsMax); // AGAIN whitesTurn
         assert mState.children().equals(Helper.newHashSet(child)); // not deepEquals ?
 
         // Doesn't put stone to opponent's treasury on pass
-        board = new int[]{0,0,0, 0,0,10, 0, 1,0,0, 0,0,0, 0};
+        board = new Board( new int[]{0,0,0, 0,0,10, 0, 1,0,0, 0,0,0, 0});
         mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{1,0,0, 0,0,1, 3, 2,1,1, 1,0,1, 0};
+        childBoard = new Board( new int[]{1,0,0, 0,0,1, 3, 2,1,1, 1,0,1, 0});
         child = new MangalaState(childBoard, !whitesTurn, whiteIsMax);
         assert mState.children().equals(Helper.newHashSet(child)); // not deepEquals ?
 
         // Takes opposite trench if ended at empty at own side
-        board = new int[]{1,0,0, 0,0,0, 0, 0,0,0, 0,7,0, 0};
+        board = new Board( new int[]{1,0,0, 0,0,0, 0, 0,0,0, 0,7,0, 0});
         mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 0,0,0, 8, 0,0,0, 0,0,0, 0};
+        childBoard = new Board( new int[]{0,0,0, 0,0,0, 8, 0,0,0, 0,0,0, 0});
         child = new MangalaState(childBoard, !whitesTurn, whiteIsMax);
         assert mState.children().equals(Helper.newHashSet(child)); // not deepEquals ?
 
         // Doesn't take opposite trench if ended at empty at other side
-        board = new int[]{0,0,0, 0,7,4, 0, 1,0,0, 0,0,0, 0};
+        board = new Board( new int[]{0,0,0, 0,7,4, 0, 1,0,0, 0,0,0, 0});
         mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 0,7,1, 1, 2,1,0, 0,0,0, 0};
+        childBoard = new Board( new int[]{0,0,0, 0,7,1, 1, 2,1,0, 0,0,0, 0});
         child = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // possibility 1
-        childBoard = new int[]{0,0,0, 0,1,5, 1, 2,1,1, 1,0,0, 0};
+        childBoard = new Board( new int[]{0,0,0, 0,1,5, 1, 2,1,1, 1,0,0, 0});
         child2 = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // possibility 2
         assert mState.children().equals(Helper.newHashSet(child2, child)); // not deepEquals ?
 
         // Takes enemy's trench if ended there and made it even
-        board = new int[]{0,0,0, 0,4,0, 0, 3,0,0, 0,7,0, 0};
+        board = new Board( new int[]{0,0,0, 0,4,0, 0, 3,0,0, 0,7,0, 0});
         mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,0, 0,1,1, 5, 0,0,0, 0,7,0, 0};
+        childBoard = new Board( new int[]{0,0,0, 0,1,1, 5, 0,0,0, 0,7,0, 0});
         child = new MangalaState(childBoard, !whitesTurn, whiteIsMax);
         assert mState.children().equals(Helper.newHashSet(child)); // not deepEquals ?
 
         // Doesn't take own trench if ended there and made it even
-        board = new int[]{0,0,3, 0,1,0, 0, 0,0,0, 1,0,0, 0};
+        board = new Board( new int[]{0,0,3, 0,1,0, 0, 0,0,0, 1,0,0, 0});
         mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard = new int[]{0,0,1, 1,2,0, 0, 0,0,0, 1,0,0, 0};
+        childBoard = new Board( new int[]{0,0,1, 1,2,0, 0, 0,0,0, 1,0,0, 0});
         child = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // possibility 1
-        childBoard = new int[]{0,0,3, 0,0,1, 0, 0,0,0, 1,0,0, 0};
+        childBoard = new Board( new int[]{0,0,3, 0,0,1, 0, 0,0,0, 1,0,0, 0});
         child2 = new MangalaState(childBoard, !whitesTurn, whiteIsMax); // possibility 2
         assert mState.children().equals(Helper.newHashSet(child, child2)); // not deepEquals ?
 
         // Take all enemy trenches if own side empty
-        board = new int[]{0,0,0, 0,0,1, 0, 3,0,0, 0,7,0, 8};
+        board = new Board( new int[]{0,0,0, 0,0,1, 0, 3,0,0, 0,7,0, 8});
         mState = new MangalaState(board, whitesTurn, whiteIsMax);
-        childBoard= new int[]{0,0,0, 0,0,0, 11, 0,0,0, 0,0,0, 8};
+        childBoard= new Board( new int[]{0,0,0, 0,0,0, 11, 0,0,0, 0,0,0, 8});
         child = new MangalaState(childBoard, whitesTurn, whiteIsMax);
         assert mState.children().equals(Helper.newHashSet(child)); // not deepEquals ?
 
         // Take all enemy trenches if own side empty, even if enemy ends it
-        board = new int[]{3,0,0, 0,0,0, 3, 3,0,0, 5,1,0, 8};
+        board = new Board( new int[]{3,0,0, 0,0,0, 3, 3,0,0, 5,1,0, 8});
         mState = new MangalaState(board, !whitesTurn, whiteIsMax);
-        childBoard= new int[]{0,0,0, 0,0,0, 10, 0,0,0, 0,0,0, 13};
+        childBoard= new Board( new int[]{0,0,0, 0,0,0, 10, 0,0,0, 0,0,0, 13});
         child = new MangalaState(childBoard, whitesTurn, whiteIsMax);
         assert mState.children().contains(child);
     }

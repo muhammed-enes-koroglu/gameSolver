@@ -1,16 +1,19 @@
 package test;
 
-import games.Connect4;
 import util.Board;
 import util.Helper;
+import util.TwoPersonGameState;
 
 import java.util.Set;
+
+import games.Connect4.Connect4;
 
 public class TestConnect4 {
 
     public static final int BOARD_WIDTH = Connect4.BOARD_WIDTH;
     public static final int BOARD_HEIGHT = Connect4.BOARD_HEIGHT;
-    public static final float MAX_SCORE = Connect4.MAX_SCORE;
+    public static final float MAX_SCORE = TwoPersonGameState.MAX_SCORE;
+    public static final float MIN_SCORE = TwoPersonGameState.MIN_SCORE;
 
     public static void main(String[] args){
 

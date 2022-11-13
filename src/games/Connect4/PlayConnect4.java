@@ -1,8 +1,8 @@
-package main;
+package games.Connect4;
 
 import util.TwoPersonPlay;
-import games.Connect4;
 import util.Board;
+import util.TwoPersonGameState;
 
 import java.util.Scanner;
 
@@ -18,12 +18,9 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4> {
 
     private static final Scanner sc = new Scanner(System.in);
 
-
-    // TwoPersonPlay methods.
-
     @Override
     public boolean isGameOver(Connect4 state) {
-        return Math.abs(state.score()) == Connect4.MAX_SCORE;
+        return Math.abs(state.score()) == TwoPersonGameState.MAX_SCORE;
     }
 
     @Override
@@ -85,7 +82,7 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4> {
     @Override
     public String getWinnersName(Connect4 state) {
 
-        if(state.score() == Connect4.MAX_SCORE){ // Max player has won.
+        if(state.score() == TwoPersonGameState.MAX_SCORE){ // Max player has won.
             return state.maximizeForWhite ? "Player 1" : "Player 2";
         } else { // Min player has won.
             return state.maximizeForWhite ? "Player 2" : "Player 1";

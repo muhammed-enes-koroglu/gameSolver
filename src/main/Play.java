@@ -6,6 +6,8 @@ import util.TwoPersonPlay;
 
 import java.util.List;
 
+import games.Mangala.PlayMangala;
+
 public class Play {
     
     public static void main(String[] args) {
@@ -15,7 +17,7 @@ public class Play {
         /* Change which TwoPersonPlay class is 
         assigned to `game` below to choose 
         which game to play. */
-        TwoPersonPlay game = new PlayConnect4();
+        TwoPersonPlay game = new PlayMangala();
         runGame(game, minSearchTime);
 
     }
@@ -31,6 +33,7 @@ public class Play {
     public static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void runGame(G game, float minSearchTime){
         
         S state = game.getInitialState(TwoPersonPlay.inputWhiteIsMax());
+        System.out.println(state);
         S advisedState;
         List<S> advisedPath;
         

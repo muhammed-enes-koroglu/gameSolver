@@ -3,6 +3,8 @@ package util;
 import java.util.Set;
 
 public interface TwoPersonGameState<S>{
+    public static final float MAX_SCORE = Integer.MAX_VALUE;
+    public static final float MIN_SCORE = -MAX_SCORE;
 
     /** @return A set of all possible child states that follow from this one. */
     public Set<S> children();
@@ -14,14 +16,15 @@ public interface TwoPersonGameState<S>{
      * !! NOT Integer.MIN_VALUE !! */
     public float score();
 
-    /** @return Whether it is the of the player for whom we try to maximize. */
+    /** @return Whether it is the turn of the player for whom we try to maximize. */
     public boolean isMaxPlayersTurn();
 
-    /** @return Whether given object is equal to this game state. */
+    /** @return Whether the given object is equal to this game state. */
     public boolean equals(Object o);
 
     /** @return A printable form of the game state. */
     public String toString();
 
-    public Object getBoard();
+    /** @return The board that represents this game. */
+    public Board getBoard();
 }

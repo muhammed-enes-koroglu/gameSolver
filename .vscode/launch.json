@@ -6,6 +6,41 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch TestSuite",
+            "request": "launch",
+            "mainClass": "test.TestSuite",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
+            "name": "Launch PlayMangala",
+            "request": "launch",
+            "mainClass": "main.PlayMangala",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
+            "name": "Launch Play",
+            "request": "launch",
+            "mainClass": "main.Play",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestConnect4",
+            "request": "launch",
+            "mainClass": "test.TestConnect4",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
+            "name": "Launch TestConnect4",
+            "request": "launch",
+            "mainClass": "src.test.TestConnect4",
+            "projectName": "game_solver_6fa4d118"
+        },
+        {
+            "type": "java",
             "name": "Launch Play",
             "request": "launch",
             "mainClass": "Play",

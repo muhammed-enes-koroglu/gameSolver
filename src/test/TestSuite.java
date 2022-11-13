@@ -1,18 +1,20 @@
 package test;
 
-import games.MangalaState;
+import util.Board;
 import util.GameSolver;
 
 import java.util.Arrays;
 import java.util.List;
 
+import games.Mangala.MangalaState;
+
 public class TestSuite{
 
     public static void main(String[] args){
 
-        TestTicTacToeState.testTicTacToeState();
+        // TestTicTacToeState.testTicTacToeState();
         TestGameSolver.testFindBestPathForMax();
-        TestMangalaState.testMangalaState();
+        // TestMangalaState.testMangalaState();
         // testMangalaSearcher();
 
         System.out.println("\nALL TESTS SUCCESSFULL!");
@@ -22,18 +24,14 @@ public class TestSuite{
         boolean whitesTurn = false;
         boolean whiteIsMax = false;
         int searchFor = 10;
-        int[] board = new int[]{0, 0, 2, 3, 0, 0, 17, 0, 3, 1, 0, 0, 0, 22};
+        Board board =new Board(  new int[]{0, 0, 2, 3, 0, 0, 17, 0, 3, 1, 0, 0, 0, 22});
 
         MangalaState mState = new MangalaState(board, whitesTurn, whiteIsMax);
         System.out.println("Search starting from: " + mState.toString());
         
         List<MangalaState> bestPath = GameSolver.findBestPathForMax(mState, searchFor);
         System.out.println("Best move is:\n" + bestPath.get(1));
-        System.out.println(Arrays.toString(bestPath.get(1).getBoard()));
+        System.out.println(bestPath.get(1).getBoard());
     }
-    
-    private static int[] newStartingBoard(){
-        return new int[]{4,4,4, 4,4,4, 0, 4,4,4, 4,4,4, 0};
-    }
-
+ 
 }

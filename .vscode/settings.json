@@ -1,8 +1,5 @@
 {
     "java.project.sourcePaths": [
-        "test",
-        "src",
-        "games",
-        "play_games"
+        "src"
     ]
 }

@@ -16,6 +16,7 @@ public class Board {
         return matrix[position.row][position.col];
     }
 
+    /** Returns a copy of this board's representative matrix. */
     public int[][] getMatrix(){
         return Helper.deepCopy(this.matrix);
     }
@@ -61,7 +62,20 @@ public class Board {
         
 
         this.matrix = Helper.deepCopy(matrix);
-    }
+    }   
+
+    public Board(int[] matrix){
+        if(matrix == null)
+            throw new IllegalArgumentException("Given matrix may not be null!");
+        this.nbRows = 1;
+        this.nbCols = matrix.length;
+        if(this.nbCols == 0)
+            throw new IllegalArgumentException("Number of columns may not be 0.");
+        
+
+        this.matrix = new int[][]{matrix.clone()};
+    }   
+    
 
     public void set(int row, int col, int value){
         matrix[row][col] = value;
@@ -69,6 +83,10 @@ public class Board {
 
     public void set(Vector position, int value){
         matrix[position.row][position.col] = value;
+    }
+
+    public void increment(int row, int col, int value){
+        matrix[row][col] += value;
     }
 
     public boolean locationIsOutOfBounds(Vector position) {
