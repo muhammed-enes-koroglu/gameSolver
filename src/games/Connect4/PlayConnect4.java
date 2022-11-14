@@ -56,6 +56,11 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4State> {
             // Ask for input.
             System.out.print("Enter column number: ");
             String line = sc.nextLine();
+     
+            // Return null if input is empty.
+            if(line.equals("")){
+                return null;
+            }
 
             // Parse the input.
             try{

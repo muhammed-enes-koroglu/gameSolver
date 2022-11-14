@@ -13,10 +13,11 @@ import games.Connect4.PlayConnect4;
 
 public class Play {
     static final String[] gameStrings = new String[]{"TicTacToe", "Mangala", "Connect4"}; 
+    static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
 
-        final float minSearchTime = 1f;
+        final float minSearchTime = 0.01f;
         chooseNRunGame(minSearchTime);
 
     }
@@ -32,7 +33,7 @@ public class Play {
         
         S state = game.getInitialState(TwoPersonPlay.inputWhiteIsMax());
         System.out.println(state);
-        S advisedState;
+        S advisedState = null;
         List<S> advisedPath;
         
         // The game loop
@@ -40,17 +41,24 @@ public class Play {
 
             System.out.println("\n[ANALYSING...]");
             advisedPath = GameSolver.findBestPathForMax(state, minSearchTime);
-            if(!advisedPath.isEmpty()){
+            if(advisedPath.size() >= 2){
                 advisedState = advisedPath.get(1);
-                System.out.println("[ADVISED]" + advisedState);    
+            } else if(advisedPath.size() == 1){
+                advisedState = advisedPath.get(0);
             }
+            System.out.println("[ADVISED]" + advisedState);    
 
             // System.out.println(state.getBoard());
-
+            
             // Get the user's input and update the state.
             int[] moveNumber = game.scanMoveNumber(state);
-            state = game.makeMove(state, moveNumber);
-            System.out.println("\n[CURRENT]" + state);
+            if(moveNumber == null){
+                state = advisedState;
+                System.out.println("\n[CURRENT] == [ADVISED]" + state);
+            } else{
+                state = game.makeMove(state, moveNumber);
+                System.out.println("\n[CURRENT]" + state);
+            }
             System.out.println("Score: " + state.score());
 
 
@@ -88,7 +96,6 @@ public class Play {
     }
 
     private static int scanGameChoice(String[] gameStrings){
-        Scanner sc = new Scanner(System.in);
             
         int gameNumber = -1;
         boolean validInput = false;

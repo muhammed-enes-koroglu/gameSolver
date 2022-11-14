@@ -11,6 +11,11 @@ public interface TwoPersonPlay <C>{
     
     public C getInitialState(boolean maximizeForWhite);
 
+    /**
+     * 
+     * @param state
+     * @return null if input is empty.
+     */
     public int[] scanMoveNumber(C state);
 
     /** Scan, parse and validate whether the player wants to be player 1. */

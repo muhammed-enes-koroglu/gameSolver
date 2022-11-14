@@ -44,6 +44,10 @@ public class PlayTicTacToe implements TwoPersonPlay<TicTacToeState>{
             System.out.print("Now enter the column number: ");
             String line2 = sc.nextLine();
             
+            // Return null if input is empty.
+            if(line1.equals("")){
+                return null;
+            }
 
             // Parse the input.
             try{

@@ -31,8 +31,7 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
 
     @Override
     public boolean isGameOver(MangalaState state) {
-        // TODO Auto-generated method stub
-        return false;
+        return state.isGameOver();
     }
 
     @Override
@@ -62,6 +61,11 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
             // Ask for input.
             System.out.print("Enter trench number: ");
             String line = sc.nextLine();
+                        
+            // Return null if input is empty.
+            if(line.equals("")){
+                return null;
+            }
 
             // Parse the input.
             try{
