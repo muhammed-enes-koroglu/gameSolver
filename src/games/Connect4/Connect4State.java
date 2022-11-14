@@ -13,7 +13,7 @@ import util.Vector;
  * To play, go to the Play.runGame() 
  * with the parameter an instance of PlayConnect4.
  * Then run Play.java */
-public class Connect4 implements TwoPersonGameState<Connect4> {
+public class Connect4State implements TwoPersonGameState<Connect4State> {
 
     private final Board board;
     protected final boolean whitesTurn;
@@ -31,13 +31,13 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
     public static final int EMPTY = 0;
 
     @Override
-    public Set<Connect4> children() {
+    public Set<Connect4State> children() {
 
         if(isGameOver()) {
             return new HashSet<>();
         }
 
-        Set<Connect4> children = new HashSet<>();
+        Set<Connect4State> children = new HashSet<>();
         final int piece = this.whitesTurn ? WHITE : BLACK;
         boolean appendSuccesful;
 
@@ -46,7 +46,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
             Board chilBoard = board.copy();
             appendSuccesful = appendToColumn(chilBoard, col, piece);
             if(appendSuccesful){
-                children.add(new Connect4(chilBoard, !whitesTurn, maximizeForWhite));
+                children.add(new Connect4State(chilBoard, !whitesTurn, maximizeForWhite));
             }
         }
 
@@ -111,9 +111,9 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
     
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Connect4))
+        if(!(o instanceof Connect4State))
             return false;
-        Connect4 other = (Connect4) o;
+        Connect4State other = (Connect4State) o;
         if(this.whitesTurn != other.whitesTurn)
             return false;
         return this.board.equals(other.board);
@@ -195,7 +195,7 @@ public class Connect4 implements TwoPersonGameState<Connect4> {
         return board.copy();
     }
     
-    public Connect4(Board board, boolean whitesTurn, boolean maximizeForWhite){
+    public Connect4State(Board board, boolean whitesTurn, boolean maximizeForWhite){
         if(board.nbRows != BOARD_HEIGHT)
             throw new IllegalArgumentException("Board height must be " + BOARD_HEIGHT);
         if(board.nbCols != BOARD_WIDTH)
