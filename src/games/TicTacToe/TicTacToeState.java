@@ -68,7 +68,7 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
         if(!(o instanceof TicTacToeState))
             return false;
         TicTacToeState other = (TicTacToeState) o;
-        return other.board == this.board;
+        return other.board.equals(this.board);
     }
     
     @Override
