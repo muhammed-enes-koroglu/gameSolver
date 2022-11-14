@@ -3,7 +3,7 @@ package util;
 import java.util.Set;
 
 public interface TwoPersonGameState<S>{
-    public static final float MAX_SCORE = Integer.MAX_VALUE;
+    public static final float MAX_SCORE = Float.MAX_VALUE;
     public static final float MIN_SCORE = -MAX_SCORE;
 
     /** @return A set of all possible child states that follow from this one. */

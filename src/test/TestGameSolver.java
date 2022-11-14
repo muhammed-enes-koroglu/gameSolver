@@ -2,6 +2,7 @@ package test;
 
 import util.Board;
 import util.GameSolver;
+import util.TwoPersonGameState;
 
 import java.util.List;
 
@@ -58,7 +59,8 @@ public class TestGameSolver {
         board = new Board( new int[]{1,1,0, 1,0,-1, 0,-1,0});
         ticState = new TicTacToeState(board, false);
         solution = GameSolver.findBestPathForMax(ticState, 1);
-        assert solution.get(solution.size()-1).score() == 0;
+        System.out.println(solution.get(solution.size()-1).score());
+        assert solution.get(solution.size()-1).score() == TwoPersonGameState.MIN_SCORE;
         
 
         System.out.println("\nAll findBestPathForMax tests are Successful.");

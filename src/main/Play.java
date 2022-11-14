@@ -17,7 +17,7 @@ public class Play {
 
     public static void main(String[] args) {
 
-        final float minSearchTime = 0.01f;
+        final float minSearchTime = 0.1f;
         chooseNRunGame(minSearchTime);
 
     }

@@ -21,29 +21,25 @@ public abstract class GameSolver{
         long now;
         long timePassed = 0;
 
-        float bestScore = -Float.MAX_VALUE;
         ArrayList<S> bestPath = new ArrayList<>();
-        ArrayList<S> resultPath;
         
         // System.out.println("minSearchTime: " + minSearchTimeMilliSeconds);
         int depth;
 
-        // Iterative Deepening loop.
+        // Iterative Deepening loop. 
+        // Doesn't need to remember best of 
+        // the previous iteration, because
+        // the prediction of the current 
+        // generation is guaranteed to be
+        // better than the previous.  
         for(depth=1; timePassed < minSearchTimeMilliSeconds; depth++){
+        // for(depth=1; depth < 3; depth++){
+
             // System.out.print(depth + " ");
-            resultPath = miniMax(
+            bestPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
-            float resultScore = resultPath.get(resultPath.size()-1).score();
 
-            // This works only if the score gets 
-            // higher with each depth (for the same path),
-            // as required by `TwoPersonGameState`.
-            if(bestScore <= resultScore){
-                bestScore = resultScore;
-                bestPath = resultPath;
-            }
-
-            if(resultPath.get(resultPath.size()-1).children().isEmpty()){
+            if(bestPath.get(bestPath.size()-1).children().isEmpty()){
                 break;
             }
 
