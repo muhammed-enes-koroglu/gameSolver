@@ -5,25 +5,21 @@ import util.TwoPersonGameState;
 import util.TwoPersonPlay;
 
 import java.util.List;
+import java.util.Scanner;
 
 import games.Mangala.PlayMangala;
 import games.TicTacToe.PlayTicTacToe;
-import games.TicTacToe.TicTacToeState;
+import games.Connect4.PlayConnect4;
 
 public class Play {
-    
+    static final String[] gameStrings = new String[]{"TicTacToe", "Mangala", "Connect4"}; 
+
     public static void main(String[] args) {
 
         final float minSearchTime = 1f;
-
-        /* Change which TwoPersonPlay class is 
-        assigned to `game` below to choose 
-        which game to play. */
-        TwoPersonPlay<TicTacToeState> game = new PlayTicTacToe();
-        runGame(game, minSearchTime);
+        chooseNRunGame(minSearchTime);
 
     }
-
 
     /**
      * Runs a game G that uses states S.
@@ -66,4 +62,61 @@ public class Play {
         System.out.println("[WINNER] " + game.getWinnersName(state) + " player wins!");
 
     }
+
+    private static void chooseNRunGame(float minSearchTime){
+
+        // Show the games.
+        System.out.println("Choose a game:");
+        for(int i=1; i<=gameStrings.length; i++)
+            System.out.println(i + ". " + gameStrings[i-1]);
+
+        // Scan the choice and run the appropriate game.
+        int gameNumber = scanGameChoice(gameStrings);
+        switch(gameNumber){
+            case 1:
+                runGame(new PlayTicTacToe(), minSearchTime);
+                break;
+            case 2:
+                runGame(new PlayMangala(), minSearchTime);
+                break;
+            case 3:
+                runGame(new PlayConnect4(), minSearchTime);
+                break;
+            default:
+                System.out.println("Error in scanning the game choice.");
+        }
+    }
+
+    private static int scanGameChoice(String[] gameStrings){
+        Scanner sc = new Scanner(System.in);
+            
+        int gameNumber = -1;
+        boolean validInput = false;
+        
+        // Loop until valid input.
+        while(!validInput){
+            validInput = true;
+
+            // Ask for input.
+            System.out.print("Enter the number for your game of choice: ");
+            String line = sc.nextLine();
+
+            // Parse the input.
+            try{
+                gameNumber = Integer.parseInt(line);
+
+                // gameNumber should be in [1, BOARD_SIZE-1]
+                if(gameNumber <= 0 || gameNumber > gameStrings.length){
+                    System.out.println("[ERROR] Game number must be in [1, " + (gameStrings.length)+ "]");
+                    validInput = false;
+                }
+
+            } catch(NumberFormatException e){
+                System.out.println("[ERROR] Input must be an integer");
+                validInput = false;
+            }
+        }
+        return gameNumber;
+    }
+
 }
