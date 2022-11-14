@@ -7,25 +7,25 @@ import util.TwoPersonGameState;
 import java.util.Scanner;
 
 
-public class PlayConnect4 implements TwoPersonPlay<Connect4> {
+public class PlayConnect4 implements TwoPersonPlay<Connect4State> {
 
-    public static final int BOARD_WIDTH = Connect4.BOARD_WIDTH;
-    public static final int BOARD_HEIGHT = Connect4.BOARD_HEIGHT;
+    public static final int BOARD_WIDTH = Connect4State.BOARD_WIDTH;
+    public static final int BOARD_HEIGHT = Connect4State.BOARD_HEIGHT;
 
-    public static final int WHITE = Connect4.WHITE;
-    public static final int BLACK = Connect4.BLACK;
-    public static final int EMPTY = Connect4.EMPTY;
+    public static final int WHITE = Connect4State.WHITE;
+    public static final int BLACK = Connect4State.BLACK;
+    public static final int EMPTY = Connect4State.EMPTY;
 
     private static final Scanner sc = new Scanner(System.in);
 
     @Override
-    public boolean isGameOver(Connect4 state) {
+    public boolean isGameOver(Connect4State state) {
         return Math.abs(state.score()) == TwoPersonGameState.MAX_SCORE;
     }
 
     @Override
-    public Connect4 getInitialState(boolean maximizeForWhite){
-        return new Connect4(getInitialBoard(), true, maximizeForWhite);
+    public Connect4State getInitialState(boolean maximizeForWhite){
+        return new Connect4State(getInitialBoard(), true, maximizeForWhite);
     }
 
     private static Board getInitialBoard(){
@@ -34,19 +34,19 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4> {
     }
 
     @Override
-    public Connect4 makeMove(Connect4 state, int[] action) {
+    public Connect4State makeMove(Connect4State state, int[] action) {
         
         final int piece = state.whitesTurn ? WHITE : BLACK;
 
         Board board = state.getBoard();
-        Connect4.appendToColumn(board, action[0], piece);
+        Connect4State.appendToColumn(board, action[0], piece);
 
-        return new Connect4(board, !state.whitesTurn, state.maximizeForWhite);
+        return new Connect4State(board, !state.whitesTurn, state.maximizeForWhite);
         
     }
 
     @Override
-    public int[] scanMoveNumber(Connect4 state) {
+    public int[] scanMoveNumber(Connect4State state) {
         
         int colNumber = -1;
         boolean validInput = false;
@@ -80,7 +80,7 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4> {
     }
 
     @Override
-    public String getWinnersName(Connect4 state) {
+    public String getWinnersName(Connect4State state) {
 
         if(state.score() == TwoPersonGameState.MAX_SCORE){ // Max player has won.
             return state.maximizeForWhite ? "Player 1" : "Player 2";

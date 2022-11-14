@@ -6,12 +6,12 @@ import util.TwoPersonGameState;
 
 import java.util.Set;
 
-import games.Connect4.Connect4;
+import games.Connect4.Connect4State;
 
 public class TestConnect4 {
 
-    public static final int BOARD_WIDTH = Connect4.BOARD_WIDTH;
-    public static final int BOARD_HEIGHT = Connect4.BOARD_HEIGHT;
+    public static final int BOARD_WIDTH = Connect4State.BOARD_WIDTH;
+    public static final int BOARD_HEIGHT = Connect4State.BOARD_HEIGHT;
     public static final float MAX_SCORE = TwoPersonGameState.MAX_SCORE;
     public static final float MIN_SCORE = TwoPersonGameState.MIN_SCORE;
 
@@ -37,8 +37,8 @@ public class TestConnect4 {
         board2.set(0, 0, 1);
         Helper.assrt(board1.equals(board2));
         
-        Connect4 game1 = new Connect4(board1, true, true);
-        Connect4 game2 = new Connect4(board2, true, true);
+        Connect4State game1 = new Connect4State(board1, true, true);
+        Connect4State game2 = new Connect4State(board2, true, true);
         Helper.assrt(game1.equals(game2));
 
         System.out.println("Equals: OK");
@@ -49,23 +49,23 @@ public class TestConnect4 {
         board1.set(0, 0, 1);
         board1.set(0, 1, 1);
 
-        Connect4 state1 = new Connect4(board1, true, true);
+        Connect4State state1 = new Connect4State(board1, true, true);
 
         Board board2 = board1.copy();
         board2.set(0, 2, 1);
-        Connect4 state2 = new Connect4(board2, true, true);
+        Connect4State state2 = new Connect4State(board2, true, true);
         Helper.assrt(state2.score() > state1.score());
 
         Board board3 = board2.copy();
         board3.set(0, 3, 1);
-        Connect4 state3 = new Connect4(board3, true, true);
+        Connect4State state3 = new Connect4State(board3, true, true);
         Helper.assrt(state3.score() > state2.score());
 
 
 
         int[][] array = {{1, -1, 0, -1, 0, -1, 0}, {1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}};
         board1 = new Board(array);
-        state1 = new Connect4(board1, false, false);
+        state1 = new Connect4State(board1, false, false);
         Helper.assrt(state1.score() == -MAX_SCORE);
 
         // System.out.println(state1.score());
@@ -82,8 +82,8 @@ public class TestConnect4 {
         Board board = getInitialBoard();
         board.set(0, 0, 1);
 
-        Connect4 connect4;
-        Set<Connect4> children;
+        Connect4State connect4;
+        Set<Connect4State> children;
 
         // Board with white wins.
         board = getInitialBoard();
@@ -92,7 +92,7 @@ public class TestConnect4 {
         board.set(0, 2, 1);
         board.set(0, 3, 1);
 
-        connect4 = new Connect4(board, true, true);
+        connect4 = new Connect4State(board, true, true);
         children = connect4.children();
         Helper.assrt(children.isEmpty());
 
@@ -103,7 +103,7 @@ public class TestConnect4 {
         board.set(0, 2, -1);
         board.set(0, 3, -1);
 
-        connect4 = new Connect4(board, true, true);
+        connect4 = new Connect4State(board, true, true);
         children = connect4.children();
         Helper.assrt(children.isEmpty());
 
@@ -118,7 +118,7 @@ public class TestConnect4 {
 
     private static void testPrivateMethods(){
         
-        Connect4.testPrivateMethods();
+        Connect4State.testPrivateMethods();
 
     }
 
