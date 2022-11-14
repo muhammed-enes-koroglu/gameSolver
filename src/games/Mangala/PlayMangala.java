@@ -60,7 +60,7 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
             validInput = true;
 
             // Ask for input.
-            System.out.print("Enter column number: ");
+            System.out.print("Enter trench number: ");
             String line = sc.nextLine();
 
             // Parse the input.
@@ -68,12 +68,12 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
                 trenchNumber = Integer.parseInt(line) - 1;
                 // colNumber should be in [1, BOARD_SIZE-1]
                 if(trenchNumber < 0 || trenchNumber > MangalaState.BOARD_SIZE-2){
-                    System.out.println("[ERROR] Column number must be in [1, " + (MangalaState.BOARD_SIZE -1)+ "]");
+                    System.out.println("[ERROR] Trench number must be in [1, " + (MangalaState.BOARD_SIZE -1)+ "]");
                     validInput = false;
                 }
                 // Trench to be played should not be empty.
                 else if(state.getBoard().get(0, trenchNumber) == 0){
-                    System.out.println("[ERROR] Column may not be empty");
+                    System.out.println("[ERROR] Trench may not be empty");
                     validInput = false;
                 }
             } catch(NumberFormatException e){
