@@ -13,7 +13,12 @@ public interface TwoPersonGameState<S>{
      * The higher the number, the closer maxPlayer in this state is to winning. 
      * Returns Integer.MAX_VALUE if the maxPlayer has won.
      * Returns -Integer.MAX_VALUE if the minPlayer has won.
-     * !! NOT Integer.MIN_VALUE !! */
+     * !! NOT Integer.MIN_VALUE !! 
+     * 
+     * The score should get progressively better
+     * (or stay the same) for each
+     * progressive move towards a win.
+     * */
     public float score();
 
     /** @return Whether it is the turn of the player for whom we try to maximize. */

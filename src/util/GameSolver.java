@@ -35,7 +35,10 @@ public abstract class GameSolver{
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
             float resultScore = resultPath.get(resultPath.size()-1).score();
 
-            if(bestScore < resultScore){
+            // This works only if the score gets 
+            // higher with each depth (for the same path),
+            // as required by `TwoPersonGameState`.
+            if(bestScore <= resultScore){
                 bestScore = resultScore;
                 bestPath = resultPath;
             }
