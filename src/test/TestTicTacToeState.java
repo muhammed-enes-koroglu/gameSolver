@@ -15,19 +15,19 @@ public class TestTicTacToeState {
     }
     
     public static void testTicTacToeState(){
-        System.out.println("\n Testing TicTacToe..");
+        System.out.println("[TESTING] TicTacToe");
 
         testChildren();
         testXWonXLost();
         testHashCode();
         testScore();
 
-        System.out.println("\nAll TicTacToe tests are Successful.");
+        System.out.println("[TESTING] TicTacToe - DONE\n");
 
     }
 
     private static void testChildren(){
-        System.out.println("testChildren..");
+
         Board board = new Board( new int[]{0,0,0, 0,0,0, 0,0,0});
         TicTacToeState game = new TicTacToeState(board, true); // so it's max's turn.
         Set<TicTacToeState> children = game.children();
@@ -45,11 +45,10 @@ public class TestTicTacToeState {
         assert children.stream().allMatch(g -> Helper.countElement(g.getBoard().getMatrix()[0], -1) == 0);
         assert children.stream().allMatch(g -> Helper.countElement(g.getBoard().getMatrix()[0], 0) == 8);
                 
-        System.out.println("testChildren successful");
+        System.out.println("    Children: OK");
     }
 
     private static void testXWonXLost(){
-        System.out.println("testXWon..");
 
         // X wins.
         int[] board = new int[]{0,0,0, 0,0,0, 0,0,0};
@@ -94,11 +93,11 @@ public class TestTicTacToeState {
         boardMatrix = TicTacToeState.matrificise(board);
         assert !TicTacToeState.xWon(boardMatrix) && !TicTacToeState.xLost(boardMatrix);
 
-        System.out.println("testXWonXLost successful");
+        System.out.println("    XWonXLost: OK");
     }
 
     private static void testHashCode(){
-        System.out.println("testHashCode..");
+
         Board board = new Board( new int[]{0,0,0, 0,0,0, 0,0,0});
         TicTacToeState game = new TicTacToeState(board, true);
         
@@ -108,11 +107,10 @@ public class TestTicTacToeState {
             hashcodes.add(c.hashCode());
         });
 
-        System.out.println("testHashcode successful");
+        System.out.println("    Hashcode: OK");
     }
     
     private static void testScore(){
-        System.out.println("testScore..");
 
         // X is Max
         Board board = new Board( new int[]{1,0,1, -1,-1,0, 0,0,0});
@@ -133,7 +131,7 @@ public class TestTicTacToeState {
         assert ticState.children().stream().noneMatch(g -> g.score() == Float.MAX_VALUE);
         
                
-        System.out.println("testScore successful");
+        System.out.println("    Score: OK");
     }
 
 }

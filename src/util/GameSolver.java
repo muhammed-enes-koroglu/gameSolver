@@ -15,27 +15,24 @@ public abstract class GameSolver{
      * 
      * @param minSearchTime in seconds.
     */
-    public static <S extends TwoPersonGameState<S>> List<S> findBestPathForMax(S startState, float minSearchTime){
+    public static <S extends TwoPersonGameState<S>> List<S> iterDeepeningMiniMax(S startState, float minSearchTime){
         long minSearchTimeMilliSeconds = (long) (minSearchTime *  1000);
         long startTime = System.currentTimeMillis();
         long now;
         long timePassed = 0;
 
         ArrayList<S> bestPath = new ArrayList<>();
-        
-        // System.out.println("minSearchTime: " + minSearchTimeMilliSeconds);
         int depth;
 
-        // Iterative Deepening loop. 
-        // Doesn't need to remember best of 
-        // the previous iteration, because
-        // the prediction of the current 
-        // generation is guaranteed to be
-        // better than the previous.  
+        /** Iterative Deepening Loop. 
+         * 
+         * Doesn't need to remember best of 
+         * the previous iteration, because
+         * the prediction of the current 
+         * generation is guaranteed to be
+         * better than the previous. */
         for(depth=1; timePassed < minSearchTimeMilliSeconds; depth++){
-        // for(depth=1; depth < 3; depth++){
 
-            // System.out.print(depth + " ");
             bestPath = miniMax(
                 new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
 
@@ -45,7 +42,39 @@ public abstract class GameSolver{
 
             now = System.currentTimeMillis();
             timePassed = now - startTime;   
-            // System.out.println(timePassed/1000); 
+        }
+        
+        // Print searched depth.
+        System.out.println("Depth: " + depth);
+        return bestPath;
+    }
+
+    
+    /** Return a path with the best score for maxPlayer 
+     * after searching for a depth of `maxDepth`.
+     * 
+     * @param maxDepth The maximum depth to search.
+    */
+    public static <S extends TwoPersonGameState<S>> List<S> iterDeepeningMiniMax(S startState, int maxDepth){
+        ArrayList<S> bestPath = new ArrayList<>();
+        int depth;
+
+        /** Iterative Deepening Loop. 
+         * 
+         * Doesn't need to remember best of 
+         * the previous iteration, because
+         * the prediction of the current 
+         * generation is guaranteed to be
+         * better than the previous. */
+        for(depth=1; depth <= maxDepth; depth++){
+
+            bestPath = miniMax(
+                new ArrayList<S>(Arrays.asList(startState)), depth, -Float.MAX_VALUE, Float.MAX_VALUE);
+
+            if(bestPath.get(bestPath.size()-1).children().isEmpty()){
+                break;
+            }
+
         }
         
         // Print searched depth.

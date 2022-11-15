@@ -40,7 +40,7 @@ public class Play {
         while(!game.isGameOver(state)){
 
             System.out.println("\n[ANALYSING...]");
-            advisedPath = GameSolver.findBestPathForMax(state, minSearchTime);
+            advisedPath = GameSolver.iterDeepeningMiniMax(state, minSearchTime);
             if(advisedPath.size() >= 2){
                 advisedState = advisedPath.get(1);
             } else if(advisedPath.size() == 1){

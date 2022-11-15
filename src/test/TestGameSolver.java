@@ -14,29 +14,31 @@ public class TestGameSolver {
         throw new IllegalStateException("Utility class");
     }
     
-    public static void testFindBestPathForMax(){
-        System.out.println("\nTesting findBestPathForMax");
+    public static void testIterDeepeningMiniMax(){
+        System.out.println("[TESTING] iterDeepeningMiniMax");
+        float minSearchTime = 1f;
+
         Board board = new Board( new int[]{1,0,1, -1,-1,0, 0,0,0});
         TicTacToeState ticState = new TicTacToeState(board, true);
-        List<TicTacToeState> solution = GameSolver.findBestPathForMax(ticState, 1);
+        List<TicTacToeState> solution = GameSolver.iterDeepeningMiniMax(ticState, minSearchTime);
         assert solution.get(solution.size()-1).xWon();
 
         // Tricky
         board = new Board( new int[]{0,1,0, 1,0,-1, 0,-1,0});
         ticState = new TicTacToeState(board, true);
-        solution = GameSolver.findBestPathForMax(ticState, 1);
+        solution = GameSolver.iterDeepeningMiniMax(ticState, minSearchTime);
         assert solution.get(solution.size()-1).xWon();
 
         // Tricky
         board = new Board( new int[]{0,-1,0, -1,0,1, 0,1,0});
         ticState = new TicTacToeState(board, true);
-        solution = GameSolver.findBestPathForMax(ticState, 1);
+        solution = GameSolver.iterDeepeningMiniMax(ticState, minSearchTime);
         assert solution.get(solution.size()-1).xWon();
 
         // Preventing O from winning.
         board = new Board( new int[]{-1,-1,0, 1,0,0, 1,0,0});
         ticState = new TicTacToeState(board, true);
-        solution = GameSolver.findBestPathForMax(ticState, 2);
+        solution = GameSolver.iterDeepeningMiniMax(ticState, minSearchTime);
         board = new Board( new int[]{-1,-1,1, 1,0,0, 1,0,0});
         ticState = new TicTacToeState(board, true);
         assert solution.get(1).equals(ticState);
@@ -44,7 +46,7 @@ public class TestGameSolver {
         // Preventing O from winning.
         board = new Board( new int[]{-1,1,1, 0,-1,0, 0,0,0});
         ticState = new TicTacToeState(board, true);
-        solution = GameSolver.findBestPathForMax(ticState, 10);
+        solution = GameSolver.iterDeepeningMiniMax(ticState, minSearchTime);
         board = new Board( new int[]{-1,1,1, 0,-1,0, 0,0,1});
         ticState = new TicTacToeState(board, true);
         assert solution.get(1).equals(ticState);
@@ -53,17 +55,16 @@ public class TestGameSolver {
         // Will produce a more meaningful result when score() is improved.
         board = new Board( new int[]{0,0,0, 0,0,0, 0,0,0});
         ticState = new TicTacToeState(board, true);
-        solution = GameSolver.findBestPathForMax(ticState, 3);
+        solution = GameSolver.iterDeepeningMiniMax(ticState, minSearchTime);
         assert solution.get(solution.size()-1).score() == 0;
 
         board = new Board( new int[]{1,1,0, 1,0,-1, 0,-1,0});
         ticState = new TicTacToeState(board, false);
-        solution = GameSolver.findBestPathForMax(ticState, 1);
-        System.out.println(solution.get(solution.size()-1).score());
+        solution = GameSolver.iterDeepeningMiniMax(ticState, minSearchTime);
         assert solution.get(solution.size()-1).score() == TwoPersonGameState.MIN_SCORE;
         
 
-        System.out.println("\nAll findBestPathForMax tests are Successful.");
+        System.out.println("[TESTING] iterDeepeningMiniMax - DONE\n");
     }
 
     

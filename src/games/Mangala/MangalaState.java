@@ -344,7 +344,6 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
     }
 
     private static void testPlayTrench(){
-        System.out.println("testPlayTrench..");
 
         Board board = new Board(new int[][]{ new int[]{0,5,0, 0,0,0, 0, 0,0,0, 0,0,0, 0}});
         int endedAt = spreadTrench(board, 1);
@@ -367,24 +366,8 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         assert Arrays.equals(board.getMatrix()[0], new int[]{1,1,0, 0,0,1, 1, 1,1,1, 1,1,1, 0});
         assert endedAt == 1;
                 
-        System.out.println("testPlayTrench successful");
+        System.out.println("    PlayTrench: OK");
     }
-
-    // public MangalaState makeMove(int trenchNumber) {
-    //     int colorOffset = getOffsetForColor(this.whitesTurn);
-    //     Board childBoard = this.board.copy();
-    //     int endedAt = spreadTrench(childBoard, trenchNumber);
-    //     boolean nextIsWhitesTurn = !this.whitesTurn;
-
-    //     if(endedAtTreasury(endedAt, colorOffset)){ // Ended at treasury
-    //         nextIsWhitesTurn = this.whitesTurn;
-    //         emptyBoardToFinisherIfGameOver(childBoard);
-    //     }
-    //     else 
-    //         adjustBoardAfterSpreading(endedAt, colorOffset, nextIsWhitesTurn, childBoard, new HashSet<MangalaState>());
-
-    //     return new MangalaState(childBoard, nextIsWhitesTurn, nextIsWhitesTurn);
-    // }
 
     public boolean isGameOver() {
         return isWhiteSideEmpty(this.board) || isBlackSideEmpty(this.board);

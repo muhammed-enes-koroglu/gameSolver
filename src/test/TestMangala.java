@@ -4,19 +4,19 @@ import games.Mangala.MangalaState;
 import util.Board;
 import util.Helper;
 
-public class TestMangalaState {
+public class TestMangala {
     
-    private TestMangalaState(){
+    private TestMangala(){
         throw new IllegalStateException("Utility class");
     }
 
     public static void testMangalaState(){
-        System.out.println("\nTesting MangalaState");
+        System.out.println("[TESTING] Mangala");
 
         MangalaState.testPrivateMethods();
         testChildren();
 
-        System.out.println("\nAll MangalaState tests are Successful.");
+        System.out.println("[TESTING] Mangala - DONE\n");
     }
     
     private static void testChildren(){
@@ -28,6 +28,7 @@ public class TestMangalaState {
             -Take enemy trench if ended at enemy trench and made it even.
             -Take enemy's all trenches if your side empty.
         */
+
         // One simple move
         MangalaState child2;
         Board board = new Board( new int[]{1,0,0, 0,0,0, 0, 1,0,0, 0,0,0, 0});
@@ -109,6 +110,8 @@ public class TestMangalaState {
         childBoard= new Board( new int[]{0,0,0, 0,0,0, 10, 0,0,0, 0,0,0, 13});
         child = new MangalaState(childBoard, whitesTurn, whiteIsMax);
         assert mState.children().contains(child);
+
+        System.out.println("    Children: OK");
     }
 
 }

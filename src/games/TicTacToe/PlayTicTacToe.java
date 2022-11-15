@@ -7,7 +7,7 @@ public class PlayTicTacToe implements TwoPersonPlay<TicTacToeState>{
 
     @Override
     public boolean isGameOver(TicTacToeState state) {
-        return state.xWon() || state.xLost();
+        return state.children().isEmpty();
     }
 
     @Override

@@ -437,7 +437,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
     /** Converts the length of the chain of same pieces to a score. */
     private static float streakToScore(int chainLength){
         if(chainLength == GOAL)
-            return Integer.MAX_VALUE;
+            return MAX_SCORE;
         return (float) Math.exp(chainLength);
     }
 
@@ -460,7 +460,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
      * 
      * @param a positive number.
      * @param b positive number.
-     * @return -MAX_SCORE+1 if overflow occurs and 
+     * @return MIN_SCORE+1 if overflow occurs and 
      * none of the operands is MAX_SCORE.
      */
     public static float subtractWithOverflow(float a, float b){
@@ -469,7 +469,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
     }
 
     public boolean isGameOver(){
-        return (this.calculatedScore == MAX_SCORE) || (this.calculatedScore == -MIN_SCORE);
+        return (this.calculatedScore == MAX_SCORE) || (this.calculatedScore == MIN_SCORE);
     }
 
     public static void testPrivateMethods(){
@@ -490,7 +490,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
         Helper.assrt(addWithOverflow(MAX_SCORE/2 + 1, MAX_SCORE/2 + 1) == MAX_SCORE - 1);
         Helper.assrt(addWithOverflow(MAX_SCORE - 1, MAX_SCORE - 1) == MAX_SCORE - 1);
 
-        System.out.println("AddWithOverflow: OK");
+        System.out.println("    AddWithOverflow: OK");
    
     }
 
@@ -502,7 +502,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
         Helper.assrt(subtractWithOverflow(MIN_SCORE + 1, 1) == MIN_SCORE + 1);
         Helper.assrt(subtractWithOverflow(MIN_SCORE + 1, 2) == MIN_SCORE + 1);
 
-        System.out.println("SubtractWithOverflow: OK");
+        System.out.println("    SubtractWithOverflow: OK");
    
     }
 

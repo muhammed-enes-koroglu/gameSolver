@@ -12,11 +12,13 @@ public class RunTests{
 
     public static void main(String[] args){
 
+        System.out.println("[TESTING]\n");
         TestTicTacToeState.testTicTacToeState();
-        TestGameSolver.testFindBestPathForMax();
-        TestMangalaState.testMangalaState();
+        TestGameSolver.testIterDeepeningMiniMax();
+        TestMangala.testMangalaState();
+        TestConnect4.testConnect4();
 
-        System.out.println("\nALL TESTS SUCCESSFULL!");
+        System.out.println("\nALL TESTS SUCCESSFULL!\n");
     }
 
 }
