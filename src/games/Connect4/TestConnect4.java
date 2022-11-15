@@ -1,7 +1,6 @@
 package games.connect4;
 
 import util.Board;
-import util.Helper;
 import util.TwoPersonGameState;
 
 import java.util.Set;

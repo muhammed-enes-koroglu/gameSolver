@@ -1,13 +1,6 @@
 package test;
 
-import util.Board;
-import util.GameSolver;
-
-import java.util.Arrays;
-import java.util.List;
-
 import games.connect4.TestConnect4;
-import games.mangala.MangalaState;
 import games.mangala.TestMangala;
 import games.tictactoe.TestTicTacToeState;
 

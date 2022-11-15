@@ -33,7 +33,7 @@ public class Play {
         
         S state = game.getInitialState(TwoPersonPlay.inputWhiteIsMax());
         System.out.println(state);
-        S advisedState = null;
+        S advisedState = state;
         List<S> advisedPath;
         
         // The game loop
@@ -47,12 +47,10 @@ public class Play {
                 advisedState = advisedPath.get(0);
             }
             System.out.println("[ADVISED]" + advisedState);    
-
-            // System.out.println(state.getBoard());
             
             // Get the user's input and update the state.
             int[] moveNumber = game.scanMoveNumber(state);
-            if(moveNumber == null){
+            if(moveNumber.length == 0){
                 state = advisedState;
                 System.out.println("\n[CURRENT] == [ADVISED]" + state);
             } else{
@@ -67,7 +65,7 @@ public class Play {
         // Print the final state.
         System.out.println("[GAME OVER]" + state);
         // Print the winner.
-        System.out.println("[WINNER] " + game.getWinnersName(state) + " player wins!");
+        System.out.println("[WINNER] " + game.getWinnersName(state) + " wins!");
 
     }
 

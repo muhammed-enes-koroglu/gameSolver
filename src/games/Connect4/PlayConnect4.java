@@ -4,6 +4,7 @@ import util.TwoPersonPlay;
 import util.Board;
 import util.TwoPersonGameState;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 
@@ -20,7 +21,9 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4State> {
 
     @Override
     public boolean isGameOver(Connect4State state) {
-        return Math.abs(state.score()) == TwoPersonGameState.MAX_SCORE;
+        return (Math.abs(state.score()) == TwoPersonGameState.MAX_SCORE) ||
+                Arrays.stream(state.getBoard().getMatrix()).allMatch(row -> 
+                Arrays.stream(row).allMatch(cell -> cell != EMPTY));
     }
 
     @Override
@@ -59,7 +62,7 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4State> {
      
             // Return null if input is empty.
             if(line.equals("")){
-                return null;
+                return new int[0];
             }
 
             // Parse the input.
@@ -89,8 +92,10 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4State> {
 
         if(state.score() == TwoPersonGameState.MAX_SCORE){ // Max player has won.
             return state.maximizeForWhite ? "Player 1" : "Player 2";
-        } else { // Min player has won.
+        } else if(state.score()== TwoPersonGameState.MIN_SCORE) { // Min player has won.
             return state.maximizeForWhite ? "Player 2" : "Player 1";
+        } else { // Game is a draw.
+            return "No One";
         }
 
     }

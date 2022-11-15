@@ -46,7 +46,7 @@ public class PlayTicTacToe implements TwoPersonPlay<TicTacToeState>{
             
             // Return null if input is empty.
             if(line1.equals("")){
-                return null;
+                return new int[0];
             }
 
             // Parse the input.
@@ -82,7 +82,13 @@ public class PlayTicTacToe implements TwoPersonPlay<TicTacToeState>{
 
     @Override
     public String getWinnersName(TicTacToeState state) {
-        return state.xWon() ? "X" : "O";
+        String winner = "No one";
+        if(state.xWon()){
+            winner = "Player X";
+        } else if(state.xLost()){
+            winner = "Player O";
+        }
+        return winner;
     }
     
 }

@@ -22,10 +22,12 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
 
         // Player with more stones wins.
         if(scoreWhite > scoreBlack){
-            return "First";
+            return "First Player";
         }
-        else{
-            return "Second";
+        else if(scoreBlack > scoreWhite){
+            return "Second Player";
+        } else{
+            return "No One";
         }
     }
 
@@ -64,7 +66,7 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
                         
             // Return null if input is empty.
             if(line.equals("")){
-                return null;
+                return new int[0];
             }
 
             // Parse the input.
