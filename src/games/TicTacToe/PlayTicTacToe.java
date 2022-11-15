@@ -1,4 +1,4 @@
-package games.TicTacToe;
+package games.tictactoe;
 
 import util.Board;
 import util.TwoPersonPlay;

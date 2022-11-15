@@ -13,6 +13,3 @@ The estimate is always less than or equal to the estimated distance from any nei
 # 4. Write `TurkishDraughts`
 
 # 5. Play- class for `TurkishDraughts`
-
-# 6. Restructure Test files' location?
-Move the test files of the game states to the folder of the respective game?

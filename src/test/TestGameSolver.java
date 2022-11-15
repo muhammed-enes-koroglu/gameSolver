@@ -6,7 +6,7 @@ import util.TwoPersonGameState;
 
 import java.util.List;
 
-import games.TicTacToe.TicTacToeState;
+import games.tictactoe.TicTacToeState;
 
 public class TestGameSolver {
 

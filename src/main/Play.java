@@ -7,9 +7,9 @@ import util.TwoPersonPlay;
 import java.util.List;
 import java.util.Scanner;
 
-import games.Mangala.PlayMangala;
-import games.TicTacToe.PlayTicTacToe;
-import games.Connect4.PlayConnect4;
+import games.tictactoe.PlayTicTacToe;
+import games.connect4.PlayConnect4;
+import games.mangala.PlayMangala;
 
 public class Play {
     static final String[] gameStrings = new String[]{"TicTacToe", "Mangala", "Connect4"}; 

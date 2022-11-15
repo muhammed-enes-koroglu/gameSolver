@@ -1,4 +1,4 @@
-package games;
+package games.turkish_draughts;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,12 +1,10 @@
-package test;
+package games.tictactoe;
 
 import util.Board;
 import util.Helper;
 
 import java.util.ArrayList;
 import java.util.Set;
-
-import games.TicTacToe.TicTacToeState;
 
 public class TestTicTacToeState {
 

@@ -1,4 +1,4 @@
-package games.Mangala;
+package games.mangala;
 
 import java.util.Arrays;
 import java.util.HashSet;

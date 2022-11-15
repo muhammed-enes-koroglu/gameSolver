@@ -1,4 +1,4 @@
-package games.Connect4;
+package games.connect4;
 
 import util.TwoPersonPlay;
 import util.Board;

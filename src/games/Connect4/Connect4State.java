@@ -1,4 +1,4 @@
-package games.Connect4;
+package games.connect4;
 
 import java.util.HashSet;
 import java.util.Set;

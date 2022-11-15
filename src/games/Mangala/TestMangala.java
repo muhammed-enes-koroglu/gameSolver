@@ -1,6 +1,5 @@
-package test;
+package games.mangala;
 
-import games.Mangala.MangalaState;
 import util.Board;
 import util.Helper;
 

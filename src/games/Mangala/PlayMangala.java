@@ -1,4 +1,4 @@
-package games.Mangala;
+package games.mangala;
 
 import util.Board;
 import util.TwoPersonPlay;

@@ -1,6 +1,5 @@
-package test;
+package games.turkish_draughts;
 
-import games.TurkishDraughts;
 import util.Helper;
 import util.Board;
 
@@ -19,13 +18,13 @@ public abstract class TestTurkishDraughts {
     private static final int INITITAL_NB_BLACK_PIECES = 16;
 
     public static void main(String[] args) {
-        System.out.println("\nTesting TurkishDraughts\n");
+        System.out.println("[TESTING] TurkishDraughts");
 
         testInitialization();
         // TurkishDraughts.testPrivateMethods();
         testChildren();
         
-        System.out.println("\nAll TurkishDraughts tests are Successful.");
+        System.out.println("[TESTING] TurkishDraughts - DONE");
     }
 
     private static void testInitialization(){
@@ -250,7 +249,7 @@ public abstract class TestTurkishDraughts {
         int[][] childBrd;
 
         TurkishDraughts checkers = new TurkishDraughts(new Board(board), whitesTurn, maximizeForWhite, INITITAL_NB_WHITE_PIECES, INITITAL_NB_BLACK_PIECES, false);
-        System.out.println(checkers);
+        // System.out.println(checkers);
 
         //children of king at (1,0) going up.
         childBoard = Helper.deepCopy(board);
@@ -354,7 +353,7 @@ public abstract class TestTurkishDraughts {
 
         System.out.println("###########\n###########");
         System.out.println("Expected Children: " + expectedChildren.size());
-        System.out.println(expectedChildren);
+        // System.out.println(expectedChildren);
         System.out.println("###########\n###########");
 
         Set<TurkishDraughts> children = checkers.children();
@@ -408,13 +407,13 @@ public abstract class TestTurkishDraughts {
         }
 
         checkers = new TurkishDraughts(new Board(boardMatrix), whitesTurn, maximizeForWhite, INITITAL_NB_WHITE_PIECES, INITITAL_NB_BLACK_PIECES, false);
-        System.out.println(checkers);
+        // System.out.println(checkers);
         System.out.println("###########\n###########");
         System.out.println("Expected Children: " + expectedChildren.size());
-        System.out.println(expectedChildren);
+        // System.out.println(expectedChildren);
         System.out.println("###########\n###########");
         System.out.println("\nCalculated Children: " + checkers.children().size());
-        System.out.println(checkers.children());
+        // System.out.println(checkers.children());
 
         assert checkers.children().equals(expectedChildren);       
 

@@ -1,4 +1,4 @@
-package games.TicTacToe;
+package games.tictactoe;
 
 import java.util.Arrays;
 import java.util.HashSet;
