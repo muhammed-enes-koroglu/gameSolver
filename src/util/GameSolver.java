@@ -44,8 +44,6 @@ public abstract class GameSolver{
             timePassed = now - startTime;   
         }
         
-        // Print searched depth.
-        System.out.println("Depth: " + depth);
         return bestPath;
     }
 
@@ -77,8 +75,6 @@ public abstract class GameSolver{
 
         }
         
-        // Print searched depth.
-        System.out.println("Depth: " + depth);
         return bestPath;
     }
 
