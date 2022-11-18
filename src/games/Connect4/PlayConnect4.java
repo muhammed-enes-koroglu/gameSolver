@@ -91,11 +91,11 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4State> {
     public String getWinnersName(Connect4State state) {
 
         if(state.score() == TwoPersonGameState.MAX_SCORE){ // Max player has won.
-            return state.maximizeForWhite ? "Player 1" : "Player 2";
+            return state.maximizeForWhite ? "X" : "O";
         } else if(state.score()== TwoPersonGameState.MIN_SCORE) { // Min player has won.
-            return state.maximizeForWhite ? "Player 2" : "Player 1";
+            return state.maximizeForWhite ? "O" : "X";
         } else { // Game is a draw.
-            return "No One";
+            return "No one";
         }
 
     }
