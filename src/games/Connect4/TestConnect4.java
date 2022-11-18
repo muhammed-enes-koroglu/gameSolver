@@ -2,7 +2,9 @@ package games.connect4;
 
 import util.Board;
 import util.TwoPersonGameState;
+import util.GameSolver;
 
+import java.util.List;
 import java.util.Set;
 
 public class TestConnect4 {
@@ -68,6 +70,29 @@ public class TestConnect4 {
         board1 = new Board(array);
         state1 = new Connect4State(board1, false, false);
         assert state1.score() == MIN_SCORE;
+
+
+        // Test the score of a board with a losing diagonal.
+        array = new int[][]{{1, 1, 1, -1, 0, 0, 0}, {-1, 1, -1, -1, 0, 0, 0}, {1, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}};
+        board1 = new Board(array);
+        state1 = new Connect4State(board1, true, true);
+        assert state1.score() == MIN_SCORE;
+
+        // Same board, change the maxPlayer.
+        state1 = new Connect4State(board1, true, false);
+        assert state1.score() == MAX_SCORE;
+
+        // Test that the advised state is 
+        // the one state that prevents the certain lose.
+        board1 = new Board(new int[][]{{1, 1, 1, -1, 0, 0, 0}, {-1, 1, 0, -1, 0, 0, 0}, {1, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}});
+        state1 = new Connect4State(board1, true, true);
+        List<Connect4State> bestPath = GameSolver.iterDeepeningMiniMax(state1, 0.1f);
+
+        board2 = new Board(new int[][]{{1, 1, 1, -1, 0, 0, 0}, {-1, 1, 1, -1, 0, 0, 0}, {1, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}});
+        Connect4State expectedState = new Connect4State(board2, false, true);
+        Connect4State advisedState = bestPath.get(1);
+
+        assert advisedState.equals(expectedState);
 
         System.out.println("    Score: OK");
     }
