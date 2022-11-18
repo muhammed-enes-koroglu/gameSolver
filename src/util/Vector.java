@@ -10,8 +10,8 @@ public class Vector {
     public static final Vector LEFT = new Vector(0, -1);
 
     public static final Vector UP_RIGHT = new Vector(1,1);
-    public static final Vector UP_LEFT = new Vector(-1,1);
-    public static final Vector DOWN_RIGHT = new Vector(1,-1);
+    public static final Vector UP_LEFT = new Vector(1,-1);
+    public static final Vector DOWN_RIGHT = new Vector(-1,1);
     public static final Vector DOWN_LEFT = new Vector(-1, -1);
 
 
