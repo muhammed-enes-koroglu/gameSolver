@@ -12,12 +12,27 @@ import games.connect4.PlayConnect4;
 import games.mangala.PlayMangala;
 
 public class Play {
+
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
+    public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
+    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+    public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+    public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
+    public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
+    public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+
+    public static final String BACKGROUND_ADVISED = ANSI_GREEN_BACKGROUND;
+    public static final String BACKGROUND_CURRENT = ANSI_CYAN_BACKGROUND;
+    
+
     static final String[] gameStrings = new String[]{"TicTacToe", "Mangala", "Connect4"}; 
     static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
 
-        final float minSearchTime = 0.1f;
+        final float minSearchTime = .1f;
         chooseNRunGame(minSearchTime);
 
     }
@@ -39,33 +54,38 @@ public class Play {
         // The game loop
         while(!game.isGameOver(state)){
 
-            System.out.println("\n[ANALYSING...]");
+            // System.out.println("\n[ANALYSING...]");
+
+            // Get the best move.
             advisedPath = GameSolver.iterDeepeningMiniMax(state, minSearchTime);
             if(advisedPath.size() >= 2){
                 advisedState = advisedPath.get(1);
             } else if(advisedPath.size() == 1){
                 advisedState = advisedPath.get(0);
             }
-            System.out.println("[ADVISED]" + advisedState);    
-            
+            System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState + ANSI_RESET);    
+            System.out.println("Depth: " + advisedPath.size());
+            System.out.println("Score: " + advisedPath.get(advisedPath.size()-1).score() + "\n");
+
             // Get the user's input and update the state.
             int[] moveNumber = game.scanMoveNumber(state);
+
+            // If the user's input is empty, 
+            // then the user wants to play as advised.
             if(moveNumber.length == 0){
                 state = advisedState;
-                System.out.println("\n[CURRENT] == [ADVISED]" + state);
             } else{
                 state = game.makeMove(state, moveNumber);
-                System.out.println("\n[CURRENT]" + state);
             }
-            System.out.println("Score: " + state.score());
+            System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state + ANSI_RESET);
 
 
         }
 
         // Print the final state.
-        System.out.println("[GAME OVER]" + state);
+        System.out.println("[GAME OVER]");
         // Print the winner.
-        System.out.println("[WINNER] " + game.getWinnersName(state) + " wins!");
+        System.out.println("[WINNER] " + game.getWinnersName(state) + " wins!\n");
 
     }
 
