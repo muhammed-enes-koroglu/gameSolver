@@ -438,6 +438,8 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
     private static float streakToScore(int chainLength){
         if(chainLength == GOAL)
             return MAX_SCORE;
+        if(chainLength == 0)
+            return 0;
         return (float) Math.exp(chainLength);
     }
 
