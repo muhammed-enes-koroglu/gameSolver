@@ -44,7 +44,7 @@ public class Play {
      * @param game an instance of G.
      * @param minSearchTime the minimum time to search for a move.
      */
-    public static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void runGame(G game, float minSearchTime){
+    public static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void runGame(G game, float minSearchTime, boolean showAdvised){
         
         S state = game.getInitialState(TwoPersonPlay.inputWhiteIsMax());
         System.out.println(state);
@@ -54,8 +54,6 @@ public class Play {
         // The game loop
         while(!game.isGameOver(state)){
 
-            // System.out.println("\n[ANALYSING...]");
-
             // Get the best move.
             advisedPath = GameSolver.iterDeepeningMiniMax(state, minSearchTime);
             if(advisedPath.size() >= 2){
@@ -63,22 +61,32 @@ public class Play {
             } else if(advisedPath.size() == 1){
                 advisedState = advisedPath.get(0);
             }
-            System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState + ANSI_RESET);    
-            System.out.println("Depth: " + advisedPath.size());
-            System.out.println("Score: " + advisedPath.get(advisedPath.size()-1).score() + "\n");
 
-            // Get the user's input and update the state.
-            int[] moveNumber = game.scanMoveNumber(state);
-
-            // If the user's input is empty, 
-            // then the user wants to play as advised.
-            if(moveNumber.length == 0){
-                state = advisedState;
-            } else{
-                state = game.makeMove(state, moveNumber);
+            // Print the advised move.
+            if(showAdvised){
+                System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState + ANSI_RESET);    
+                System.out.println("Depth: " + advisedPath.size());
+                System.out.println("Score: " + advisedPath.get(advisedPath.size()-1).score() + "\n");
             }
-            System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state + ANSI_RESET);
 
+            // Get the next state.
+            if(state.isMaxPlayersTurn()){
+                // MaxPlayer == User ==> User's turn.
+                // Get the user's input and update the state.
+                int[] moveNumber = game.scanMoveNumber(state);
+
+                // If the user's input is empty, 
+                // then the user wants to play as advised.
+                if(moveNumber.length == 0){
+                    state = advisedState;
+                } else{
+                    state = game.makeMove(state, moveNumber);
+                }
+            } else {
+                // Get the computer's move and update the state.
+                state = advisedState;
+                System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state + ANSI_RESET);
+            }
 
         }
 
@@ -91,6 +99,9 @@ public class Play {
 
     private static void chooseNRunGame(float minSearchTime){
 
+        // Choose whether to show the advised move.
+        boolean showAdvised = scanShowAdvised();
+
         // Show the games.
         System.out.println("Choose a game:");
         for(int i=1; i<=gameStrings.length; i++)
@@ -100,13 +111,13 @@ public class Play {
         int gameNumber = scanGameChoice(gameStrings);
         switch(gameNumber){
             case 1:
-                runGame(new PlayTicTacToe(), minSearchTime);
+                runGame(new PlayTicTacToe(), minSearchTime, showAdvised);
                 break;
             case 2:
-                runGame(new PlayMangala(), minSearchTime);
+                runGame(new PlayMangala(), minSearchTime, showAdvised);
                 break;
             case 3:
-                runGame(new PlayConnect4(), minSearchTime);
+                runGame(new PlayConnect4(), minSearchTime, showAdvised);
                 break;
             default:
                 System.out.println("Error in scanning the game choice.");
@@ -144,4 +155,24 @@ public class Play {
         return gameNumber;
     }
 
+    /** Choose whether to show the advised move. */
+    private static boolean scanShowAdvised(){
+
+        boolean showAdvised = false;
+        System.out.println("Show advised move? (y/n)");
+        String input = sc.nextLine();
+        switch(input){
+            case "y":
+                showAdvised = true;
+                break;
+            case "n":
+                showAdvised = false;
+                break;
+            default:
+                System.out.println("Invalid input. Defaulting to 'n'.");
+                showAdvised = false;
+                break;
+        }
+        return showAdvised;
+    }
 }
