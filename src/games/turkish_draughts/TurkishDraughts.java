@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import util.Board;
+import util.ConsoleColors;
 import util.TwoPersonGameState;
 import util.Vector;
 
@@ -40,6 +41,9 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     private final int nbWhitePieces;
     private final int nbBlackPieces;
     private final boolean hasTakenLastTurn;
+
+    private static String backgroundW = ConsoleColors.WHITE_BACKGROUND;
+    private static String backgroundB = ConsoleColors.BLACK_BACKGROUND;
 
     @Override
     public Set<TurkishDraughts> children() {
@@ -298,19 +302,23 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         return hash;
     }
 
-    @Override
     public String toString(){
+        return this.toString(ConsoleColors.RESET);
+    }
+
+    @Override
+    public String toString(String background){
         StringBuilder str = new StringBuilder();
 
         // add board elements
         str.append(getHorizontalLine());
         for(int rowNb=BOARD_SIZE-1; rowNb>=0; rowNb--){
             int[] row = this.board.getRow(rowNb);
-            str.append(rowToString(row, rowNb));
+            str.append(rowToString(row, rowNb, background));
         }
         // add column numbers
         str.append(getHorizontalLine());
-        str.append(rowToString(new int[]{0,1,2,3,4,5,6,7}, -1));
+        str.append(rowToString(new int[]{0,1,2,3,4,5,6,7}, -1, background));
         
         return str.toString();
     }
@@ -325,11 +333,11 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     }
 
     /** Converts the given array of numbers to string. */
-    private String rowToString(int[] row, int rowNb){
+    private String rowToString(int[] row, int rowNb, String background){
         if(rowNb == -1)
             return lastRowToString(row) + "\n";
         else
-            return normalRowToString(row, rowNb) + "\n";    
+            return normalRowToString(row, rowNb, background) + "\n";    
     }
 
     /** Converts the row with rowNb == -1 to string. */
@@ -350,7 +358,7 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
     }
 
     /** Converts a normal row to string. */
-    private static String normalRowToString(int[] row, int rowNb){
+    private static String normalRowToString(int[] row, int rowNb, String background){
         StringBuilder result = new StringBuilder();
 
         result.append(rowNb + "| ");
@@ -358,7 +366,7 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
         // Add the pieces, seperated by " | ".
         for(int piece: row){
             // add row elements
-            result.append(pieceToString(piece) + " | ");
+            result.append(pieceToString(piece, background) + " | ");
         }
         return result.toString();
     }
@@ -368,17 +376,17 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
      * @param piece
      * @return String representation of the piece.
     */
-    private static String pieceToString(int piece){
+    private static String pieceToString(int piece, String background){
 
         switch(piece){
             case W_KING:
-                return "W";
+                return backgroundW + "W" + background;
             case W_MAN:
-                return "w";
+                return backgroundW + "w" + background;
             case B_KING:
-                return "B";
+                return backgroundB + "B" + background;
             case B_MAN:
-                return "b";
+                return backgroundB + "b" + background;
             case EMPTY_SQUARE:
                 return " ";
             default:

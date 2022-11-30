@@ -1,5 +1,6 @@
 package main;
 
+import util.ConsoleColors;
 import util.GameSolver;
 import util.TwoPersonGameState;
 import util.TwoPersonPlay;
@@ -13,20 +14,9 @@ import games.mangala.PlayMangala;
 
 public class Play {
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
-    public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
-    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
-    public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
-    public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
-    public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
-    public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
-    public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
-
-    public static final String BACKGROUND_ADVISED = ANSI_GREEN_BACKGROUND;
-    public static final String BACKGROUND_CURRENT = ANSI_CYAN_BACKGROUND;
+    public static final String BACKGROUND_ADVISED = ConsoleColors.GREEN_BACKGROUND;
+    public static final String BACKGROUND_CURRENT = ConsoleColors.CYAN_BACKGROUND;
     
-
     static final String[] gameStrings = new String[]{"TicTacToe", "Mangala", "Connect4"}; 
     static final Scanner sc = new Scanner(System.in);
 
@@ -46,6 +36,7 @@ public class Play {
      */
     public static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void runGame(G game, float minSearchTime, boolean showAdvised){
         
+        // Initialize the game.
         S state = game.getInitialState(TwoPersonPlay.inputWhiteIsMax());
         System.out.println(state);
         S advisedState = state;
@@ -64,14 +55,14 @@ public class Play {
 
             // Print the advised move.
             if(showAdvised){
-                System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState + ANSI_RESET);    
+                System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState.toString(BACKGROUND_ADVISED) + ConsoleColors.RESET);    
                 System.out.println("Depth: " + advisedPath.size());
                 System.out.println("Score: " + advisedPath.get(advisedPath.size()-1).score() + "\n");
             }
 
             // Get the next state.
-            if(state.isMaxPlayersTurn()){
-                // MaxPlayer == User ==> User's turn.
+            if(state.isMaxPlayersTurn()){ // MaxPlayer == User ==> User's turn.
+
                 // Get the user's input and update the state.
                 int[] moveNumber = game.scanMoveNumber(state);
 
@@ -85,16 +76,15 @@ public class Play {
             } else {
                 // Get the computer's move and update the state.
                 state = advisedState;
-                System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state + ANSI_RESET);
+                System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
             }
 
         }
 
-        // Print the final state.
-        System.out.println("[GAME OVER]");
         // Print the winner.
-        System.out.println("[WINNER] " + game.getWinnersName(state) + " wins!\n");
-
+        System.out.println("[GAME OVER]");
+            System.out.println("[WINNER] " + game.getWinnersName(state) + " wins!\n");
+        System.out.println(ConsoleColors.RESET);
     }
 
     private static void chooseNRunGame(float minSearchTime){

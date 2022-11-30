@@ -3,6 +3,7 @@ package games.connect4;
 import java.util.HashSet;
 import java.util.Set;
 
+import util.ConsoleColors;
 import util.Board;
 import util.Helper;
 import util.TwoPersonGameState;
@@ -29,6 +30,10 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
     public static final int WHITE = 1;
     public static final int BLACK = -1;
     public static final int EMPTY = 0;
+
+    private static final String BACKGROUND_X = ConsoleColors.BLACK_BACKGROUND;
+    private static final String BACKGROUND_O = ConsoleColors.WHITE_BACKGROUND;
+    
 
     @Override
     public Set<Connect4State> children() {
@@ -127,8 +132,12 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
         return hash;
     }
 
-    @Override
     public String toString(){
+        return toString(ConsoleColors.RESET);
+    }
+
+    @Override
+    public String toString(String backgroundColor){
         StringBuilder result = new StringBuilder();
         result.append("\n");
 
@@ -136,12 +145,12 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
         result.append(getHorizontalLine());
         for(int rowNb=BOARD_HEIGHT-1; rowNb>=0; rowNb--){
             int[] row = this.board.getRow(rowNb);
-            result.append(rowToString(row));
+            result.append(rowToString(row, backgroundColor));
             result.append("\n");
         }
         // add column numbers
         result.append(getHorizontalLine());
-        result.append("Turn: " + pieceToString(this.whitesTurn ? WHITE : BLACK));
+        result.append("Turn: " + pieceToString(this.whitesTurn ? WHITE : BLACK, backgroundColor));
         
         return result.toString();
     }
@@ -157,7 +166,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
     }
 
     /** Converts the given array of numbers to string. */
-    private String rowToString(int[] row){
+    private String rowToString(int[] row, String backgroundColor){
         StringBuilder result = new StringBuilder();
 
         result.append("| ");
@@ -165,7 +174,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
         // Add the pieces, seperated by " | ".
         for(int piece: row){
             // add piece
-            result.append(pieceToString(piece));
+            result.append(pieceToString(piece, backgroundColor));
             result.append(" | ");
         }
         return result.toString();
@@ -176,13 +185,13 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
      * @param piece
      * @return String representation of the piece.
     */
-    private static String pieceToString(int piece){
+    private static String pieceToString(int piece, String backgroundColor){
 
         switch(piece){
             case WHITE:
-                return "X";
+                return BACKGROUND_X + "X" + backgroundColor;
             case BLACK:
-                return "O";
+                return BACKGROUND_O + "O" + backgroundColor;
             case EMPTY:
                 return " ";
             default:

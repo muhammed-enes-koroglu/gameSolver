@@ -28,7 +28,7 @@ public interface TwoPersonGameState<S>{
     public boolean equals(Object o);
 
     /** @return A printable form of the game state. */
-    public String toString();
+    public String toString(String backgroundColor);
 
     /** @return The board that represents this game. */
     public Board getBoard();

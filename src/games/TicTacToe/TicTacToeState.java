@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import util.Board;
+import util.ConsoleColors;
 import util.TwoPersonGameState;
 
 public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
@@ -78,14 +79,18 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
         return hash;
     }
 
-    @Override
     public String toString(){
+        return this.toString(ConsoleColors.RESET);
+    }
+
+    @Override
+    public String toString(String background) {
         String str = "\n";
         for(int i=0; i<board.nbCols; i++){
             if(board.get(0, i) == 1)
-                str += "X ";
+                str += ConsoleColors.BLACK_BACKGROUND + "X" + background + " ";
             else if(board.get(0, i) == -1)
-                str += "O ";
+                str += ConsoleColors.WHITE_BACKGROUND + "O" + background + " ";
             else 
                 str += "_ ";
             if(i%3 == 2)
