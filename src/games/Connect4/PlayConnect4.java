@@ -67,7 +67,7 @@ public class PlayConnect4 implements TwoPersonPlay<Connect4State> {
 
             // Parse the input.
             try{
-                colNumber = Integer.parseInt(line) - 1;
+                colNumber = Integer.parseInt(line);
             }catch(NumberFormatException e){
                 System.out.println("[ERROR] Input must be an integer");
                 validInput = false;

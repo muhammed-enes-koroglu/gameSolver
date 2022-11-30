@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import util.Board;
+import util.ConsoleColors;
 import util.TwoPersonGameState;
 
 
@@ -125,8 +126,12 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         return !(whiteIsMax ^ whitesTurn);
     }
 
-    @Override
     public String toString(){
+        return this.toString(ConsoleColors.RESET);
+    }
+
+    @Override
+    public String toString(String background){
         String str = "\n ";
         String turn = "   <<";
         for(int i= 2*BOARD_SIZE-2; i>BOARD_SIZE-1; i--)

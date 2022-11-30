@@ -6,6 +6,7 @@ import java.util.Set;
 import util.ConsoleColors;
 import util.Board;
 import util.Helper;
+import util.PrintBoardGame;
 import util.TwoPersonGameState;
 import util.Vector;
 
@@ -25,14 +26,12 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
     public static final int BOARD_HEIGHT = 6;
     public static final int GOAL = 4;
 
-    private static final int HORIZONTAL_LINE_LENGTH = 29;
-
     public static final int WHITE = 1;
     public static final int BLACK = -1;
     public static final int EMPTY = 0;
 
-    private static final String BACKGROUND_X = ConsoleColors.BLACK_BACKGROUND;
-    private static final String BACKGROUND_O = ConsoleColors.WHITE_BACKGROUND;
+    private static final String BACKGROUND_X = ConsoleColors.WHITE_BACKGROUND;
+    private static final String BACKGROUND_O = ConsoleColors.BLACK_BACKGROUND;
     
 
     @Override
@@ -138,65 +137,17 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
 
     @Override
     public String toString(String backgroundColor){
-        StringBuilder result = new StringBuilder();
-        result.append("\n");
-
-        // add board elements
-        result.append(getHorizontalLine());
-        for(int rowNb=BOARD_HEIGHT-1; rowNb>=0; rowNb--){
-            int[] row = this.board.getRow(rowNb);
-            result.append(rowToString(row, backgroundColor));
-            result.append("\n");
-        }
-        // add column numbers
-        result.append(getHorizontalLine());
-        result.append("Turn: " + pieceToString(this.whitesTurn ? WHITE : BLACK, backgroundColor));
+        String[] pieceRepresentations = new String[]{ 
+            "?", 
+            BACKGROUND_O + "O" + backgroundColor,
+            " ", 
+            BACKGROUND_X + "X" + backgroundColor,  
+            "?" };
         
-        return result.toString();
-    }
+        String turnMarker = this.whitesTurn ? BACKGROUND_X + "X" : BACKGROUND_O + "O";
+        turnMarker += backgroundColor;
+        return PrintBoardGame.toString(this.board, pieceRepresentations, turnMarker, backgroundColor);
 
-    /** Returns a horizontal line of about the same size as a normal row. */
-    private static String getHorizontalLine(){
-        StringBuilder result = new StringBuilder();
-        for(int i=0; i < HORIZONTAL_LINE_LENGTH; i++)
-            result.append("_");
-
-        result.append("\n");
-        return result.toString();
-    }
-
-    /** Converts the given array of numbers to string. */
-    private String rowToString(int[] row, String backgroundColor){
-        StringBuilder result = new StringBuilder();
-
-        result.append("| ");
-
-        // Add the pieces, seperated by " | ".
-        for(int piece: row){
-            // add piece
-            result.append(pieceToString(piece, backgroundColor));
-            result.append(" | ");
-        }
-        return result.toString();
-    }
-
-    /** Converts the piece number to its approppriate representation.
-     * 
-     * @param piece
-     * @return String representation of the piece.
-    */
-    private static String pieceToString(int piece, String backgroundColor){
-
-        switch(piece){
-            case WHITE:
-                return BACKGROUND_X + "X" + backgroundColor;
-            case BLACK:
-                return BACKGROUND_O + "O" + backgroundColor;
-            case EMPTY:
-                return " ";
-            default:
-                return "?";
-        }
     }
 
     // TODO: Change this to protected. And DELETE this method from TwoPersonGameState.

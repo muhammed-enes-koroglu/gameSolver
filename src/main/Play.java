@@ -38,7 +38,7 @@ public class Play {
         
         // Initialize the game.
         S state = game.getInitialState(TwoPersonPlay.inputWhiteIsMax());
-        System.out.println(state);
+        System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
         S advisedState = state;
         List<S> advisedPath;
         
