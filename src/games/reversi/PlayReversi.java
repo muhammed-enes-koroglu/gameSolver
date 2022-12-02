@@ -71,13 +71,13 @@ public class PlayReversi implements TwoPersonPlay<ReversiState>{
                 col = Integer.parseInt(lineOfCol);
 
                 // colNumber should be in [0, BOARD_SIZE-1]
-                if(col < 0 || col > ReversiState.BOARD_SIZE-1){
-                    System.out.println("[ERROR] Column number must be in [0, " + (ReversiState.BOARD_SIZE-1)+ "]");
+                if(row < 0 || row > ReversiState.BOARD_SIZE-1){
+                    System.out.println("[ERROR] Row number must be in [0, " + (ReversiState.BOARD_SIZE-1)+ "]");
                     validInput = false;
                 }
                 // colNumber should be in [0, BOARD_SIZE-1]
-                else if(row < 0 || row > ReversiState.BOARD_SIZE-1){
-                    System.out.println("[ERROR] Row number must be in [0, " + (ReversiState.BOARD_SIZE-1)+ "]");
+                else if(col < 0 || col > ReversiState.BOARD_SIZE-1){
+                    System.out.println("[ERROR] Column number must be in [0, " + (ReversiState.BOARD_SIZE-1)+ "]");
                     validInput = false;
                 }
                 // Square to be played should be empty.

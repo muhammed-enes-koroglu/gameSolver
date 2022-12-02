@@ -113,8 +113,8 @@ public class TestReversi {
         // Check if number of children is correct.
         ReversiState state = new ReversiState(board, true, true);
         Set<ReversiState> children = state.children();
-        System.out.println("ORIGINAL: \n" + state);
-        System.out.println("CHILDREN: \n" + children);
+        // System.out.println("ORIGINAL: \n" + state);
+        // System.out.println("CHILDREN: \n" + children);
         assert children.size() == 4;
 
         // Check if cointains the correct children 

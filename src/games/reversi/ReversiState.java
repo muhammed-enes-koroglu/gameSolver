@@ -1,5 +1,6 @@
 package games.reversi;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     public static final int WHITE = 1;
     public static final int BLACK = -1;
     public static final int EMPTY = 0;
+    private static final int MULTITHREADING_THRESHOLD = 16;
 
     @Override
     public Set<ReversiState> children() {
@@ -44,6 +46,18 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     }
 
     private Set<ReversiState> getChildren() {
+
+        Set<ReversiState> children;
+        if(nbWhitesOnBoard + nbBlacksOnBoard > MULTITHREADING_THRESHOLD){
+            children = getChildrenInParallel();
+        } else{
+            children = getChildrenInSerial();
+        }
+        return children;
+    }
+
+    private Set<ReversiState> getChildrenInSerial() {
+
         int playersPiece = whitesTurn ? WHITE : BLACK;
         HashSet<ReversiState> childrenSet = new HashSet<>();
         for(int row=0; row<BOARD_SIZE; row++){
@@ -63,6 +77,63 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         return childrenSet;
     }
 
+
+    private Set<ReversiState> getChildrenInParallel(){
+
+        int playersPiece = whitesTurn ? WHITE : BLACK;
+
+        // Initialize the sets of children.
+        ArrayList<HashSet<ReversiState>> childrenSets = new ArrayList<>();
+        for(int i = 0; i < BOARD_SIZE; i++){
+            childrenSets.add(new HashSet<>());
+        }
+
+        // For each piece on the board, get the children of the piece.
+        // Do this in parallel.
+        Thread[] threads = new Thread[BOARD_SIZE];
+        for(int row=0; row<BOARD_SIZE; row++){
+
+            // We need a final variable for the lambda expression.
+            final Integer rowFinal = row;
+            threads[row] = new Thread(
+                () -> getChildrenOfRow(rowFinal, childrenSets.get(rowFinal), playersPiece)
+            );
+            threads[row].start();
+        }
+
+        // Wait for all threads to finish.
+        // Combine all children sets into one.
+        HashSet<ReversiState> children = new HashSet<>();
+        for(int i = 0; i < BOARD_SIZE; i++){
+
+            // Wait for the thread to finish.
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            HashSet<ReversiState> childrenSet = childrenSets.get(i);
+            children.addAll(childrenSet);
+        }
+        return children;
+    }
+
+    private void getChildrenOfRow(int row, HashSet<ReversiState> childrenSet, int playersPiece) {
+        for(int col=0; col<BOARD_SIZE; col++){
+            if(board.get(row, col) == playersPiece){
+                addChildrenToTheRight(row, col, childrenSet);
+                addChildrenToTheLeft(row, col, childrenSet);
+                addChildrenToTheTop(row, col, childrenSet);
+                addChildrenToTheBottom(row, col, childrenSet);
+                addChildrenToTheTopRight(row, col, childrenSet);
+                addChildrenToTheTopLeft(row, col, childrenSet);
+                addChildrenToTheBottomRight(row, col, childrenSet);
+                addChildrenToTheBottomLeft(row, col, childrenSet);
+            }
+        }
+
+    }
 
     private void addChildrenToTheRight(int initialRow, int initialCol, HashSet<ReversiState> children) {
 
