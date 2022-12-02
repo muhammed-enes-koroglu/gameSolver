@@ -1,3 +1,8 @@
+# 0. Multithreading
+We have made an attempt at starting to implement multithreading to our project, however it has not gone very favorably. Creation of the threads takes too much time. This time propagates in the search algorithm and makes our algorithm run exponentially slower. 
+
+Solution --> Reuse existing threads? 
+
 # 1. Action Space
 Change the `GameSolver` algorithm so it asks not for the child states, but for the action space. Do this so the return type of the algorithm can be an action to achieve the desired state instead of the new state itself.
 
@@ -14,4 +19,4 @@ The estimate is always less than or equal to the estimated distance from any nei
 
 # 5. Play- class for `TurkishDraughts`
 
-# 6. Abalone, Reversi
+# 6. Abalone
