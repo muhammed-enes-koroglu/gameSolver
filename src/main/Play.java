@@ -42,9 +42,15 @@ public class Play {
         System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
         S advisedState = state;
         List<S> advisedPath;
-        
+
+        int turn = 0;
+        int totalDepth = 0;
+
+        final long startTime = System.currentTimeMillis();
+
         // The game loop
         while(!game.isGameOver(state)){
+            turn++;
 
             // Get the best move.
             advisedPath = GameSolver.iterDeepeningMiniMax(state, minSearchTime);
@@ -53,18 +59,20 @@ public class Play {
             } else if(advisedPath.size() == 1){
                 advisedState = advisedPath.get(0);
             }
+            System.out.println("Depth: " + advisedPath.size());
+            totalDepth += advisedPath.size();
 
             if(state.isMaxPlayersTurn()){ // MaxPlayer == User ==> User's turn.
 
                 // Print the advised move.
                 if(showAdvised){
                     System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState.toString(BACKGROUND_ADVISED) + ConsoleColors.RESET);    
-                    System.out.println("Depth: " + advisedPath.size());
                     System.out.println("Score: " + advisedPath.get(advisedPath.size()-1).score() + "\n");
                 }
-
+                
                 // Get the user's input and update the state.
-                int[] move = game.scanMoveNumber(state);
+                // int[] move = game.scanMoveNumber(state);
+                int[] move = new int[0];
 
                 // Get the next state.
                 // If the user's input is empty, 
@@ -74,8 +82,6 @@ public class Play {
                 } else{
                     state = game.makeMove(state, move);
                 }
-                System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
-
             } else {
                 // Get the computer's move and update the state.
                 state = advisedState;
@@ -86,8 +92,12 @@ public class Play {
 
         // Print the winner.
         System.out.println("[GAME OVER]");
-            System.out.println("[WINNER] " + game.getWinnersName(state) + " wins!\n");
+        System.out.println("[WINNER] " + game.getWinnersName(state) + " wins!\n");
         System.out.println(ConsoleColors.RESET);
+
+        System.out.println("Average depth: " + (float) (totalDepth) / turn);
+        final long endTime = System.currentTimeMillis();
+        System.out.println("Time: " + (endTime - startTime) / 1000f + "s");
     }
 
     private static void chooseNRunGame(float minSearchTime){
