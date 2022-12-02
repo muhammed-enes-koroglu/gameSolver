@@ -23,8 +23,8 @@ public class TestReversi {
         System.out.println("[TESTING] Reversi class");
 
         testEquals();
-        testScore();
         testChildren();
+        testScore();
         // testPrivateMethods();
         
         System.out.println("[TESTING] Reversi class - DONE\n");
@@ -113,8 +113,8 @@ public class TestReversi {
         // Check if number of children is correct.
         ReversiState state = new ReversiState(board, true, true);
         Set<ReversiState> children = state.children();
-        // System.out.println("ORIGINAL: \n" + state);
-        // System.out.println("CHILDREN: \n" + children);
+        System.out.println("ORIGINAL: \n" + state);
+        System.out.println("CHILDREN: \n" + children);
         assert children.size() == 4;
 
         // Check if cointains the correct children 
@@ -125,6 +125,7 @@ public class TestReversi {
         board.set(4, 4, WHITE);
         board.set(4, 5, WHITE);
         state = new ReversiState(board.copy(), false, true);
+
         assert children.contains(state);
 
         // Test child to the left.
@@ -185,10 +186,10 @@ public class TestReversi {
         // int sign = random == 0 ? 1 : -1;
         int sign = 1;
         // Set the initial board.
-        array[4][3] = sign * 1;
-        array[3][4] = sign * 1;
-        array[3][3] = sign * -1;
-        array[4][4] = sign * -1;
+        array[4][3] = sign * WHITE;
+        array[3][4] = sign * WHITE;
+        array[3][3] = sign * BLACK;
+        array[4][4] = sign * BLACK;
 
         return new Board(array);
     }

@@ -29,7 +29,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     @Override
     public Set<ReversiState> children() {
 
-        if(gameOver()) return new HashSet<>();
+        if(isGameOver()) return new HashSet<>();
 
         Set<ReversiState> children = getChildren();
 
@@ -71,28 +71,25 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         // If there is, add a child with a new piece of the same color in the empty space
         // And flip all the pieces in between
         
-        int row = initialRow;
-        int col = initialCol + 1;
+        Vector initialVector = new Vector(initialRow, initialCol);
+        Vector currentVector = initialVector.plus(Vector.RIGHT);
         boolean foundOppositeColor = false;
 
         // Check if there is a piece of the opposite color to the left.
-        while(col < BOARD_SIZE && board.get(row, col) == -board.get(initialRow, initialCol)){
-            col++;
+        while(!board.locationIsOutOfBounds(currentVector) && board.get(currentVector) == -board.get(initialRow, initialCol)){
+            currentVector = currentVector.plus(Vector.RIGHT);
             foundOppositeColor = true;
         }
         // If there is, then check if there is an empty space after that
-        if(col < BOARD_SIZE && board.get(row, col) == EMPTY && foundOppositeColor){
+        if(!board.locationIsOutOfBounds(currentVector) && board.get(currentVector) == EMPTY && foundOppositeColor){
             Board newBoard = board.copy();
 
             // Add a child with a new piece of the same color in the empty space
-            newBoard.set(row, col, board.get(initialRow, initialCol));
-            int nbAddedPieces = 0;
+            newBoard.set(currentVector, board.get(initialRow, initialCol));
+
             // And flip all the pieces in between
-            for(int c=initialCol+1; c<col; c++){
-                newBoard.set(row, c, board.get(initialRow, initialCol));
-                nbAddedPieces++;
-            }
-            addChild(children, newBoard, nbAddedPieces);
+            int nbFlippedPieces = flipPieces(newBoard, currentVector);
+            addChild(children, newBoard, nbFlippedPieces);
         }
 
     }
@@ -104,105 +101,92 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         // If there is, add a child with a new piece of the same color in the empty space
         // And flip all the pieces in between
         
-        int row = initialRow;
-        int col = initialCol - 1;
+        Vector initialVector = new Vector(initialRow, initialCol);
+        Vector currentVector = initialVector.plus(Vector.LEFT);
         boolean foundOppositeColor = false;
 
         // Check if there is a piece of the opposite color to the left.
-        while(col >= 0 && board.get(row, col) == -board.get(initialRow, initialCol)){
-            col--;
+        while(!board.locationIsOutOfBounds(currentVector) && board.get(currentVector) == -board.get(initialRow, initialCol)){
+            currentVector = currentVector.plus(Vector.LEFT);
             foundOppositeColor = true;
         }
         // If there is, then check if there is an empty space after that
-        if(col >= 0 && board.get(row, col) == EMPTY && foundOppositeColor){
+        if(!board.locationIsOutOfBounds(currentVector) && board.get(currentVector) == EMPTY && foundOppositeColor){
             Board newBoard = board.copy();
 
             // Add a child with a new piece of the same color in the empty space
-            newBoard.set(row, col, board.get(initialRow, initialCol));
-            int nbAddedPieces = 0;
+            newBoard.set(currentVector, board.get(initialRow, initialCol));
 
             // And flip all the pieces in between
-            for(int c=initialCol-1; c>col; c--){
-                newBoard.set(row, c, board.get(initialRow, initialCol));
-                nbAddedPieces++;
-            }
-            addChild(children, newBoard, nbAddedPieces);
-
+            int nbFlippedPieces = flipPieces(newBoard, currentVector);
+            addChild(children, newBoard, nbFlippedPieces);
         }
 
     }
 
     private void addChildrenToTheTop(int initialRow, int initialCol, HashSet<ReversiState> children) {
 
-        // Check if there is a piece of the opposite color to the left.
+        // Check if there is a piece of the opposite color to the top.
         // If there is, then check if there is an empty space after that
         // If there is, add a child with a new piece of the same color in the empty space
         // And flip all the pieces in between
         
-        int row = initialRow - 1;
-        int col = initialCol;
+        Vector initialVector = new Vector(initialRow, initialCol);
+        Vector currentVector = initialVector.plus(Vector.UP);
         boolean foundOppositeColor = false;
 
         // Check if there is a piece of the opposite color to the left.
-        while(row >= 0 && board.get(row, col) == -board.get(initialRow, initialCol)){
-            row--;
+        while(!board.locationIsOutOfBounds(currentVector) && board.get(currentVector) == -board.get(initialRow, initialCol)){
+            currentVector = currentVector.plus(Vector.UP);
             foundOppositeColor = true;
         }
         // If there is, then check if there is an empty space after that
-        if(row >= 0 && board.get(row, col) == EMPTY && foundOppositeColor){
+        if(!board.locationIsOutOfBounds(currentVector) && board.get(currentVector) == EMPTY && foundOppositeColor){
             Board newBoard = board.copy();
 
             // Add a child with a new piece of the same color in the empty space
-            newBoard.set(row, col, board.get(initialRow, initialCol));
-            int nbAddedPieces = 0;
+            newBoard.set(currentVector, board.get(initialRow, initialCol));
 
             // And flip all the pieces in between
-            for(int r=initialRow-1; r>row; r--){
-                newBoard.set(r, col, board.get(initialRow, initialCol));
-                nbAddedPieces++;
-            }
-            addChild(children, newBoard, nbAddedPieces);
+            int nbFlippedPieces = flipPieces(newBoard, currentVector);
+            addChild(children, newBoard, nbFlippedPieces);
         }
 
     }
 
     private void addChildrenToTheBottom(int initialRow, int initialCol, HashSet<ReversiState> children) {
 
-        // Check if there is a piece of the opposite color to the left.
+        // Check if there is a piece of the opposite color to the bottom.
         // If there is, then check if there is an empty space after that
         // If there is, add a child with a new piece of the same color in the empty space
         // And flip all the pieces in between
         
-        int row = initialRow + 1;
-        int col = initialCol;
+        Vector initialVector = new Vector(initialRow, initialCol);
+        Vector currentVector = initialVector.plus(Vector.DOWN);
         boolean foundOppositeColor = false;
 
         // Check if there is a piece of the opposite color to the left.
-        while(row < BOARD_SIZE && board.get(row, col) == -board.get(initialRow, initialCol)){
-            row++;
+        while(!board.locationIsOutOfBounds(currentVector) && board.get(currentVector) == -board.get(initialRow, initialCol)){
+            currentVector = currentVector.plus(Vector.DOWN);
             foundOppositeColor = true;
         }
         // If there is, then check if there is an empty space after that
-        if(row < BOARD_SIZE && board.get(row, col) == EMPTY && foundOppositeColor){
+        if(!board.locationIsOutOfBounds(currentVector) && board.get(currentVector) == EMPTY && foundOppositeColor){
             Board newBoard = board.copy();
 
             // Add a child with a new piece of the same color in the empty space
-            newBoard.set(row, col, board.get(initialRow, initialCol));
-            int nbAddedPieces = 0;
+            newBoard.set(currentVector, board.get(initialRow, initialCol));
 
             // And flip all the pieces in between
-            for(int r=initialRow+1; r<row; r++){
-                newBoard.set(r, col, board.get(initialRow, initialCol));
-                nbAddedPieces++;
-            }
-            addChild(children, newBoard, nbAddedPieces);
+            int nbFlippedPieces = flipPieces(newBoard, currentVector);
+            addChild(children, newBoard, nbFlippedPieces);
         }
 
     }
 
     private void addChildrenToTheTopRight(int initialRow, int initialCol, HashSet<ReversiState> children) {
 
-        // Check if there is a piece of the opposite color to the left.
+        // Check if there is a piece of the opposite color to the top right.
         // If there is, then check if there is an empty space after that
         // If there is, add a child with a new piece of the same color in the empty space
         // And flip all the pieces in between
@@ -221,23 +205,17 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // Add a child with a new piece of the same color in the empty space
             newBoard.set(currentVector, board.get(initialVector));
-            int nbAddedPieces = 0;
 
             // And flip all the pieces in between
-            for(Vector v=initialVector.plus(Vector.UP_RIGHT); 
-                    v.row<currentVector.row && v.col<currentVector.col; 
-                    v=v.plus(Vector.UP_RIGHT)){
-                newBoard.set(v, board.get(initialVector));
-                nbAddedPieces++;
-            }
-            addChild(children, newBoard, nbAddedPieces);
+            int nbFlippedPieces = flipPieces(newBoard, currentVector);
+            addChild(children, newBoard, nbFlippedPieces);
         }
 
     }
 
     private void addChildrenToTheTopLeft(int initialRow, int initialCol, HashSet<ReversiState> children) {
 
-        // Check if there is a piece of the opposite color to the left.
+        // Check if there is a piece of the opposite color to the top left.
         // If there is, then check if there is an empty space after that
         // If there is, add a child with a new piece of the same color in the empty space
         // And flip all the pieces in between
@@ -256,23 +234,17 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // Add a child with a new piece of the same color in the empty space
             newBoard.set(currentVector, board.get(initialVector));
-            int nbAddedPieces = 0;
 
             // And flip all the pieces in between
-            for(Vector v=initialVector.plus(Vector.UP_LEFT); 
-                    v.row<currentVector.row && v.col>currentVector.col; 
-                    v=v.plus(Vector.UP_LEFT)){
-                newBoard.set(v, board.get(initialVector));
-                nbAddedPieces++;
-            }
-            addChild(children, newBoard, nbAddedPieces);
+            int nbFlippedPieces = flipPieces(newBoard, currentVector);
+            addChild(children, newBoard, nbFlippedPieces);
         }
 
     }
 
     private void addChildrenToTheBottomRight(int initialRow, int initialCol, HashSet<ReversiState> children) {
 
-        // Check if there is a piece of the opposite color to the left.
+        // Check if there is a piece of the opposite color to the top right.
         // If there is, then check if there is an empty space after that
         // If there is, add a child with a new piece of the same color in the empty space
         // And flip all the pieces in between
@@ -291,23 +263,17 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // Add a child with a new piece of the same color in the empty space
             newBoard.set(currentVector, board.get(initialVector));
-            int nbAddedPieces = 0;
 
             // And flip all the pieces in between
-            for(Vector v=initialVector.plus(Vector.DOWN_RIGHT); 
-                    v.row>currentVector.row && v.col<currentVector.col; 
-                    v=v.plus(Vector.DOWN_RIGHT)){
-                newBoard.set(v, board.get(initialVector));
-                nbAddedPieces++;
-            }
-            addChild(children, newBoard, nbAddedPieces);
+            int nbFlippedPieces = flipPieces(newBoard, currentVector);
+            addChild(children, newBoard, nbFlippedPieces);
         }
 
     }
 
     private void addChildrenToTheBottomLeft(int initialRow, int initialCol, HashSet<ReversiState> children) {
 
-        // Check if there is a piece of the opposite color to the left.
+        // Check if there is a piece of the opposite color to the top left.
         // If there is, then check if there is an empty space after that
         // If there is, add a child with a new piece of the same color in the empty space
         // And flip all the pieces in between
@@ -326,22 +292,15 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // Add a child with a new piece of the same color in the empty space
             newBoard.set(currentVector, board.get(initialVector));
-            int nbAddedPieces = 0;
 
             // And flip all the pieces in between
-            for(Vector v=initialVector.plus(Vector.DOWN_LEFT); 
-                    v.row>currentVector.row && v.col>currentVector.col; 
-                    v=v.plus(Vector.DOWN_LEFT)){
-                newBoard.set(v, board.get(initialVector));
-                nbAddedPieces++;
-            }
-            addChild(children, newBoard, nbAddedPieces);
+            int nbFlippedPieces = flipPieces(newBoard, currentVector);
+            addChild(children, newBoard, nbFlippedPieces);
         }
 
     }
 
     /**
-     * 
      * @param children  The set of children to add to
      * @param newBoard  The board to add to the children
      * @param nbAddedPieces The number of pieces added to the board
@@ -368,6 +327,189 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         }
     }
 
+    // Flippers
+    protected static int flipPieces(Board newBoard, Vector finalVector) {
+        int nbFlippedPieces = 0;
+        nbFlippedPieces += flipPiecesToTheTop(newBoard, finalVector);
+        nbFlippedPieces += flipPiecesToTheBottom(newBoard, finalVector);
+        nbFlippedPieces += flipPiecesToTheLeft(newBoard, finalVector);
+        nbFlippedPieces += flipPiecesToTheRight(newBoard, finalVector);
+        nbFlippedPieces += flipPiecesToTheTopLeft(newBoard, finalVector);
+        nbFlippedPieces += flipPiecesToTheTopRight(newBoard, finalVector);
+        nbFlippedPieces += flipPiecesToTheBottomLeft(newBoard, finalVector);
+        nbFlippedPieces += flipPiecesToTheBottomRight(newBoard, finalVector);
+
+        return nbFlippedPieces;
+    }
+
+    private static int flipPiecesToTheTop(Board newBoard, Vector finalVector) {
+        Vector currentVector = finalVector.plus(Vector.UP);
+        boolean foundOppositeColor = false;
+        int nbFlippedPieces = 0;
+
+        // Check if there is a piece of the opposite color to the top.
+        while(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == -newBoard.get(finalVector)){
+            currentVector = currentVector.plus(Vector.UP);
+            foundOppositeColor = true;
+        }
+        // If there is, then check if there is a friendly piece after that
+        if(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == newBoard.get(finalVector) && foundOppositeColor){
+            // And flip all the pieces in between
+            for(Vector v=finalVector.plus(Vector.UP); v.row<currentVector.row; v=v.plus(Vector.UP)){
+                newBoard.set(v, newBoard.get(finalVector));
+                nbFlippedPieces++;
+            }
+        }
+        return nbFlippedPieces;
+    }
+
+    private static int flipPiecesToTheBottom(Board newBoard, Vector finalVector) {
+        Vector currentVector = finalVector.plus(Vector.DOWN);
+        boolean foundOppositeColor = false;
+        int nbFlippedPieces = 0;
+
+        // Check if there is a piece of the opposite color to the bottom.
+        while(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == -newBoard.get(finalVector)){
+            currentVector = currentVector.plus(Vector.DOWN);
+            foundOppositeColor = true;
+        }
+        // If there is, then check if there is a friendly piece after that
+        if(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == newBoard.get(finalVector) && foundOppositeColor){
+            // And flip all the pieces in between
+            for(Vector v=finalVector.plus(Vector.DOWN); v.row>currentVector.row; v=v.plus(Vector.DOWN)){
+                newBoard.set(v, newBoard.get(finalVector));
+                nbFlippedPieces++;
+            }
+        }
+        return nbFlippedPieces;
+    }
+
+    private static int flipPiecesToTheLeft(Board newBoard, Vector finalVector) {
+        Vector currentVector = finalVector.plus(Vector.LEFT);
+        boolean foundOppositeColor = false;
+        int nbFlippedPieces = 0;
+
+        // Check if there is a piece of the opposite color to the left.
+        while(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == -newBoard.get(finalVector)){
+            currentVector = currentVector.plus(Vector.LEFT);
+            foundOppositeColor = true;
+        }
+        // If there is, then check if there is a friendly piece after that
+        if(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == newBoard.get(finalVector) && foundOppositeColor){
+            // And flip all the pieces in between
+            for(Vector v=finalVector.plus(Vector.LEFT); v.col>currentVector.col; v=v.plus(Vector.LEFT)){
+                newBoard.set(v, newBoard.get(finalVector));
+                nbFlippedPieces++;
+            }
+        }
+        return nbFlippedPieces;
+    }
+
+    private static int flipPiecesToTheRight(Board newBoard, Vector finalVector) {
+        Vector currentVector = finalVector.plus(Vector.RIGHT);
+        boolean foundOppositeColor = false;
+        int nbFlippedPieces = 0;
+
+        // Check if there is a piece of the opposite color to the right.
+        while(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == -newBoard.get(finalVector)){
+            currentVector = currentVector.plus(Vector.RIGHT);
+            foundOppositeColor = true;
+        }
+        // If there is, then check if there is a friendly piece after that
+        if(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == newBoard.get(finalVector) && foundOppositeColor){
+            // And flip all the pieces in between
+            for(Vector v=finalVector.plus(Vector.RIGHT); v.col<currentVector.col; v=v.plus(Vector.RIGHT)){
+                newBoard.set(v, newBoard.get(finalVector));
+                nbFlippedPieces++;
+            }
+        }
+        return nbFlippedPieces;
+    }
+
+    private static int flipPiecesToTheTopLeft(Board newBoard, Vector finalVector) {
+        Vector currentVector = finalVector.plus(Vector.UP_LEFT);
+        boolean foundOppositeColor = false;
+        int nbFlippedPieces = 0;
+
+        // Check if there is a piece of the opposite color to the top left.
+        while(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == -newBoard.get(finalVector)){
+            currentVector = currentVector.plus(Vector.UP_LEFT);
+            foundOppositeColor = true;
+        }
+        // If there is, then check if there is a friendly piece after that
+        if(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == newBoard.get(finalVector) && foundOppositeColor){
+            // And flip all the pieces in between
+            for(Vector v=finalVector.plus(Vector.UP_LEFT); v.row<currentVector.row && v.col>currentVector.col; v=v.plus(Vector.UP_LEFT)){
+                newBoard.set(v, newBoard.get(finalVector));
+                nbFlippedPieces++;
+            }
+        }
+        return nbFlippedPieces;
+    }
+
+    private static int flipPiecesToTheTopRight(Board newBoard, Vector finalVector) {
+        Vector currentVector = finalVector.plus(Vector.UP_RIGHT);
+        boolean foundOppositeColor = false;
+        int nbFlippedPieces = 0;
+
+        // Check if there is a piece of the opposite color to the top right.
+        while(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == -newBoard.get(finalVector)){
+            currentVector = currentVector.plus(Vector.UP_RIGHT);
+            foundOppositeColor = true;
+        }
+        // If there is, then check if there is a friendly piece after that
+        if(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == newBoard.get(finalVector) && foundOppositeColor){
+            // And flip all the pieces in between
+            for(Vector v=finalVector.plus(Vector.UP_RIGHT); v.row<currentVector.row && v.col<currentVector.col; v=v.plus(Vector.UP_RIGHT)){
+                newBoard.set(v, newBoard.get(finalVector));
+                nbFlippedPieces++;
+            }
+        }
+        return nbFlippedPieces;
+    }
+
+    private static int flipPiecesToTheBottomLeft(Board newBoard, Vector finalVector) {
+        Vector currentVector = finalVector.plus(Vector.DOWN_LEFT);
+        boolean foundOppositeColor = false;
+        int nbFlippedPieces = 0;
+
+        // Check if there is a piece of the opposite color to the bottom left.
+        while(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == -newBoard.get(finalVector)){
+            currentVector = currentVector.plus(Vector.DOWN_LEFT);
+            foundOppositeColor = true;
+        }
+        // If there is, then check if there is a friendly piece after that
+        if(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == newBoard.get(finalVector) && foundOppositeColor){
+            // And flip all the pieces in between
+            for(Vector v=finalVector.plus(Vector.DOWN_LEFT); v.row>currentVector.row && v.col>currentVector.col; v=v.plus(Vector.DOWN_LEFT)){
+                newBoard.set(v, newBoard.get(finalVector));
+                nbFlippedPieces++;
+            }
+        }
+        return nbFlippedPieces;
+    }
+
+    private static int flipPiecesToTheBottomRight(Board newBoard, Vector finalVector) {
+        Vector currentVector = finalVector.plus(Vector.DOWN_RIGHT);
+        boolean foundOppositeColor = false;
+        int nbFlippedPieces = 0;
+
+        // Check if there is a piece of the opposite color to the bottom right.
+        while(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == -newBoard.get(finalVector)){
+            currentVector = currentVector.plus(Vector.DOWN_RIGHT);
+            foundOppositeColor = true;
+        }
+        // If there is, then check if there is a friendly piece after that
+        if(!newBoard.locationIsOutOfBounds(currentVector) && newBoard.get(currentVector) == newBoard.get(finalVector) && foundOppositeColor){
+            // And flip all the pieces in between
+            for(Vector v=finalVector.plus(Vector.DOWN_RIGHT); v.row>currentVector.row && v.col<currentVector.col; v=v.plus(Vector.DOWN_RIGHT)){
+                newBoard.set(v, newBoard.get(finalVector));
+                nbFlippedPieces++;
+            }
+        }
+        return nbFlippedPieces;
+    }
+
     @Override
     public float score() {
 
@@ -376,7 +518,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
         // If game ended, and we have more
         // pieces than the opponent, we win.
-        if(gameOver()){
+        if(isGameOver()){
             if(nbOurPieces > nbOpponentPieces){
                 return TwoPersonGameState.MAX_SCORE;
             } else if(nbOurPieces < nbOpponentPieces){
@@ -389,7 +531,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         }
     }
 
-    private boolean gameOver() {
+    protected boolean isGameOver() {
         // If there are no more empty spaces, 
         // or if both players have not been able
         //  to make a move the last turn, 
@@ -441,9 +583,9 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         // Print the board using the PrintBoardGame class.
         String[] pieceRepresentations = new String[]{ 
             "?", 
-            BACKGROUND_BLACK + "O" + backgroundColor,
-            " ", 
-            BACKGROUND_WHITE + "X" + backgroundColor,  
+            BACKGROUND_BLACK + "O " + backgroundColor,
+            "  ", 
+            BACKGROUND_WHITE + "X " + backgroundColor,  
             "?" };
         
         String turnMarker = this.whitesTurn ? BACKGROUND_WHITE + "X" : BACKGROUND_BLACK + "O";

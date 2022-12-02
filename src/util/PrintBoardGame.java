@@ -31,7 +31,7 @@ public class PrintBoardGame {
     /** Returns a horizontal line of about the same size as a normal row. */
     private static String getHorizontalLine(int nbCols){
         StringBuilder result = new StringBuilder();
-        int horizontalLineLength = 4*nbCols + 2;
+        int horizontalLineLength = 3*nbCols + 2;
         for(int i=0; i < horizontalLineLength; i++)
             result.append("_");
         result.append("\n");
@@ -53,7 +53,7 @@ public class PrintBoardGame {
         result.append(" | ");
         // Add elements, seperated by " | ".
         for(int element : row){
-            result.append(element + " | ");
+            result.append(element + "| ");
         }
         result.append("\n");
          // Add whose turn it is
@@ -66,12 +66,12 @@ public class PrintBoardGame {
     private static String normalRowToString(int[] row, String[] pieceRepresentation, int rowNb){
         StringBuilder result = new StringBuilder();
 
-        result.append(rowNb + "| ");
+        result.append(rowNb + "|");
 
         // Add the pieces, seperated by " | ".
         for(int piece: row){
             // add row elements
-            result.append(pieceRepresentation[piece + 2] + " | ");
+            result.append(pieceRepresentation[piece + 2] + "|");
         }
         return result.toString();
     }

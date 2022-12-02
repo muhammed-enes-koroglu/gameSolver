@@ -11,13 +11,14 @@ import java.util.Scanner;
 import games.tictactoe.PlayTicTacToe;
 import games.connect4.PlayConnect4;
 import games.mangala.PlayMangala;
+import games.reversi.PlayReversi;
 
 public class Play {
 
     public static final String BACKGROUND_ADVISED = ConsoleColors.GREEN_BACKGROUND;
     public static final String BACKGROUND_CURRENT = ConsoleColors.CYAN_BACKGROUND;
     
-    static final String[] gameStrings = new String[]{"TicTacToe", "Mangala", "Connect4"}; 
+    static final String[] gameStrings = new String[]{"TicTacToe", "Mangala", "Connect4", "Reversi"}; 
     static final Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -37,7 +38,7 @@ public class Play {
     public static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void runGame(G game, float minSearchTime, boolean showAdvised){
         
         // Initialize the game.
-        S state = game.getInitialState(TwoPersonPlay.inputWhiteIsMax());
+        S state = game.getInitialState(scanWhiteIsMax());
         System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
         S advisedState = state;
         List<S> advisedPath;
@@ -53,26 +54,28 @@ public class Play {
                 advisedState = advisedPath.get(0);
             }
 
-            // Print the advised move.
-            if(showAdvised){
-                System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState.toString(BACKGROUND_ADVISED) + ConsoleColors.RESET);    
-                System.out.println("Depth: " + advisedPath.size());
-                System.out.println("Score: " + advisedPath.get(advisedPath.size()-1).score() + "\n");
-            }
-
-            // Get the next state.
             if(state.isMaxPlayersTurn()){ // MaxPlayer == User ==> User's turn.
 
-                // Get the user's input and update the state.
-                int[] moveNumber = game.scanMoveNumber(state);
+                // Print the advised move.
+                if(showAdvised){
+                    System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState.toString(BACKGROUND_ADVISED) + ConsoleColors.RESET);    
+                    System.out.println("Depth: " + advisedPath.size());
+                    System.out.println("Score: " + advisedPath.get(advisedPath.size()-1).score() + "\n");
+                }
 
+                // Get the user's input and update the state.
+                int[] move = game.scanMoveNumber(state);
+
+                // Get the next state.
                 // If the user's input is empty, 
                 // then the user wants to play as advised.
-                if(moveNumber.length == 0){
+                if(move.length == 0){
                     state = advisedState;
                 } else{
-                    state = game.makeMove(state, moveNumber);
+                    state = game.makeMove(state, move);
                 }
+                System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
+
             } else {
                 // Get the computer's move and update the state.
                 state = advisedState;
@@ -92,11 +95,6 @@ public class Play {
         // Choose whether to show the advised move.
         boolean showAdvised = scanShowAdvised();
 
-        // Show the games.
-        System.out.println("Choose a game:");
-        for(int i=1; i<=gameStrings.length; i++)
-            System.out.println(i + ". " + gameStrings[i-1]);
-
         // Scan the choice and run the appropriate game.
         int gameNumber = scanGameChoice(gameStrings);
         switch(gameNumber){
@@ -109,13 +107,22 @@ public class Play {
             case 3:
                 runGame(new PlayConnect4(), minSearchTime, showAdvised);
                 break;
+            case 4:
+                runGame(new PlayReversi(), minSearchTime, showAdvised);
+                break;
             default:
                 System.out.println("Error in scanning the game choice.");
         }
     }
 
     private static int scanGameChoice(String[] gameStrings){
-            
+        
+        // Show the games.
+        System.out.println("Choose a game:");
+        for(int i=1; i<=gameStrings.length; i++)
+            System.out.println(i + ". " + gameStrings[i-1]);
+
+
         int gameNumber = -1;
         boolean validInput = false;
         
@@ -144,6 +151,37 @@ public class Play {
         }
         return gameNumber;
     }
+
+    /** Scan, parse and validate whether the player wants to be player 1. */
+    public static boolean scanWhiteIsMax(){
+
+        int inputNumber = 1;
+        boolean validInput = false;
+        while(!validInput){
+            validInput = true;
+
+            // Ask for input.
+            System.out.print("Enter `1` to be player 1, `2` to be player 2: ");
+            String line = sc.nextLine();
+
+            // Parse the input.
+            try{
+                inputNumber = Integer.parseInt(line);
+            }
+            catch(NumberFormatException e){
+                System.out.println("[ERROR] Input must be 1 of 2");
+                validInput = false;
+            }
+            
+            // inputNumber should be 1 or 2.
+            if(!(inputNumber == 1 || inputNumber == 2)){
+                System.out.println("[ERROR] Player number must be 1 or 2");
+                validInput = false;
+            }
+        }
+        return inputNumber == 1;
+    }
+    
 
     /** Choose whether to show the advised move. */
     private static boolean scanShowAdvised(){
