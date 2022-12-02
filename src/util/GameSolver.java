@@ -53,7 +53,7 @@ public abstract class GameSolver{
      * 
      * @param maxDepth The maximum depth to search.
     */
-    public static <S extends TwoPersonGameState<S>> List<S> iterDeepeningMiniMax(S startState, int maxDepth){
+    public static <S extends TwoPersonGameState<S>> List<S> iterativeDeepeningMiniMax(S startState, int maxDepth){
         ArrayList<S> bestPath = new ArrayList<>();
         int depth;
 

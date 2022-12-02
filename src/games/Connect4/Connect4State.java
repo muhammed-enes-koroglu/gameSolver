@@ -160,7 +160,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
             throw new IllegalArgumentException("Board height must be " + BOARD_HEIGHT);
         if(board.nbCols != BOARD_WIDTH)
             throw new IllegalArgumentException("Board width must be " + BOARD_WIDTH);
-            
+
         this.board = board;
         this.whitesTurn = whitesTurn;
         this.maximizeForWhite = maximizeForWhite;

@@ -15,7 +15,7 @@ public class TestGameSolver {
     }
     
     public static void testIterDeepeningMiniMax(){
-        System.out.println("[TESTING] iterDeepeningMiniMax");
+        System.out.println("[TESTING] iterativeDeepeningMiniMax");
         float minSearchTime = 1f;
 
         Board board = new Board( new int[]{1,0,1, -1,-1,0, 0,0,0});
@@ -64,7 +64,7 @@ public class TestGameSolver {
         assert solution.get(solution.size()-1).score() == TwoPersonGameState.MIN_SCORE;
         
 
-        System.out.println("[TESTING] iterDeepeningMiniMax - DONE\n");
+        System.out.println("[TESTING] iterativeDeepeningMiniMax - DONE\n");
     }
 
     
