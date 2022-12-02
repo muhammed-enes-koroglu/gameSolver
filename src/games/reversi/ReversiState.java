@@ -26,8 +26,9 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     public static final int WHITE = 1;
     public static final int BLACK = -1;
     public static final int EMPTY = 0;
-    private static final int MULTITHREADING_THRESHOLD = 16;
 
+    private static final int MULTITHREADING_THRESHOLD = BOARD_SIZE * BOARD_SIZE / 2;
+    private static final int MULTITHREADED_GROUP_SIZE = 16;
     @Override
     public Set<ReversiState> children() {
 
@@ -73,12 +74,12 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
                     addChildrenToTheBottomLeft(row, col, childrenSet);
                 }
             }
-        }
+            }
         return childrenSet;
     }
 
 
-    private Set<ReversiState> getChildrenInParallel(){
+    private Set<ReversiState> getChildrenInParallel() {
 
         int playersPiece = whitesTurn ? WHITE : BLACK;
 
@@ -88,27 +89,31 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
             childrenSets.add(new HashSet<>());
         }
 
-        // For each piece on the board, get the children of the piece.
-        // Do this in parallel.
-        Thread[] threads = new Thread[BOARD_SIZE];
-        for(int row=0; row<BOARD_SIZE; row++){
+        // Find own positions.
+        ArrayList<Vector> playablePositions = findPlayablePositions(playersPiece);
 
-            // We need a final variable for the lambda expression.
-            final Integer rowFinal = row;
-            threads[row] = new Thread(
-                () -> getChildrenOfRow(rowFinal, childrenSets.get(rowFinal), playersPiece)
-            );
-            threads[row].start();
-        }
+        // Group positions into sets of 8.
+        // Each position is put into only one grouping.
+        ArrayList<HashSet<Vector>> groupingsOfPositions = new ArrayList<>();
+        createGroups(playablePositions, groupingsOfPositions, MULTITHREADED_GROUP_SIZE);
 
-        // Wait for all threads to finish.
-        // Combine all children sets into one.
+        ArrayList<Thread> threads = initializeThreads(playersPiece, childrenSets, groupingsOfPositions);
+
+        return joinThreads(childrenSets, threads);
+    }
+
+    
+    /** Wait for all threads to finish.
+     * Combine all children sets into one.
+     * @throws InterruptedException
+     */
+    private HashSet<ReversiState> joinThreads(ArrayList<HashSet<ReversiState>> childrenSets, ArrayList<Thread> threads) {
         HashSet<ReversiState> children = new HashSet<>();
-        for(int i = 0; i < BOARD_SIZE; i++){
+        for(int i = 0; i < threads.size(); i++){
 
             // Wait for the thread to finish.
             try {
-                threads[i].join();
+                threads.get(i).join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -119,8 +124,67 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         return children;
     }
 
-    private void getChildrenOfRow(int row, HashSet<ReversiState> childrenSet, int playersPiece) {
-        for(int col=0; col<BOARD_SIZE; col++){
+    /** For each piece on the board, get the children of the piece.
+     * Do this in parallel.
+     */
+    private ArrayList<Thread> initializeThreads(int playersPiece, ArrayList<HashSet<ReversiState>> childrenSets,
+            ArrayList<HashSet<Vector>> groupingsOfPositions) {
+
+        // Keep track of the threads.
+        ArrayList<Thread> threads = new ArrayList<>();
+        for(int groupNumber=0; groupNumber<groupingsOfPositions.size(); groupNumber++){
+
+            // We need a final variable for the lambda expression.
+            final Integer groupNumberFinal = groupNumber;
+
+            // Create a thread for this group.
+            // The thread will get the children of the pieces in this group.
+            threads.add(new Thread(
+                () -> getChildrenOfGroup(groupingsOfPositions.get(groupNumberFinal), childrenSets.get(groupNumberFinal), playersPiece)
+            ));
+            threads.get(groupNumber).start();
+        }
+        return threads;
+    }
+
+    /** Find positions with pieces belonging to whomever's turn it is. */
+    private ArrayList<Vector> findPlayablePositions(int playersPiece) {
+        ArrayList<Vector> playablePositions = new ArrayList<>();
+        for(int row=0; row<BOARD_SIZE; row++){
+            for(int col=0; col<BOARD_SIZE; col++){
+                if(board.get(row, col) == playersPiece){
+                    playablePositions.add(new Vector(row, col));
+                }
+            }
+        }
+        return playablePositions;
+    }
+
+    /** Group positions into sets of 8.
+     * Each position is put into only one grouping.
+     */
+    private void createGroups(ArrayList<Vector> playablePositions, ArrayList<HashSet<Vector>> groupingsOfPositions,
+            int groupSize) {
+        for(int i = 0; i < playablePositions.size(); i += groupSize){
+            HashSet<Vector> grouping = new HashSet<>();
+            for(int j = 0; j < groupSize; j++){
+                if(i + j < playablePositions.size()){
+                    grouping.add(playablePositions.get(i + j));
+                }
+            }
+            groupingsOfPositions.add(grouping);
+        }
+    }
+
+    private void getChildrenOfGroup(HashSet<Vector> group, HashSet<ReversiState> childrenSet, int playersPiece) {
+
+        // For each piece in the group, 
+        // add the children of the piece to `childrenSet`.
+        for(Vector position : group){
+            int row = position.row;
+            int col = position.col;
+
+            // Add the children of the piece.
             if(board.get(row, col) == playersPiece){
                 addChildrenToTheRight(row, col, childrenSet);
                 addChildrenToTheLeft(row, col, childrenSet);
