@@ -15,7 +15,7 @@ public abstract class GameSolver{
      * 
      * @param minSearchTime in seconds.
     */
-    public static <S extends TwoPersonGameState<S>> List<S> iterDeepeningMiniMax(S startState, float minSearchTime){
+    public static <S extends TwoPersonGameState<S>> List<S> iterativeDeepeningMiniMax(S startState, float minSearchTime){
         long minSearchTimeMilliSeconds = (long) (minSearchTime *  1000);
         long startTime = System.currentTimeMillis();
         long now;

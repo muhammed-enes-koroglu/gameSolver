@@ -53,7 +53,7 @@ public class Play {
             turn++;
 
             // Get the best move.
-            advisedPath = GameSolver.iterDeepeningMiniMax(state, minSearchTime);
+            advisedPath = GameSolver.iterativeDeepeningMiniMax(state, minSearchTime);
             if(advisedPath.size() >= 2){
                 advisedState = advisedPath.get(1);
             } else if(advisedPath.size() == 1){
@@ -85,7 +85,7 @@ public class Play {
             } else {
                 // Get the computer's move and update the state.
                 state = advisedState;
-                System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
+                // System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
             }
 
         }

@@ -86,7 +86,7 @@ public class TestConnect4 {
         // the one state that prevents the certain lose.
         board1 = new Board(new int[][]{{1, 1, 1, -1, 0, 0, 0}, {-1, 1, 0, -1, 0, 0, 0}, {1, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}});
         state1 = new Connect4State(board1, true, true);
-        List<Connect4State> bestPath = GameSolver.iterDeepeningMiniMax(state1, 0.1f);
+        List<Connect4State> bestPath = GameSolver.iterativeDeepeningMiniMax(state1, 0.1f);
 
         board2 = new Board(new int[][]{{1, 1, 1, -1, 0, 0, 0}, {-1, 1, 1, -1, 0, 0, 0}, {1, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}});
         Connect4State expectedState = new Connect4State(board2, false, true);
