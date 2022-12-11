@@ -3,6 +3,9 @@ package games.reversi;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import util.Vector;
 import util.Board;
@@ -27,14 +30,15 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     public static final int BLACK = -1;
     public static final int EMPTY = 0;
 
-    private static final int MULTITHREADING_THRESHOLD = BOARD_SIZE * BOARD_SIZE / 2;
-    private static final int MULTITHREADED_GROUP_SIZE = 16;
+    private static final int NB_THREADS = 8;
+    private static final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(NB_THREADS);
+
     @Override
     public Set<ReversiState> children() {
 
         if(isGameOver()) return new HashSet<>();
 
-        Set<ReversiState> children = getChildren();
+        Set<ReversiState> children = getChildrenParallel();
 
         if(children.isEmpty()){
             Set<ReversiState> passingState = new HashSet<>();
@@ -43,160 +47,70 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         }
 
         return children;
-
     }
 
-    private Set<ReversiState> getChildren() {
-
-        Set<ReversiState> children;
-        if(nbWhitesOnBoard + nbBlacksOnBoard > MULTITHREADING_THRESHOLD){
-            children = getChildrenInParallel();
-        } else{
-            children = getChildrenInSerial();
-        }
-        return children;
-    }
-
-    private Set<ReversiState> getChildrenInSerial() {
+    private Set<ReversiState> getChildrenSerial() {
 
         int playersPiece = whitesTurn ? WHITE : BLACK;
         HashSet<ReversiState> childrenSet = new HashSet<>();
+
+        // For each piece of the player, add the children.
         for(int row=0; row<BOARD_SIZE; row++){
             for(int col=0; col<BOARD_SIZE; col++){
                 if(board.get(row, col) == playersPiece){
-                    addChildrenToTheRight(row, col, childrenSet);
-                    addChildrenToTheLeft(row, col, childrenSet);
-                    addChildrenToTheTop(row, col, childrenSet);
-                    addChildrenToTheBottom(row, col, childrenSet);
-                    addChildrenToTheTopRight(row, col, childrenSet);
-                    addChildrenToTheTopLeft(row, col, childrenSet);
-                    addChildrenToTheBottomRight(row, col, childrenSet);
-                    addChildrenToTheBottomLeft(row, col, childrenSet);
+                    addChildrenForPosition(childrenSet, row, col);
                 }
             }
-            }
+        }
+
         return childrenSet;
     }
 
-
-    private Set<ReversiState> getChildrenInParallel() {
+    private Set<ReversiState> getChildrenParallel() {
 
         int playersPiece = whitesTurn ? WHITE : BLACK;
+        HashSet<Future<Void>> threadResults = new HashSet<>();
+        HashSet<ReversiState> childrenSet = new HashSet<>();
 
-        // Initialize the sets of children.
-        ArrayList<HashSet<ReversiState>> childrenSets = new ArrayList<>();
-        for(int i = 0; i < BOARD_SIZE; i++){
-            childrenSets.add(new HashSet<>());
-        }
-
-        // Find own positions.
-        ArrayList<Vector> playablePositions = findPlayablePositions(playersPiece);
-
-        // Group positions into sets of 8.
-        // Each position is put into only one grouping.
-        ArrayList<HashSet<Vector>> groupingsOfPositions = new ArrayList<>();
-        createGroups(playablePositions, groupingsOfPositions, MULTITHREADED_GROUP_SIZE);
-
-        ArrayList<Thread> threads = initializeThreads(playersPiece, childrenSets, groupingsOfPositions);
-
-        return joinThreads(childrenSets, threads);
-    }
-
-    
-    /** Wait for all threads to finish.
-     * Combine all children sets into one.
-     * @throws InterruptedException
-     */
-    private HashSet<ReversiState> joinThreads(ArrayList<HashSet<ReversiState>> childrenSets, ArrayList<Thread> threads) {
-        HashSet<ReversiState> children = new HashSet<>();
-        for(int i = 0; i < threads.size(); i++){
-
-            // Wait for the thread to finish.
-            try {
-                threads.get(i).join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            HashSet<ReversiState> childrenSet = childrenSets.get(i);
-            children.addAll(childrenSet);
-        }
-        return children;
-    }
-
-    /** For each piece on the board, get the children of the piece.
-     * Do this in parallel.
-     */
-    private ArrayList<Thread> initializeThreads(int playersPiece, ArrayList<HashSet<ReversiState>> childrenSets,
-            ArrayList<HashSet<Vector>> groupingsOfPositions) {
-
-        // Keep track of the threads.
-        ArrayList<Thread> threads = new ArrayList<>();
-        for(int groupNumber=0; groupNumber<groupingsOfPositions.size(); groupNumber++){
-
-            // We need a final variable for the lambda expression.
-            final Integer groupNumberFinal = groupNumber;
-
-            // Create a thread for this group.
-            // The thread will get the children of the pieces in this group.
-            threads.add(new Thread(
-                () -> getChildrenOfGroup(groupingsOfPositions.get(groupNumberFinal), childrenSets.get(groupNumberFinal), playersPiece)
-            ));
-            threads.get(groupNumber).start();
-        }
-        return threads;
-    }
-
-    /** Find positions with pieces belonging to whomever's turn it is. */
-    private ArrayList<Vector> findPlayablePositions(int playersPiece) {
-        ArrayList<Vector> playablePositions = new ArrayList<>();
+        // For each piece of the player, add the children.
         for(int row=0; row<BOARD_SIZE; row++){
             for(int col=0; col<BOARD_SIZE; col++){
                 if(board.get(row, col) == playersPiece){
-                    playablePositions.add(new Vector(row, col));
+
+                    // Multi-threading takes final variables.
+                    final Integer rowFinal = row;
+                    final Integer colFinal = col;
+
+                    // Submit a task to the thread pool.
+                    Future<Void> future = executor.submit(
+                        () -> addChildrenForPosition(childrenSet, rowFinal, colFinal), 
+                        null);
+                    threadResults.add(future);
                 }
             }
         }
-        return playablePositions;
-    }
 
-    /** Group positions into sets of 8.
-     * Each position is put into only one grouping.
-     */
-    private void createGroups(ArrayList<Vector> playablePositions, ArrayList<HashSet<Vector>> groupingsOfPositions,
-            int groupSize) {
-        for(int i = 0; i < playablePositions.size(); i += groupSize){
-            HashSet<Vector> grouping = new HashSet<>();
-            for(int j = 0; j < groupSize; j++){
-                if(i + j < playablePositions.size()){
-                    grouping.add(playablePositions.get(i + j));
-                }
-            }
-            groupingsOfPositions.add(grouping);
-        }
-    }
-
-    private void getChildrenOfGroup(HashSet<Vector> group, HashSet<ReversiState> childrenSet, int playersPiece) {
-
-        // For each piece in the group, 
-        // add the children of the piece to `childrenSet`.
-        for(Vector position : group){
-            int row = position.row;
-            int col = position.col;
-
-            // Add the children of the piece.
-            if(board.get(row, col) == playersPiece){
-                addChildrenToTheRight(row, col, childrenSet);
-                addChildrenToTheLeft(row, col, childrenSet);
-                addChildrenToTheTop(row, col, childrenSet);
-                addChildrenToTheBottom(row, col, childrenSet);
-                addChildrenToTheTopRight(row, col, childrenSet);
-                addChildrenToTheTopLeft(row, col, childrenSet);
-                addChildrenToTheBottomRight(row, col, childrenSet);
-                addChildrenToTheBottomLeft(row, col, childrenSet);
+        // Wait for all tasks to finish.
+        for(Future<Void> future : threadResults){
+            try{
+                future.get();
+            } catch(Exception e){
+                e.printStackTrace();
             }
         }
+        return childrenSet;
+    }
 
+    /** Add all children for a given position */
+    private void addChildrenForPosition(HashSet<ReversiState> childrenSet, int row, int col) {
+        addChildrenToTheRight(row, col, childrenSet);
+        addChildrenToTheLeft(row, col, childrenSet);
+        addChildrenToTheTop(row, col, childrenSet);
+        addChildrenToTheBottom(row, col, childrenSet);
+        addChildrenToTheTopRight(row, col, childrenSet);
+        addChildrenToTheTopLeft(row, col, childrenSet);
+        addChildrenToTheBottomRight(row, col, childrenSet);
+        addChildrenToTheBottomLeft(row, col, childrenSet);
     }
 
     private void addChildrenToTheRight(int initialRow, int initialCol, HashSet<ReversiState> children) {
