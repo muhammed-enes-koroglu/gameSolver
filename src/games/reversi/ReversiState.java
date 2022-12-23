@@ -34,11 +34,17 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     private static final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(NB_THREADS);
 
     @Override
+    /**
+     * Serial: 7.27 depth
+     * Parallel 4 Threads: 6.16 depth
+     * Parallel 8 Threads: 6.24 depth
+     * Parallel 12 Threads: 6.30 depth
+     */
     public Set<ReversiState> children() {
 
         if(isGameOver()) return new HashSet<>();
 
-        Set<ReversiState> children = getChildrenSerial();
+        Set<ReversiState> children = getChildrenParallel();
 
         if(children.isEmpty()){
             Set<ReversiState> passingState = new HashSet<>();
@@ -66,6 +72,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         return childrenSet;
     }
 
+    /** Gets children using the thread pool. Lower performance then `getChildrenSerial`. */
     private Set<ReversiState> getChildrenParallel() {
 
         int playersPiece = whitesTurn ? WHITE : BLACK;
