@@ -1,8 +1,8 @@
 package games.reversi;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -38,7 +38,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
         if(isGameOver()) return new HashSet<>();
 
-        Set<ReversiState> children = getChildrenParallel();
+        Set<ReversiState> children = getChildrenSerial();
 
         if(children.isEmpty()){
             Set<ReversiState> passingState = new HashSet<>();
@@ -69,8 +69,8 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     private Set<ReversiState> getChildrenParallel() {
 
         int playersPiece = whitesTurn ? WHITE : BLACK;
-        HashSet<Future<Void>> threadResults = new HashSet<>();
-        HashSet<ReversiState> childrenSet = new HashSet<>();
+        Set<Future<Void>> threadResults = ConcurrentHashMap.newKeySet();
+        Set<ReversiState> childrenSet = ConcurrentHashMap.newKeySet();
 
         // For each piece of the player, add the children.
         for(int row=0; row<BOARD_SIZE; row++){
@@ -102,7 +102,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     }
 
     /** Add all children for a given position */
-    private void addChildrenForPosition(HashSet<ReversiState> childrenSet, int row, int col) {
+    private void addChildrenForPosition(Set<ReversiState> childrenSet, int row, int col) {
         addChildrenToTheRight(row, col, childrenSet);
         addChildrenToTheLeft(row, col, childrenSet);
         addChildrenToTheTop(row, col, childrenSet);
@@ -113,7 +113,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         addChildrenToTheBottomLeft(row, col, childrenSet);
     }
 
-    private void addChildrenToTheRight(int initialRow, int initialCol, HashSet<ReversiState> children) {
+    private void addChildrenToTheRight(int initialRow, int initialCol, Set<ReversiState> childrenSet) {
 
         // Check if there is a piece of the opposite color to the right.
         // If there is, then check if there is an empty space after that
@@ -138,12 +138,12 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // And flip all the pieces in between
             int nbFlippedPieces = flipPieces(newBoard, currentVector);
-            addChild(children, newBoard, nbFlippedPieces);
+            addChild(childrenSet, newBoard, nbFlippedPieces);
         }
 
     }
 
-    private void addChildrenToTheLeft(int initialRow, int initialCol, HashSet<ReversiState> children) {
+    private void addChildrenToTheLeft(int initialRow, int initialCol, Set<ReversiState> childrenSet) {
 
         // Check if there is a piece of the opposite color to the left.
         // If there is, then check if there is an empty space after that
@@ -168,12 +168,12 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // And flip all the pieces in between
             int nbFlippedPieces = flipPieces(newBoard, currentVector);
-            addChild(children, newBoard, nbFlippedPieces);
+            addChild(childrenSet, newBoard, nbFlippedPieces);
         }
 
     }
 
-    private void addChildrenToTheTop(int initialRow, int initialCol, HashSet<ReversiState> children) {
+    private void addChildrenToTheTop(int initialRow, int initialCol, Set<ReversiState> childrenSet) {
 
         // Check if there is a piece of the opposite color to the top.
         // If there is, then check if there is an empty space after that
@@ -198,12 +198,12 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // And flip all the pieces in between
             int nbFlippedPieces = flipPieces(newBoard, currentVector);
-            addChild(children, newBoard, nbFlippedPieces);
+            addChild(childrenSet, newBoard, nbFlippedPieces);
         }
 
     }
 
-    private void addChildrenToTheBottom(int initialRow, int initialCol, HashSet<ReversiState> children) {
+    private void addChildrenToTheBottom(int initialRow, int initialCol, Set<ReversiState> childrenSet) {
 
         // Check if there is a piece of the opposite color to the bottom.
         // If there is, then check if there is an empty space after that
@@ -228,12 +228,12 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // And flip all the pieces in between
             int nbFlippedPieces = flipPieces(newBoard, currentVector);
-            addChild(children, newBoard, nbFlippedPieces);
+            addChild(childrenSet, newBoard, nbFlippedPieces);
         }
 
     }
 
-    private void addChildrenToTheTopRight(int initialRow, int initialCol, HashSet<ReversiState> children) {
+    private void addChildrenToTheTopRight(int initialRow, int initialCol, Set<ReversiState> childrenSet) {
 
         // Check if there is a piece of the opposite color to the top right.
         // If there is, then check if there is an empty space after that
@@ -257,12 +257,12 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // And flip all the pieces in between
             int nbFlippedPieces = flipPieces(newBoard, currentVector);
-            addChild(children, newBoard, nbFlippedPieces);
+            addChild(childrenSet, newBoard, nbFlippedPieces);
         }
 
     }
 
-    private void addChildrenToTheTopLeft(int initialRow, int initialCol, HashSet<ReversiState> children) {
+    private void addChildrenToTheTopLeft(int initialRow, int initialCol, Set<ReversiState> childrenSet) {
 
         // Check if there is a piece of the opposite color to the top left.
         // If there is, then check if there is an empty space after that
@@ -286,12 +286,12 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // And flip all the pieces in between
             int nbFlippedPieces = flipPieces(newBoard, currentVector);
-            addChild(children, newBoard, nbFlippedPieces);
+            addChild(childrenSet, newBoard, nbFlippedPieces);
         }
 
     }
 
-    private void addChildrenToTheBottomRight(int initialRow, int initialCol, HashSet<ReversiState> children) {
+    private void addChildrenToTheBottomRight(int initialRow, int initialCol, Set<ReversiState> childrenSet) {
 
         // Check if there is a piece of the opposite color to the top right.
         // If there is, then check if there is an empty space after that
@@ -315,12 +315,12 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // And flip all the pieces in between
             int nbFlippedPieces = flipPieces(newBoard, currentVector);
-            addChild(children, newBoard, nbFlippedPieces);
+            addChild(childrenSet, newBoard, nbFlippedPieces);
         }
 
     }
 
-    private void addChildrenToTheBottomLeft(int initialRow, int initialCol, HashSet<ReversiState> children) {
+    private void addChildrenToTheBottomLeft(int initialRow, int initialCol, Set<ReversiState> childrenSet) {
 
         // Check if there is a piece of the opposite color to the top left.
         // If there is, then check if there is an empty space after that
@@ -344,19 +344,19 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
             // And flip all the pieces in between
             int nbFlippedPieces = flipPieces(newBoard, currentVector);
-            addChild(children, newBoard, nbFlippedPieces);
+            addChild(childrenSet, newBoard, nbFlippedPieces);
         }
 
     }
 
     /**
-     * @param children  The set of children to add to
+     * @param childrenSet  The set of children to add to
      * @param newBoard  The board to add to the children
      * @param nbAddedPieces The number of pieces added to the board
      */
-    private void addChild(HashSet<ReversiState> children, Board newBoard, int nbAddedPieces) {
+    private void addChild(Set<ReversiState> childrenSet, Board newBoard, int nbAddedPieces) {
         if(whitesTurn){
-            children.add(new ReversiState(
+            childrenSet.add(new ReversiState(
                 newBoard, 
                 false, 
                 maximizeForWhite, 
@@ -365,7 +365,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
                 true, 
                 this.blacksPlayedLastTurn));
         } else{
-            children.add(new ReversiState(
+            childrenSet.add(new ReversiState(
                 newBoard, 
                 true, 
                 maximizeForWhite, 
