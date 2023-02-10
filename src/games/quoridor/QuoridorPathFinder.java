@@ -11,11 +11,12 @@ import util.Vector;
 public abstract class QuoridorPathFinder {
     
 
-    public boolean pathExists(Board board, Vector startingVector, int targetRow){
+    public static boolean pathExists(Board board, Vector startingVector, int targetRow){
 
         Node start = new Node(startingVector, null, heuristic(startingVector, targetRow), 0);
 
-        PriorityQueue<Node> openList = new PriorityQueue<>();
+        // Create priority queue with as comparator the f = g + h.
+        PriorityQueue<Node> openList = new PriorityQueue<>((a, b) -> a.f - b.f);
         ArrayList<Node> closedList = new ArrayList<>();
         openList.add(start);
 
@@ -41,17 +42,17 @@ public abstract class QuoridorPathFinder {
     }
 
     /** Return the heuristic for the given vector. */
-    private int heuristic(Vector current, int targetRow){
+    private static int heuristic(Vector current, int targetRow){
         return Math.abs(current.row - targetRow);
     }
 
     /** Return true if the given vector is on the target row. */
-    private boolean isTarget(Vector current, int targetRow){
+    private static boolean isTarget(Vector current, int targetRow){
         return current.row == targetRow;
     }
 
     /** Return all adjacent empty squares. */
-    private ArrayList<Vector> getAdjacent(Board board, Vector current){
+    private static ArrayList<Vector> getAdjacent(Board board, Vector current){
 
         ArrayList<Vector> adjacent = new ArrayList<>();
         for(int i = 0; i < 4; i++){
