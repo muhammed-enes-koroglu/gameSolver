@@ -641,7 +641,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         
         String turnMarker = this.whitesTurn ? BACKGROUND_WHITE + "X" : BACKGROUND_BLACK + "O";
         turnMarker += backgroundColor;
-        return PrintBoardGame.toString(this.board, pieceRepresentations, turnMarker, backgroundColor);
+        return PrintBoardGame.toString(this.board, pieceRepresentations, turnMarker, backgroundColor, true);
 
     }
 

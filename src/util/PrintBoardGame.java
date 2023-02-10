@@ -16,7 +16,7 @@ public class PrintBoardGame {
      * index 2 holds what is printed for the number 0, index 3 holds what is printed for the number 1,
      * index 4 holds what is printed for the number 2 on the board.
     */
-    public static String toString(Board board, Map<Integer, String> pieceRepresentation, String turnMarker, String background){
+    public static String toString(Board board, Map<Integer, String> pieceRepresentation, String turnMarker, String background, boolean printCoordinates){
         if(pieceRepresentation.size() != 5){
             throw new IllegalArgumentException("The number of piece representations must be equal to 5");
         }
@@ -27,12 +27,18 @@ public class PrintBoardGame {
         str.append(getHorizontalLine(board.nbCols));
         for(int rowNb=board.nbRows-1; rowNb>=0; rowNb--){
             int[] row = board.getRow(rowNb);
-            str.append(rowToString(row, pieceRepresentation, rowNb, turnMarker, background));
+            str.append(normalRowToString(row, pieceRepresentation, rowNb, printCoordinates));
         }
+
         // add column numbers
-        str.append(getHorizontalLine(board.nbCols));
-        str.append(rowToString(IntStream.range(0, board.nbCols).toArray(), pieceRepresentation, -1, turnMarker, background));
+        if(printCoordinates){
+            str.append(getHorizontalLine(board.nbCols));
+            str.append(lastRowToString(IntStream.range(0, board.nbCols).toArray()));
+        }
         
+        // Add whose turn it is
+        str.append("Turn of: " + turnMarker);
+
         return str.toString();
     }
 
@@ -46,16 +52,8 @@ public class PrintBoardGame {
         return result.toString();
     }
 
-    /** Converts the given array of numbers to string. */
-    private static String rowToString(int[] row, Map<Integer, String> pieceRepresentation, int rowNb, String turnMarker, String background){
-        if(rowNb == -1)
-            return lastRowToString(row, turnMarker) + "\n";
-        else
-            return normalRowToString(row, pieceRepresentation, rowNb) + "\n";    
-    }
-
     /** Converts the row with rowNb == -1 to string. */
-    private static String lastRowToString(int[] row, String turnMarker){
+    private static String lastRowToString(int[] row){
         StringBuilder result = new StringBuilder();
 
         result.append(" | ");
@@ -64,18 +62,18 @@ public class PrintBoardGame {
             result.append(element + "| ");
         }
         result.append("\n");
-         // Add whose turn it is
-        result.append("Turn of: " + turnMarker);
 
         return result.toString();
     }
 
     /** Converts a normal row to string. */
-    private static String normalRowToString(int[] row, Map<Integer, String> pieceRepresentation, int rowNb){
+    private static String normalRowToString(int[] row, Map<Integer, String> pieceRepresentation, int rowNb, boolean printCoordinates){
         StringBuilder result = new StringBuilder();
 
-        result.append(rowNb + "|");
-
+        if(printCoordinates)
+            result.append(rowNb + "|");
+        else
+            result.append(" |");
         // Add the pieces, seperated by " | ".
         for(int piece: row){
             // add row elements
