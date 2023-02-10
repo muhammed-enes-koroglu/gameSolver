@@ -37,7 +37,7 @@ public class QuoridorState implements TwoPersonGameState<QuoridorState> {
     protected final boolean whitesTurn;
     protected final boolean maximizeForWhite;
     
-    
+
     @Override
     public Set<QuoridorState> children() {
         // TODO Auto-generated method stub
@@ -46,8 +46,19 @@ public class QuoridorState implements TwoPersonGameState<QuoridorState> {
 
     @Override
     public float score() {
-        // TODO Auto-generated method stub
-        return 0;
+        // This is a very bad score function. It should be improved.
+        // Currently the AI will probably go for moving the pawn instead of building walls.
+
+        int result = 0;
+        result += TARGET_ROW_WHITE - this.whitePawnPosition.row;
+        result -= this.blackPawnPosition.row - TARGET_ROW_BLACK;
+
+        if(this.maximizeForWhite){
+            return result;
+        } else {
+            return -result;
+        }
+
     }
 
     @Override
