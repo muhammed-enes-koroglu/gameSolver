@@ -14,7 +14,20 @@ public class Vector {
     public static final Vector DOWN_RIGHT = new Vector(-1,1);
     public static final Vector DOWN_LEFT = new Vector(-1, -1);
 
-
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null){
+            return false;
+        }
+        if(obj == this){
+            return true;
+        }
+        if(!(obj instanceof Vector)){
+            return false;
+        }
+        Vector other = (Vector) obj;
+        return this.row == other.row && this.col == other.col;
+    }
 
     public Vector plus(Vector other){
         return new Vector(this.row + other.row, this.col + other.col);
@@ -23,6 +36,7 @@ public class Vector {
     public Vector times(int factor){
         return new Vector(this.row * factor, this.col * factor);
     }
+
     public Vector(int row, int col){
             this.row = row;
             this.col = col;
