@@ -4,6 +4,7 @@ import games.connect4.TestConnect4;
 import games.mangala.TestMangala;
 import games.reversi.TestReversi;
 import games.tictactoe.TestTicTacToeState;
+import games.quoridor.TestQuoridor;
 
 public class RunTests{
 
@@ -15,6 +16,7 @@ public class RunTests{
         TestMangala.testMangalaState();
         TestConnect4.testConnect4();
         TestReversi.testReversi();
+        TestQuoridor.testQuoridor();
 
         System.out.println("\nALL TESTS SUCCESSFULL!\n");
     }
