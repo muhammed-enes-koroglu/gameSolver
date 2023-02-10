@@ -39,7 +39,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
         if(isGameOver()) return new HashSet<>();
 
-        Set<ReversiState> children = getChildrenParallel();
+        Set<ReversiState> children = getChildrenSerial();
 
         if(children.isEmpty()){
             Set<ReversiState> passingState = new HashSet<>();
