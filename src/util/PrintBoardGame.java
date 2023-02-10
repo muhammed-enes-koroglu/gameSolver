@@ -1,5 +1,6 @@
 package util;
 
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public class PrintBoardGame {
@@ -15,8 +16,8 @@ public class PrintBoardGame {
      * index 2 holds what is printed for the number 0, index 3 holds what is printed for the number 1,
      * index 4 holds what is printed for the number 2 on the board.
     */
-    public static String toString(Board board, String[] pieceRepresentation, String turnMarker, String background){
-        if(pieceRepresentation.length != 5){
+    public static String toString(Board board, Map<Integer, String> pieceRepresentation, String turnMarker, String background){
+        if(pieceRepresentation.size() != 5){
             throw new IllegalArgumentException("The number of piece representations must be equal to 5");
         }
         StringBuilder str = new StringBuilder();
@@ -46,7 +47,7 @@ public class PrintBoardGame {
     }
 
     /** Converts the given array of numbers to string. */
-    private static String rowToString(int[] row, String[] pieceRepresentation, int rowNb, String turnMarker, String background){
+    private static String rowToString(int[] row, Map<Integer, String> pieceRepresentation, int rowNb, String turnMarker, String background){
         if(rowNb == -1)
             return lastRowToString(row, turnMarker) + "\n";
         else
@@ -70,7 +71,7 @@ public class PrintBoardGame {
     }
 
     /** Converts a normal row to string. */
-    private static String normalRowToString(int[] row, String[] pieceRepresentation, int rowNb){
+    private static String normalRowToString(int[] row, Map<Integer, String> pieceRepresentation, int rowNb){
         StringBuilder result = new StringBuilder();
 
         result.append(rowNb + "|");
@@ -78,7 +79,7 @@ public class PrintBoardGame {
         // Add the pieces, seperated by " | ".
         for(int piece: row){
             // add row elements
-            result.append(pieceRepresentation[piece + 2] + "|");
+            result.append(pieceRepresentation.get(piece) + "|");
         }
         return result.toString();
     }

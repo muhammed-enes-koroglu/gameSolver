@@ -1,6 +1,7 @@
 package games.connect4;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import util.ConsoleColors;
@@ -137,13 +138,15 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
 
     @Override
     public String toString(String backgroundColor){
-        String[] pieceRepresentations = new String[]{ 
-            "?", 
-            BACKGROUND_O + "O" + backgroundColor,
-            " ", 
-            BACKGROUND_X + "X" + backgroundColor,  
-            "?" };
-        
+
+        Map<Integer, String> pieceRepresentations = Map.of(
+            -2, "?",
+            BLACK, BACKGROUND_O + "O" + backgroundColor,
+            EMPTY, "  ", 
+            WHITE, BACKGROUND_X + "X" + backgroundColor,
+            2, "?"
+        );    
+
         String turnMarker = this.whitesTurn ? BACKGROUND_X + "X" : BACKGROUND_O + "O";
         turnMarker += backgroundColor;
         return PrintBoardGame.toString(this.board, pieceRepresentations, turnMarker, backgroundColor);

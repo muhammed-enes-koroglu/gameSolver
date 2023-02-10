@@ -2,6 +2,7 @@ package games.reversi;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -630,12 +631,13 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
     public String toString(String backgroundColor){
 
         // Print the board using the PrintBoardGame class.
-        String[] pieceRepresentations = new String[]{ 
-            "?", 
-            BACKGROUND_BLACK + "O " + backgroundColor,
-            "  ", 
-            BACKGROUND_WHITE + "X " + backgroundColor,  
-            "?" };
+        Map<Integer, String> pieceRepresentations = Map.of(
+            -2, "?",
+            BLACK, BACKGROUND_BLACK + "O " + backgroundColor,
+            EMPTY, "  ", 
+            WHITE, BACKGROUND_WHITE + "X " + backgroundColor,
+            2, "?"
+        );
         
         String turnMarker = this.whitesTurn ? BACKGROUND_WHITE + "X" : BACKGROUND_BLACK + "O";
         turnMarker += backgroundColor;
