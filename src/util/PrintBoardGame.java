@@ -8,6 +8,13 @@ public class PrintBoardGame {
         throw new IllegalStateException("Utility class");
     }
 
+    /** Returns a string representation of the given board. 
+     * @param board The board to print.
+     * @param pieceRepresentation The representation of the pieces. 
+     * Index 0 holds what is printed for the number -2, index 1 holds what is printed for the number -1,
+     * index 2 holds what is printed for the number 0, index 3 holds what is printed for the number 1,
+     * index 4 holds what is printed for the number 2 on the board.
+    */
     public static String toString(Board board, String[] pieceRepresentation, String turnMarker, String background){
         if(pieceRepresentation.length != 5){
             throw new IllegalArgumentException("The number of piece representations must be equal to 5");
@@ -18,7 +25,7 @@ public class PrintBoardGame {
         str.append("\n");
         str.append(getHorizontalLine(board.nbCols));
         for(int rowNb=board.nbRows-1; rowNb>=0; rowNb--){
-        int[] row = board.getRow(rowNb);
+            int[] row = board.getRow(rowNb);
             str.append(rowToString(row, pieceRepresentation, rowNb, turnMarker, background));
         }
         // add column numbers
