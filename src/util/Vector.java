@@ -14,6 +14,10 @@ public class Vector {
     public static final Vector DOWN_RIGHT = new Vector(-1,1);
     public static final Vector DOWN_LEFT = new Vector(-1, -1);
 
+    public static final Vector[] CARDINAL_DIRECTIONS = {UP, DOWN, RIGHT, LEFT};
+    public static final Vector[] DIAGONAL_DIRECTIONS = {UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT};
+    public static final Vector[] ALL_DIRECTIONS = {UP, DOWN, RIGHT, LEFT, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT};
+    
     @Override
     public boolean equals(Object obj) {
         if(obj == null){
