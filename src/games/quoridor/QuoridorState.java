@@ -1,6 +1,7 @@
 package games.quoridor;
 
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,6 +43,132 @@ public class QuoridorState implements TwoPersonGameState<QuoridorState> {
     public Set<QuoridorState> children() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /** Return a set of children acquired by moving the pawn. */
+    private Set<QuoridorState> childrenForPawn(){
+        HashSet<QuoridorState> result = new HashSet<>();
+        Vector pawnPosition = this.whitesTurn ? this.whitePawnPosition : this.blackPawnPosition;
+        int pawn = this.whitesTurn ? WHITE : BLACK;
+
+        // Move the pawn in all directions.
+        for(Vector direction : Vector.CARDINAL_DIRECTIONS){
+            Vector newPosition = pawnPosition.plus(direction.times(2));
+
+            if(!this.board.locationIsOutOfBounds(newPosition)){
+
+                // Check if the pawn can move to the new position.
+                if(this.board.get(newPosition) == EMPTY){
+                    Board newBoard = this.board.copy();
+                    newBoard.set(pawnPosition, EMPTY);
+                    newBoard.set(newPosition, pawn);
+
+                    // Add the new state to the result.
+                    if(this.whitesTurn){
+                        result.add(new QuoridorState(this.whitesRemainingWalls, this.blacksRemainingWalls, newPosition, this.whitePawnPosition, newBoard, !this.whitesTurn, this.maximizeForWhite));
+                    } else {
+                        result.add(new QuoridorState(this.whitesRemainingWalls, this.blacksRemainingWalls, this.whitePawnPosition, newPosition, newBoard, !this.whitesTurn, this.maximizeForWhite));
+                    }
+
+                } else if(this.board.get(newPosition) == WHITE || this.board.get(newPosition) == BLACK){
+                    // Check if the pawn can jump over the other pawn.
+
+                    // See if there is a wall in the middle.
+                    Vector middlePosition = pawnPosition.plus(direction);
+                    if(this.board.get(middlePosition) == WALLABLE){
+                        Vector newPosition2 = newPosition.plus(direction);
+
+                        // Check if the pawn can move to the new position.
+                        if(!this.board.locationIsOutOfBounds(newPosition2) && this.board.get(newPosition2) == EMPTY){
+                                Board newBoard = this.board.copy();
+                                newBoard.set(pawnPosition, EMPTY);
+                                newBoard.set(newPosition2, pawn);
+
+                                // Add the new state to the result.
+                                if(this.whitesTurn){
+                                    result.add(new QuoridorState(this.whitesRemainingWalls, this.blacksRemainingWalls, newPosition2, this.whitePawnPosition, newBoard, !this.whitesTurn, this.maximizeForWhite));
+                                } else {
+                                    result.add(new QuoridorState(this.whitesRemainingWalls, this.blacksRemainingWalls, this.whitePawnPosition, newPosition2, newBoard, !this.whitesTurn, this.maximizeForWhite));
+                                }
+
+                            }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /** Return a set of children acquired by placing a wall. */
+    private Set<QuoridorState> childrenByWall(){
+        HashSet<QuoridorState> result = new HashSet<>();
+
+        // Check if the player has any walls left.
+        if((this.whitesTurn && this.whitesRemainingWalls == 0) || 
+            (!this.whitesTurn && this.blacksRemainingWalls == 0)){
+            return result;
+        }
+
+        // Check if the player can place a wall in all directions.
+        for(Vector direction : Vector.CARDINAL_DIRECTIONS){
+            for(int i = 0; i < BOARD_SIZE; i++){
+                for(int j = 0; j < BOARD_SIZE; j++){
+                    Vector position = new Vector(i, j);
+
+                    // Check if the wall can be placed here.
+                    if(this.board.get(position) == WALLABLE){
+                        if(this.canPlaceWall(position, direction)){
+                            Board newBoard = this.board.copy();
+                            newBoard.set(position, WALL);
+                            newBoard.set(position.plus(direction), WALL);
+                            newBoard.set(position.plus(direction.times(2)), WALL);
+
+                            // Add the new state to the result.
+                            if(this.whitesTurn){
+                                result.add(new QuoridorState(this.whitesRemainingWalls - 1, this.blacksRemainingWalls, this.whitePawnPosition, this.blackPawnPosition, newBoard, !this.whitesTurn, this.maximizeForWhite));
+                            } else {
+                                result.add(new QuoridorState(this.whitesRemainingWalls, this.blacksRemainingWalls - 1, this.whitePawnPosition, this.blackPawnPosition, newBoard, !this.whitesTurn, this.maximizeForWhite));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /** Return true if a wall can be placed at the given position in the given direction. */
+    private boolean canPlaceWall(Vector position, Vector direction){
+        // Check if the wall can be placed here.
+        if(this.board.get(position) != WALLABLE){
+            return false;
+        }
+        if(!this.board.locationIsOutOfBounds(position.plus(direction)) && 
+            this.board.get(position.plus(direction)) != WALLABLE){
+            return false;
+        }
+        if(!this.board.locationIsOutOfBounds(position.plus(direction.times(2))) && 
+            this.board.get(position.plus(direction.times(2))) != WALLABLE){
+            return false;
+        }
+
+        // Check if the wall blocks the path of the other pawn. Use QuoridorPathFinder.
+        Vector otherPawnPosition = this.whitesTurn ? this.blackPawnPosition : this.whitePawnPosition;
+        int otherPawnTargetRow = this.whitesTurn ? TARGET_ROW_WHITE : TARGET_ROW_BLACK;
+        if(!QuoridorPathFinder.pathExists(this.board, otherPawnPosition, otherPawnTargetRow)){
+            return false;
+        }
+
+        // Check if the wall blocks the path of the own pawn. Use QuoridorPathFinder.
+        Vector ownPawnPosition = this.whitesTurn ? this.whitePawnPosition : this.blackPawnPosition;
+        int ownPawnTargetRow = this.whitesTurn ? TARGET_ROW_BLACK : TARGET_ROW_WHITE;
+        if(!QuoridorPathFinder.pathExists(this.board, ownPawnPosition, ownPawnTargetRow)){
+            return false;
+        }
+
+        return true;
     }
 
     @Override
