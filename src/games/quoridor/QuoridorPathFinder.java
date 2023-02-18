@@ -11,7 +11,10 @@ import util.Vector;
 public abstract class QuoridorPathFinder {
     
 
-    public static boolean pathExists(Board board, Vector startingVector, int targetRow){
+    /** Searches for a path from startingVector to targetRow.
+     * Returns the length of the path or Integer.MAX_VALUE if no path exists.
+     */
+    public static int getLengthOfPath(Board board, Vector startingVector, int targetRow){
 
         Node start = new Node(startingVector, null, heuristic(startingVector, targetRow), 0);
 
@@ -22,12 +25,11 @@ public abstract class QuoridorPathFinder {
 
         while(!openList.isEmpty()){
             Node current = openList.poll();
-
             if(isTarget(current.position, targetRow)){
-                return true;
+                return current.g;
             }
 
-            // Cyce through all adjacent nodes
+            // Cycle through all adjacent nodes
             for(Vector child : getAdjacent(board, current.position)){
                 Node childNode = new Node(child, current, heuristic(child, targetRow), current.g + 1);
 
@@ -38,7 +40,11 @@ public abstract class QuoridorPathFinder {
 
             closedList.add(current);
         }
-        return false;
+        return Integer.MAX_VALUE;
+    }
+
+    public static boolean pathExists(Board board, Vector startingVector, int targetRow){
+        return getLengthOfPath(board, startingVector, targetRow) != Integer.MAX_VALUE;
     }
 
     /** Return the heuristic for the given vector. */
