@@ -16,7 +16,8 @@ import games.reversi.PlayReversi;
 public class Play {
 
     public static final String BACKGROUND_ADVISED = ConsoleColors.GREEN_BACKGROUND;
-    public static final String BACKGROUND_CURRENT = ConsoleColors.CYAN_BACKGROUND;
+    public static final String BACKGROUND_PLAYER = ConsoleColors.CYAN_BACKGROUND;
+    public static final String BACKGROUND_COMPUTER = ConsoleColors.RED_BACKGROUND;
     
     static final String[] gameStrings = new String[]{"TicTacToe", "Mangala", "Connect4", "Reversi"}; 
     static final Scanner sc = new Scanner(System.in);
@@ -28,80 +29,81 @@ public class Play {
 
     }
 
-    /** Runs the game loop for a two-person game.
-     *
-     * @param <S>            the type of the game state
-     * @param <G>            the type of the game play
-     * @param game           the game play instance
-     * @param minSearchTime  the minimum search time for the AI player
-     * @param showAdvised    flag indicating whether to show the advised move
-     */
-    public static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void runGame(G game, float minSearchTime, boolean showAdvised){
-        
-        // Initialize the game.
-        S state = game.getInitialState(scanWhiteIsMax());
-        S advisedState = state;
-        List<S> advisedPath;
+    public static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void runGame(G game, float minSearchTime, boolean showAdvised) {
+        System.out.println("showAdvised: " + showAdvised);
 
+        S state = game.getInitialState(scanWhiteIsMax());
         int turn = 0;
         int totalDepth = 0;
-
         final long startTime = System.currentTimeMillis();
 
-        // The game loop
-        while(!game.isGameOver(state)){
+        while (state != null && !game.isGameOver(state)) {
             turn++;
-            System.out.println("#########################\n#########################");
-            System.out.println("[TURN] " + (turn+1)/2 + "\n");
-            System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
+            printTurn(state, turn);
 
-            // Get the best move.
-            advisedPath = GameSolver.iterativeDeepeningMiniMax(state, minSearchTime);
-            if(advisedPath.size() >= 2){
-                advisedState = advisedPath.get(1);
-            } else if(advisedPath.size() == 1){
-                advisedState = advisedPath.get(0);
-            }
-            System.out.println("Depth: " + advisedPath.size());
+            List<S> advisedPath = GameSolver.iterativeDeepeningMiniMax(state, minSearchTime);
+            S advisedState = selectAdvisedState(advisedPath);
             totalDepth += advisedPath.size();
 
-            if(state.isMaxPlayersTurn()){ // MaxPlayer == User ==> User's turn.
-
-                // Print the advised move.
-                if(showAdvised){
-                    System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState.toString(BACKGROUND_ADVISED) + ConsoleColors.RESET);    
-                    System.out.println("Score: " + advisedPath.get(advisedPath.size()-1).score() + "\n");
-                }
-                
-                // Get the user's input and update the state.
-                int[] move = game.scanMoveNumber(state);
-                // int[] move = new int[0];
-
-                // Get the next state.
-                // If the user's input is empty, 
-                // then the user wants to play as advised.
-                if(move.length == 0){
-                    state = advisedState;
-                } else{
-                    state = game.makeMove(state, move);
-                }
-            } else {
-                // Get the computer's move and update the state.
-                state = advisedState;
-            }
-
+            state = processTurn(game, state, advisedState, advisedPath, showAdvised);
         }
 
-        // Print the winner.
+        printGameSummary(game, state, totalDepth, turn, startTime);
+    }
+
+    private static <S extends TwoPersonGameState<S>> void printTurn(S state, int turn) {
+        if (state.isMaxPlayersTurn()) {
+            System.out.println("\n#########################\n#########################");
+            System.out.println("[TURN] " + (turn + 1) / 2 + "\n");
+            System.out.println(BACKGROUND_PLAYER + "[CURRENT]" + state.toString(BACKGROUND_PLAYER) + ConsoleColors.RESET);
+        }
+    }
+
+    private static <S extends TwoPersonGameState<S>> S selectAdvisedState(List<S> advisedPath) {
+        if (advisedPath.size() >= 2) {
+            return advisedPath.get(1);
+        } else if (!advisedPath.isEmpty()) {
+            return advisedPath.get(0);
+        }
+        return null; // Consider handling this case appropriately.
+    }
+
+    private static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> S processTurn(G game, S state, S advisedState, List<S> advisedPath, boolean showAdvised) {
+        if (state.isMaxPlayersTurn()) {
+            if (showAdvised) {
+                printAdvisedMove(advisedState, advisedPath);
+            }
+            return userMove(game, state, advisedState);
+        } else {
+            return advisedState;
+        }
+    }
+
+    private static <S extends TwoPersonGameState<S>> void printAdvisedMove(S advisedState, List<S> advisedPath) {
+        System.out.println(BACKGROUND_ADVISED + "\n[ADVISED]" + advisedState.toString(BACKGROUND_ADVISED) + ConsoleColors.RESET);
+        System.out.println("Score: " + advisedPath.get(advisedPath.size() - 1).score());
+        System.out.println("Depth: " + (advisedPath.size() - 1) + "\n");
+    }
+
+    private static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> S userMove(G game, S state, S advisedState) {
+        int[] move = game.scanMoveNumber(state);
+        if (move.length == 0) {
+            return advisedState;
+        } else {
+            return game.makeMove(state, move);
+        }
+    }
+
+    private static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void printGameSummary(G game, S state, int totalDepth, int turn, long startTime) {
         System.out.println("[GAME OVER]");
         System.out.println("[WINNER] " + game.getWinnersName(state) + " wins!\n");
         System.out.println(ConsoleColors.RESET);
-
-        System.out.println("Average depth: " + (float) (totalDepth) / turn);
+        System.out.println("Average depth: " + (float) totalDepth / turn);
         final long endTime = System.currentTimeMillis();
         System.out.println("Time: " + (endTime - startTime) / 1000f + "s");
     }
 
+    
     private static void chooseNRunGame(float minSearchTime){
 
         // Choose whether to show the advised move.
