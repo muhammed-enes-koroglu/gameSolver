@@ -11,9 +11,8 @@ public interface TwoPersonGameState<S>{
 
     /** @return A number indicating how close the maxPlayer is to winning. 
      * The higher the number, the closer maxPlayer in this state is to winning. 
-     * Returns Integer.MAX_VALUE if the maxPlayer has won.
-     * Returns -Integer.MAX_VALUE if the minPlayer has won.
-     * !! NOT Integer.MIN_VALUE !! 
+     * Returns MAX_SCORE if the maxPlayer has won.
+     * Returns MIN_SCORE if the minPlayer has won.
      * 
      * The score should get progressively better
      * (or stay the same) for each
