@@ -23,23 +23,23 @@ public class Play {
 
     public static void main(String[] args) {
 
-        final float minSearchTime = .1f;
+        final float minSearchTime = 1;
         chooseNRunGame(minSearchTime);
 
     }
 
-    /**
-     * Runs a game G that uses states S.
-     * @param <S> a TwoPersonGameState.
-     * @param <G> a wrapper for the states S.
-     * @param game an instance of G.
-     * @param minSearchTime the minimum time to search for a move.
+    /** Runs the game loop for a two-person game.
+     *
+     * @param <S>            the type of the game state
+     * @param <G>            the type of the game play
+     * @param game           the game play instance
+     * @param minSearchTime  the minimum search time for the AI player
+     * @param showAdvised    flag indicating whether to show the advised move
      */
     public static <S extends TwoPersonGameState<S>, G extends TwoPersonPlay<S>> void runGame(G game, float minSearchTime, boolean showAdvised){
         
         // Initialize the game.
         S state = game.getInitialState(scanWhiteIsMax());
-        System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
         S advisedState = state;
         List<S> advisedPath;
 
@@ -51,6 +51,9 @@ public class Play {
         // The game loop
         while(!game.isGameOver(state)){
             turn++;
+            System.out.println("#########################\n#########################");
+            System.out.println("[TURN] " + (turn+1)/2 + "\n");
+            System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
 
             // Get the best move.
             advisedPath = GameSolver.iterativeDeepeningMiniMax(state, minSearchTime);
@@ -71,8 +74,8 @@ public class Play {
                 }
                 
                 // Get the user's input and update the state.
-                // int[] move = game.scanMoveNumber(state);
-                int[] move = new int[0];
+                int[] move = game.scanMoveNumber(state);
+                // int[] move = new int[0];
 
                 // Get the next state.
                 // If the user's input is empty, 
@@ -85,7 +88,6 @@ public class Play {
             } else {
                 // Get the computer's move and update the state.
                 state = advisedState;
-                // System.out.println(BACKGROUND_CURRENT + "[CURRENT]" + state.toString(BACKGROUND_CURRENT) + ConsoleColors.RESET);
             }
 
         }
