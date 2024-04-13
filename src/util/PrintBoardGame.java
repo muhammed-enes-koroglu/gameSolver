@@ -50,10 +50,10 @@ public class PrintBoardGame {
     private static String lastRowToString(int[] row, String turnMarker){
         StringBuilder result = new StringBuilder();
 
-        result.append(" | ");
+        result.append(" |");
         // Add elements, seperated by " | ".
         for(int element : row){
-            result.append(element + "| ");
+            result.append(element + "|");
         }
         result.append("\n");
          // Add whose turn it is
