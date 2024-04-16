@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AIShowdown",
+            "request": "launch",
+            "mainClass": "test.AIShowdown",
+            "projectName": "gameSolver_f769e67"
+        },
+        {
+            "type": "java",
+            "name": "RunTests",
+            "request": "launch",
+            "mainClass": "test.RunTests",
+            "projectName": "gameSolver_f769e67"
+        },
+        {
+            "type": "java",
             "name": "Play",
             "request": "launch",
             "mainClass": "main.Play",
