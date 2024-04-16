@@ -60,9 +60,8 @@ public abstract class Helper {
     }
 
     public static void assrt(boolean statament){
-        if(statament)
-            return;
-        throw new AssertionError();
+        if(!statament)
+            throw new AssertionError();
     }
 
 }
