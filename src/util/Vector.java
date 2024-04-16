@@ -27,4 +27,24 @@ public class Vector {
             this.row = row;
             this.col = col;
     }
+    public static Vector[] getAllDirections() {
+        return new Vector[]{UP, DOWN, RIGHT, LEFT, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT};
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Vector other = (Vector) obj;
+        return this.row == other.row && this.col == other.col;
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * row + col;
+    }
 }
