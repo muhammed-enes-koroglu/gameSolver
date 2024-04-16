@@ -77,4 +77,7 @@ public class ConsoleColors {
 
     private ConsoleColors(){ throw new IllegalStateException("Utility class"); }
 
+    public static void pprint(String color, String text){
+        System.out.println(color + text + RESET);
+    }
 }
