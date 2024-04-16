@@ -3,9 +3,9 @@ package games.turkish_draughts;
 import java.util.HashSet;
 import java.util.Set;
 
+import interfaces.TwoPersonGameState;
 import util.Board;
 import util.ConsoleColors;
-import util.TwoPersonGameState;
 import util.Vector;
 
 

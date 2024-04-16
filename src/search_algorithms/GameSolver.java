@@ -1,9 +1,11 @@
-package util;
+package search_algorithms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
+import interfaces.TwoPersonGameState;
 
 public abstract class GameSolver{
 
@@ -29,7 +31,7 @@ public abstract class GameSolver{
          * Doesn't need to remember best of 
          * the previous iteration, because
          * the prediction of the current 
-         * generation is guaranteed to be
+         * generation is by definition
          * better than the previous. */
         for(depth=1; timePassed < minSearchTimeMilliSeconds; depth++){
 
@@ -86,6 +88,7 @@ public abstract class GameSolver{
         ArrayList<S> bestPath = path; // So `path` is returned if no child nodes left.
         S currentState = path.get(path.size()-1);
         Set<S> children = currentState.children();
+        
 
         if(currentState.isMaxPlayersTurn()){
             return searchIsMaxPlayer(path, maxDepth, alpha, beta, bestPath, children);
@@ -144,4 +147,5 @@ public abstract class GameSolver{
         }
         return bestPath;
     }
+
 }

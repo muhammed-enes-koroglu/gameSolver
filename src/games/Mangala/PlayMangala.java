@@ -1,10 +1,11 @@
 package games.mangala;
 
 import util.Board;
-import util.TwoPersonPlay;
 
 import java.util.HashSet;
 import java.util.Scanner;
+
+import interfaces.TwoPersonPlay;
 
 public class PlayMangala implements TwoPersonPlay<MangalaState> {
 

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import util.TwoPersonGameState;
+import interfaces.TwoPersonGameState;
 
 public class Statistics {
 

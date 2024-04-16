@@ -1,7 +1,7 @@
 package games.tictactoe;
 
+import interfaces.TwoPersonPlay;
 import util.Board;
-import util.TwoPersonPlay;
 
 public class PlayTicTacToe implements TwoPersonPlay<TicTacToeState>{
 

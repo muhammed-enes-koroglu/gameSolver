@@ -3,7 +3,6 @@ package games.reversi;
 import util.Board;
 import util.ConsoleColors;
 import static util.ConsoleColors.pprint;
-import util.TwoPersonGameState;
 import static util.Helper.assrt;
 
 import java.util.ArrayList;
@@ -11,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import interfaces.TwoPersonGameState;
 
 public class TestReversi {
 

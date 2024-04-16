@@ -1,10 +1,11 @@
 package test;
 
 import util.Board;
-import util.GameAI;
-import util.TwoPersonGameState;
+
 import java.util.List;
 import games.tictactoe.TicTacToeState;
+import interfaces.TwoPersonGameState;
+import search_algorithms.GameAI;
 
 public class TestGameAI {
 

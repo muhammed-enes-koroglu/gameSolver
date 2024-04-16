@@ -1,9 +1,11 @@
-package util;
+package search_algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+
+import interfaces.TwoPersonGameState;
 
 public class GameAI {
 

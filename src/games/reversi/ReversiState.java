@@ -5,11 +5,11 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import interfaces.TwoPersonGameState;
 import util.Vector;
 import util.Board;
 import util.ConsoleColors;
 import util.PrintBoardGame;
-import util.TwoPersonGameState;
 
 public class ReversiState implements TwoPersonGameState<ReversiState>{
 

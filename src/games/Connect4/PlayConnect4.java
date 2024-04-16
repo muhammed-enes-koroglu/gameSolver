@@ -1,11 +1,12 @@
 package games.connect4;
 
-import util.TwoPersonPlay;
 import util.Board;
-import util.TwoPersonGameState;
 
 import java.util.Arrays;
 import java.util.Scanner;
+
+import interfaces.TwoPersonGameState;
+import interfaces.TwoPersonPlay;
 
 
 public class PlayConnect4 implements TwoPersonPlay<Connect4State> {

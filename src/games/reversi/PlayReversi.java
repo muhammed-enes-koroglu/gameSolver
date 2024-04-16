@@ -1,8 +1,8 @@
 package games.reversi;
 
+import interfaces.TwoPersonGameState;
+import interfaces.TwoPersonPlay;
 import util.Board;
-import util.TwoPersonGameState;
-import util.TwoPersonPlay;
 import util.Vector;
 
 public class PlayReversi implements TwoPersonPlay<ReversiState>{

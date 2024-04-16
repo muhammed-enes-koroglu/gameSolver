@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import interfaces.TwoPersonGameState;
 import util.Board;
 import util.ConsoleColors;
-import util.TwoPersonGameState;
 
 
 /*  #MangalaState

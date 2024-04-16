@@ -3,11 +3,11 @@ package games.connect4;
 import java.util.HashSet;
 import java.util.Set;
 
+import interfaces.TwoPersonGameState;
 import util.ConsoleColors;
 import util.Board;
 import util.Helper;
 import util.PrintBoardGame;
-import util.TwoPersonGameState;
 import util.Vector;
 
 

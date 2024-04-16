@@ -1,6 +1,8 @@
-package util;
+package interfaces;
 
 import java.util.Set;
+
+import util.Board;
 
 public interface TwoPersonGameState<S>{
     public static final float MAX_SCORE = Float.MAX_VALUE;

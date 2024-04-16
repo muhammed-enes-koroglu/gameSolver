@@ -17,6 +17,7 @@ public class RunTests{
     public static void main(String[] args){
 
         System.out.println("[TESTING]\n");
+
         TestTicTacToeState.testTicTacToeState();
         TestGameAI.testAStarMinimax();
         TestGameSolver.testIterDeepeningMiniMax();
@@ -27,12 +28,12 @@ public class RunTests{
 
         System.out.println("\nALL TESTS SUCCESSFULL!\n");
 
-        someTest();
+        // someTest();
     }
 
 
     /**
-     * This method performs a test on the Mangala game solver.
+     * This method performs an analysis of the average children count for each generation.
      * It initializes the game state, sets the number of generations and iterations,
      * and calculates the average children count for each generation.
      * Finally, it prints the average children count to the console.

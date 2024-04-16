@@ -1,11 +1,12 @@
 package games.connect4;
 
 import util.Board;
-import util.TwoPersonGameState;
-import util.GameSolver;
 
 import java.util.List;
 import java.util.Set;
+
+import interfaces.TwoPersonGameState;
+import search_algorithms.GameSolver;
 
 public class TestConnect4 {
 

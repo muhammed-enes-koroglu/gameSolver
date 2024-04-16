@@ -1,16 +1,20 @@
 package test;
 
-import util.TwoPersonGameState;
-import util.TwoPersonPlay;
+import static util.ConsoleColors.pprint;
 
 import java.util.List;
 
 import games.mangala.MangalaState;
 import games.mangala.PlayMangala;
+import games.reversi.PlayReversi;
+import games.reversi.ReversiState;
 import games.tictactoe.PlayTicTacToe;
 import games.tictactoe.TicTacToeState;
-import util.GameAI;
-import util.GameSolver;
+import interfaces.TwoPersonGameState;
+import interfaces.TwoPersonPlay;
+import search_algorithms.GameAI;
+import search_algorithms.GameSolver;
+import util.ConsoleColors;
 
 public class AIShowdown {
 
@@ -23,14 +27,18 @@ public class AIShowdown {
     }
 
     public static void tournament(int nbGames) {
+        pprint(ConsoleColors.GREEN, "### AI Showdown ###");
+
         // Simulate a game between Minimax and AStarMinimax
-        PlayMangala game = new PlayMangala();
+        PlayReversi game = new PlayReversi();
         for (int i = 0; i < nbGames; i++) {
-            MangalaState finalState = playGame(game.getInitialState(true), 1, true);
+            ReversiState finalState = playGame(game.getInitialState(true), 1, true);
             System.out.println("Final state of the game: " + finalState);
             System.out.println("Winner: " + game.getWinnersName(finalState));
             System.out.println("###");
             }
+
+        pprint(ConsoleColors.GREEN, "### AI Showdown - DONE ###");
     }
 
     /** Simulates a game where two AI strategies take turns playing from a given state.
@@ -45,7 +53,7 @@ public class AIShowdown {
         int turn = 0;
         while (!currentState.children().isEmpty()) { // Continue until no more moves are possible
             turn++;
-            // System.out.println("Turn " + turn + ": " + currentState.toString());
+            System.out.println("Turn " + turn + ": " + currentState.toString());
             if (currentState.isMaxPlayersTurn() != isAStarMax) {
                 // Minimax takes the turn
                 // System.out.println("Minimax is playing...");
