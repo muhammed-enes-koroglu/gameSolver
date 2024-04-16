@@ -2,8 +2,14 @@ package games.reversi;
 
 import util.Board;
 import util.ConsoleColors;
+import static util.ConsoleColors.pprint;
 import util.TwoPersonGameState;
+import static util.Helper.assrt;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 public class TestReversi {
@@ -34,15 +40,15 @@ public class TestReversi {
         
         Board board1 = getInitialBoard();
         Board board2 = getInitialBoard();
-        assert board1.equals(board2);
+        assrt(board1.equals(board2));
 
         board1.set(0, 0, 1);
         board2.set(0, 0, 1);
-        assert board1.equals(board2);
+        assrt(board1.equals(board2));
         
         ReversiState state1 = new ReversiState(board1, true, true);
         ReversiState state2 = new ReversiState(board2, true, true);
-        assert state1.equals(state2);
+        assrt(state1.equals(state2));
 
         System.out.println("    Equals: OK");
     }
@@ -50,11 +56,11 @@ public class TestReversi {
     private static void testScore(){
         Board board = getInitialBoard();
         ReversiState state = new ReversiState(board, true, true);
-        assert state.score() == 0;
+        assrt(state.score() == 0);
         
         // Test score simple.
         for(ReversiState child : state.children()){
-            assert child.score() == 3;
+            assrt(child.score() == 3);
         }
 
         // Test the score of a full board with equal pieces.
@@ -66,18 +72,18 @@ public class TestReversi {
             }
         }
         state = new ReversiState(board, true, true);
-        assert state.score() == 0;
+        assrt(state.score() == 0);
 
         // Test the score of a full board where one player has more pieces.
         board.set(0, 0, WHITE);
         state = new ReversiState(board, true, true);
-        assert state.score() == MAX_SCORE;
+        assrt(state.score() == MAX_SCORE);
 
         // Now test the score of a full board where the other player has more pieces.
         board.set(0, 0, BLACK);
         board.set(0, 1, BLACK);
         state = new ReversiState(board, true, true);
-        assert state.score() == MIN_SCORE;
+        assrt(state.score() == MIN_SCORE);
 
 
         System.out.println("    Score: OK");
@@ -91,16 +97,24 @@ public class TestReversi {
         Board board = getInitialBoard();
         ReversiState state = new ReversiState(board, true, true);
         Set<ReversiState> children = state.children();
+        Set<ReversiState> children2 = Set.of(
+            new ReversiState(new Board(new int[][]{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 1, 0, 0, 0}, {0, 0, 0, 1, 1, 1, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}), false, true),
+            new ReversiState(new Board(new int[][]{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, -1, 1, 0, 0, 0}, {0, 0, 0, 1, 1, 0, 0, 0}, {0, 0, 0, 0, 1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}), false, true),
+            new ReversiState(new Board(new int[][]{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 0, 0, 0, 0}, {0, 0, 0, 1, 1, 0, 0, 0}, {0, 0, 0, 1, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}), false, true),
+            new ReversiState(new Board(new int[][]{{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 1, 1, 1, 0, 0, 0}, {0, 0, 0, 1, -1, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}), false, true)
+        );
+        assrt(children.equals(children2));
+        
 
         // System.out.println(ConsoleColors.YELLOW_BACKGROUND + state.toString(ConsoleColors.YELLOW_BACKGROUND) + ConsoleColors.RESET);
         for(ReversiState child : children){
 
-            // System.out.println(ConsoleColors.GREEN_BACKGROUND + child.toString(ConsoleColors.GREEN_BACKGROUND) + ConsoleColors.RESET);
-            assert child.children().size() == 3;
-
-            // for(ReversiState grandChild : child.children()){
-                // System.out.println(ConsoleColors.CYAN_BACKGROUND_BRIGHT + grandChild.toString(ConsoleColors.CYAN_BACKGROUND_BRIGHT) + ConsoleColors.RESET);
-            // }
+            // pprint(ConsoleColors.GREEN_BRIGHT, child.toInitString());
+            assrt(child.children().size() == 3);
+            for(ReversiState grandChild : child.children()){
+                // System.out.println(ConsoleColors.CYAN_BACKGROUND_BRIGHT + grandChild.toString(ConsoleColors.CYAN_BACKGROUND_BRIGHT) + ConsoleColors.RESET);        
+                // pprint(ConsoleColors.CYAN_BRIGHT, grandChild.toInitString());
+            }
         }
 
         System.out.println("    Children: OK");
@@ -115,7 +129,7 @@ public class TestReversi {
         Set<ReversiState> children = state.children();
         // System.out.println("ORIGINAL: \n" + state);
         // System.out.println("CHILDREN: \n" + children);
-        assert children.size() == 4;
+        assrt(children.size() == 4);
 
         // Check if cointains the correct children 
         // both horizontally and vertically.
@@ -126,28 +140,28 @@ public class TestReversi {
         board.set(4, 5, WHITE);
         state = new ReversiState(board.copy(), false, true);
 
-        assert children.contains(state);
+        assrt(children.contains(state));
 
         // Test child to the left.
         board = getInitialBoard();
         board.set(3, 2, WHITE);
         board.set(3, 3, WHITE);
         state = new ReversiState(board.copy(), false, true);
-        assert children.contains(state);
+        assrt(children.contains(state));
 
         // Test child to the top.
         board = getInitialBoard();
         board.set(4, 4, WHITE);
         board.set(5, 4, WHITE);
         state = new ReversiState(board.copy(), false, true);
-        assert children.contains(state);
+        assrt(children.contains(state));
 
         // Test child to the bottom.
         board = getInitialBoard();
         board.set(2, 3, WHITE);
         board.set(3, 3, WHITE);
         state = new ReversiState(board.copy(), false, true);
-        assert children.contains(state);
+        assrt(children.contains(state));
         
     }
 
@@ -162,20 +176,14 @@ public class TestReversi {
         // System.out.println("CHILDREN: \n" + children);
 
         // Check if number of children is correct.
-        assert children.size() == 3;
+        assrt(children.size() == 3);
 
 
         // Test child to the top right.
         board.set(4, 4, WHITE);
         board.set(5, 5, WHITE);
         state = new ReversiState(board.copy(), false, true);
-        assert children.contains(state);
-
-        
-
-
-
-
+        assrt(children.contains(state));
     }
 
     private static Board getInitialBoard(){
