@@ -3,10 +3,13 @@ package interfaces;
 import java.util.Set;
 
 import util.Board;
+import util.SigmoidScaler;
 
 public interface TwoPersonGameState<S>{
-    public static final float MAX_SCORE = Float.MAX_VALUE;
+    public static final float MAX_SCORE = (float) 1E3;
     public static final float MIN_SCORE = -MAX_SCORE;
+    public static final SigmoidScaler sigmoidScaler = new SigmoidScaler(0, 1, 10f);
+
 
     /** @return A set of all possible child states that follow from this one. */
     public Set<S> children();
@@ -21,6 +24,11 @@ public interface TwoPersonGameState<S>{
      * progressive move towards a win.
      * */
     public float score();
+
+    public default float heuristic(){
+        float h = 1 - (this.score() - MIN_SCORE) / (MAX_SCORE - MIN_SCORE);
+        return sigmoidScaler.scale(h);
+    }
 
     /** @return Whether it is the turn of the player for whom we try to maximize. */
     public boolean isMaxPlayersTurn();
