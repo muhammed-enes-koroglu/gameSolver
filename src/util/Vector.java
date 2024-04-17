@@ -4,6 +4,9 @@ public class Vector {
     public final int row;
     public final int col;
 
+
+    // Directions according to normal x-y plane
+    // NOT according to matrix indexing (Board class uses matrix indexing)
     public static final Vector UP = new Vector(1,0);
     public static final Vector DOWN = new Vector(-1,0);
     public static final Vector RIGHT = new Vector(0,1);
@@ -29,6 +32,14 @@ public class Vector {
     }
     public static Vector[] getAllDirections() {
         return new Vector[]{UP, DOWN, RIGHT, LEFT, UP_RIGHT, UP_LEFT, DOWN_RIGHT, DOWN_LEFT};
+    }
+
+    public int getX(){
+        return col;
+    }
+
+    public int getY(){
+        return row;
     }
 
     @Override
