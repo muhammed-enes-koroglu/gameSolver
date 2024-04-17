@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AStarPath",
+            "request": "launch",
+            "mainClass": "search_algorithms.AStarPath",
+            "projectName": "gameSolver_f769e67"
+        },
+        {
+            "type": "java",
             "name": "SigmoidScaler",
             "request": "launch",
             "mainClass": "util.SigmoidScaler",
