@@ -90,17 +90,19 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
     @Override
     public float score() {
         float score = 0;
-        score += this.board.get(0, ownTreasury(getOffsetForColor(this.whiteIsMax)));
-        score -= this.board.get(0, ownTreasury(getOffsetForColor(!this.whiteIsMax)));
+        score += 100 * this.board.get(0, ownTreasury(getOffsetForColor(this.whiteIsMax)));
+        score -= 100 * this.board.get(0, ownTreasury(getOffsetForColor(!this.whiteIsMax)));
+
+        float turnBonus = this.whitesTurn == this.whiteIsMax ? 20 : -20;
+        score += turnBonus;
         
-        float ownPosition = (float) (0.1 * positionalScore(this.whiteIsMax));
-        float opponentPosition = (float) (0.1 * positionalScore(!this.whiteIsMax));
+        score += 0.1 * positionalScore(this.whiteIsMax);
+        score -= 0.1 * positionalScore(!this.whiteIsMax);
         
-        if(ownPosition + opponentPosition == 0)
-            return Math.signum(score) * Float.MAX_VALUE; 
-        score += ownPosition;
-        score -= opponentPosition;
-        // score += 
+        if(isGameOver())
+            return Math.signum(score) > 0 ? MAX_SCORE : MIN_SCORE;
+
+            // score += 
         return score;
     }
     
@@ -333,13 +335,59 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
      * @return A score representing how good the 
      * current state is for the given player.
      */
-    private int positionalScore(boolean isWhite){
+    private int positionalScore(boolean isWhite) {
         int score = 0;
         int colorOffset = getOffsetForColor(isWhite);
-        for(int i=0; i<BOARD_SIZE-1; i++){
-            score += this.board.get(0, i + colorOffset) * (i+1);
+        int opponentOffset = getOffsetForColor(!isWhite);
+        int ownTreasury = ownTreasury(colorOffset);
+
+        for (int i = 0; i < BOARD_SIZE - 1; i++) {
+            int ownIndex = i + colorOffset;
+            int opponentIndex = oppositeTrenchOf(ownIndex);
+            int ownStones = this.board.get(0, ownIndex);
+            int opponentStones = this.board.get(0, opponentIndex);
+
+            score += calculatePotentialReplayScore(i, ownStones);
+            score += calculatePotentialCaptureScore(ownStones, opponentStones);
+            score += calculateEvenTrenchScore(isWhite, opponentStones);
+            score -= calculateLeavingStonesPenalty(isWhite, ownStones);
+
+            score += ownStones;
         }
+
         return score;
+    }
+
+    private int calculatePotentialReplayScore(int trenchIndex, int ownStones) {
+        if (trenchIndex == BOARD_SIZE - 2) {
+            return ownStones * 10;
+        }
+        return 0;
+    }
+
+    private int calculatePotentialCaptureScore(int ownStones, int opponentStones) {
+        if (ownStones == 0 && opponentStones > 0) {
+            return opponentStones * 10;
+        }
+        return 0;
+    }
+
+    private int calculateEvenTrenchScore(boolean isWhite, int opponentStones) {
+        boolean ourTurn = isWhite == this.whitesTurn;
+        if ((ourTurn && opponentStones % 2 == 1) || (!ourTurn && opponentStones % 2 == 0)) {
+            if (opponentStones > 0) {
+                return 5 * opponentStones;
+            }
+        }
+        return 0;
+    }
+
+    private int calculateLeavingStonesPenalty(boolean isWhite, int ownStones) {
+        boolean ourTurn = isWhite == this.whitesTurn;
+        if ((ourTurn && ownStones % 2 == 0) || (!ourTurn && ownStones % 2 == 1)) {
+            return 5 * ownStones;
+        }
+        return 0;
     }
 
     public static void testPrivateMethods(){
