@@ -85,26 +85,26 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
         int maxPiece = this.maximizeForWhite ? WHITE : BLACK;
         int minPiece = this.maximizeForWhite ? BLACK : WHITE;
 
-        result = addWithOverflow(result, checkScoreVertically(board, maxPiece));
-        result = subtractWithOverflow(result, checkScoreVertically(board, minPiece));
+        result += checkScoreVertically(board, maxPiece);
+        result -= checkScoreVertically(board, minPiece);
         if(result == MAX_SCORE){
             return result;
         }
 
-        result = addWithOverflow(result, checkScoreHorizontally(board, maxPiece));
-        result = subtractWithOverflow(result, checkScoreHorizontally(board, minPiece));
+        result += checkScoreHorizontally(board, maxPiece);
+        result -= checkScoreHorizontally(board, minPiece);
         if(result == MAX_SCORE){
             return result;
         }
         
-        result = addWithOverflow(result, checkScoreAllUpRightDiagonals(board, maxPiece));
-        result = subtractWithOverflow(result, checkScoreAllUpRightDiagonals(board, minPiece));
+        result += checkScoreAllUpRightDiagonals(board, maxPiece);
+        result -= checkScoreAllUpRightDiagonals(board, minPiece);
         if(result == MAX_SCORE){
             return result;
         }
         
-        result = addWithOverflow(result, checkScoreAllUpLeftDiagonals(board, maxPiece));
-        result = subtractWithOverflow(result, checkScoreAllUpLeftDiagonals(board, minPiece));
+        result += checkScoreAllUpLeftDiagonals(board, maxPiece);
+        result -= checkScoreAllUpLeftDiagonals(board, minPiece);
         return result;
     }
 
@@ -177,7 +177,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
             subResult = checkScoreColumn(board, col, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = addWithOverflow(result, subResult);
+            result += subResult;
         }
 
         return result;
@@ -191,7 +191,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
             subResult = checkScoreRow(board, row, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = addWithOverflow(result, subResult);
+            result += subResult;
         }
 
         return result;
@@ -212,7 +212,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
             subResult = checkScoreDiagonal(board, startingVector, Vector.UP_RIGHT, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = addWithOverflow(result, subResult);
+            result += subResult;
         }
 
         // Check all diagonals that start on the BOTTOM of the board. Direction: UP_RIGHT
@@ -223,7 +223,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
             subResult = checkScoreDiagonal(board, startingVector, Vector.UP_RIGHT, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = addWithOverflow(result, subResult);
+            result += subResult;
         }
 
         return result;
@@ -243,7 +243,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
             subResult = checkScoreDiagonal(board, startingVector, Vector.UP_LEFT, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = addWithOverflow(result, subResult);
+            result += subResult;
         }
 
         // Check all diagonals that start on the BOTTOM of the board. Direction: UP_LEFTS
@@ -254,7 +254,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
             subResult = checkScoreDiagonal(board, startingVector, Vector.UP_LEFT, piece);
             if(subResult == MAX_SCORE)
                 return subResult;
-            result = addWithOverflow(result, subResult);
+            result += subResult;
         }
 
         return result;
@@ -403,70 +403,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
         return (float) Math.exp(chainLength);
     }
 
-    /** Prevent overflow.
-     * 
-     * @param a positive number.
-     * @param b positive number.
-     * @return MAX_SCORE-1 if overflow occurs and 
-     * none of the operands is MAX_SCORE.
-     */
-    public static float addWithOverflow(float a, float b){
-        if(a == MAX_SCORE || b == MAX_SCORE)
-            return MAX_SCORE;
-        if(a > 0 && b > 0 && a + b < 0)
-            return MAX_SCORE-1; // So the only way to reach MAX_SCORE is by winning the game.
-        return a + b;
-    }
-
-    /** Prevent negative overflow.
-     * 
-     * @param a positive number.
-     * @param b positive number.
-     * @return MIN_SCORE+1 if overflow occurs and 
-     * none of the operands is MAX_SCORE.
-     */
-    public static float subtractWithOverflow(float a, float b){
-
-        return -1 * addWithOverflow(-a, b);
-    }
-
     public boolean isGameOver(){
         return (this.calculatedScore == MAX_SCORE) || (this.calculatedScore == MIN_SCORE);
     }
-
-    public static void testPrivateMethods(){
-
-        testAddWithOverFlow();
-        testSubtractWithOverflow();
-        
-    }
-
-    private static void testAddWithOverFlow(){
-
-        Helper.assrt(addWithOverflow(2, 1) == 2 + 1);
-        Helper.assrt(addWithOverflow(MAX_SCORE, 1) == MAX_SCORE);
-        Helper.assrt(addWithOverflow(MAX_SCORE, MAX_SCORE) == MAX_SCORE);
-
-        // Check that the only way to reach `MAX_SCORE` 
-        // is by having it as one of the arguments.            
-        Helper.assrt(addWithOverflow(MAX_SCORE/2 + 1, MAX_SCORE/2 + 1) == MAX_SCORE - 1);
-        Helper.assrt(addWithOverflow(MAX_SCORE - 1, MAX_SCORE - 1) == MAX_SCORE - 1);
-
-        System.out.println("    AddWithOverflow: OK");
-   
-    }
-
-    private static void testSubtractWithOverflow(){
-
-        Helper.assrt(subtractWithOverflow(2, 1) == 2 - 1);
-        Helper.assrt(subtractWithOverflow(MIN_SCORE, 1) == MIN_SCORE);
-        Helper.assrt(subtractWithOverflow(MIN_SCORE, MAX_SCORE) == MIN_SCORE);
-        Helper.assrt(subtractWithOverflow(MIN_SCORE + 1, 1) == MIN_SCORE + 1);
-        Helper.assrt(subtractWithOverflow(MIN_SCORE + 1, 2) == MIN_SCORE + 1);
-
-        System.out.println("    SubtractWithOverflow: OK");
-   
-    }
-
-    
 }
