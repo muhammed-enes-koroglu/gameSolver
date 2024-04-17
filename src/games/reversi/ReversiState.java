@@ -213,7 +213,7 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
 
     @Override
     public boolean isMaxPlayersTurn() {
-        return !(this.maximizeForWhite ^ this.whitesTurn);
+        return maximizeForWhite == whitesTurn;
     }
 
     @Override

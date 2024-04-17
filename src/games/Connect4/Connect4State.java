@@ -110,7 +110,7 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
 
     @Override
     public boolean isMaxPlayersTurn() {
-        return !(this.maximizeForWhite ^ this.whitesTurn);
+        return this.maximizeForWhite == this.whitesTurn;
     }
     
     @Override

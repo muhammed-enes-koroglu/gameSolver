@@ -125,7 +125,7 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
 
     @Override
     public boolean isMaxPlayersTurn() {
-        return !(whiteIsMax ^ whitesTurn);
+        return whiteIsMax == whitesTurn;
     }
 
     public String toString(){

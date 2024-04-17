@@ -61,7 +61,7 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
 
     @Override
     public boolean isMaxPlayersTurn() {
-        return !(this.xIsMaxPlayer ^ this.xTurn);
+        return this.xIsMaxPlayer == this.xTurn;
     }
 
     @Override
