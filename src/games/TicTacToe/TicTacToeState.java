@@ -53,9 +53,9 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
     public float score() {
         int sign = this.xIsMaxPlayer ? +1 : -1;
         if(this.xWon)
-            return sign * Float.MAX_VALUE;
+            return sign * MAX_SCORE;
         if(this.xLost)
-            return -sign *  Float.MAX_VALUE;
+            return sign *  MIN_SCORE;
         return 0;
     }
 

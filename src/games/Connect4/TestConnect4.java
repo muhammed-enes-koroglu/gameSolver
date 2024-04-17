@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import interfaces.TwoPersonGameState;
-import search_algorithms.GameSolver;
+import search_algorithms.MiniMaxSearch;
 
 public class TestConnect4 {
 
@@ -26,7 +26,6 @@ public class TestConnect4 {
         testEquals();
         testScore();
         testChildren();
-        testPrivateMethods();
         
         System.out.println("[TESTING] Connect4 class - DONE\n");
     }
@@ -87,7 +86,7 @@ public class TestConnect4 {
         // the one state that prevents the certain lose.
         board1 = new Board(new int[][]{{1, 1, 1, -1, 0, 0, 0}, {-1, 1, 0, -1, 0, 0, 0}, {1, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}});
         state1 = new Connect4State(board1, true, true);
-        List<Connect4State> bestPath = GameSolver.iterativeDeepeningMiniMax(state1, 0.1f);
+        List<Connect4State> bestPath = MiniMaxSearch.iterativeDeepeningMiniMax(state1, 0.1f);
 
         board2 = new Board(new int[][]{{1, 1, 1, -1, 0, 0, 0}, {-1, 1, 1, -1, 0, 0, 0}, {1, -1, 0, 0, 0, 0, 0}, {-1, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0}});
         Connect4State expectedState = new Connect4State(board2, false, true);
@@ -136,12 +135,6 @@ public class TestConnect4 {
     private static Board getInitialBoard(){
         int[][] array = new int[BOARD_HEIGHT][BOARD_WIDTH];
         return new Board(array);
-    }
-
-    private static void testPrivateMethods(){
-        
-        Connect4State.testPrivateMethods();
-
     }
 
 }

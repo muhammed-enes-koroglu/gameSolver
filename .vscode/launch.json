@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SigmoidScaler",
+            "request": "launch",
+            "mainClass": "util.SigmoidScaler",
+            "projectName": "gameSolver_f769e67"
+        },
+        {
+            "type": "java",
             "name": "AIShowdown",
             "request": "launch",
             "mainClass": "test.AIShowdown",

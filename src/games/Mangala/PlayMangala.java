@@ -47,7 +47,7 @@ public class PlayMangala implements TwoPersonPlay<MangalaState> {
     @Override
     public MangalaState getInitialState(boolean maximizeForWhite) {
         boolean whitesTurn = true;
-        boolean whiteIsMax = whitesTurn;
+        boolean whiteIsMax = maximizeForWhite;
         Board board = new Board(new int[][]{ new int[]{4,4,4, 4,4,4, 0, 4,4,4, 4,4,4, 0}});
 
         return new MangalaState(board, whitesTurn, whiteIsMax);

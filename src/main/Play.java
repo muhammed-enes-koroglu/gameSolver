@@ -8,8 +8,8 @@ import java.util.Scanner;
 import games.tictactoe.PlayTicTacToe;
 import interfaces.TwoPersonGameState;
 import interfaces.TwoPersonPlay;
-import search_algorithms.GameAI;
-import search_algorithms.GameSolver;
+import search_algorithms.AStarSearch;
+import search_algorithms.MiniMaxSearch;
 import games.connect4.PlayConnect4;
 import games.mangala.PlayMangala;
 import games.reversi.PlayReversi;
@@ -42,7 +42,7 @@ public class Play {
             turn++;
             printTurn(state, turn);
 
-            List<S> advisedPath = GameAI.aStarMinimax(state, minSearchTime);
+            List<S> advisedPath = AStarSearch.aStarMinimax(state, minSearchTime);
             // List<S> advisedPath = GameSolver.iterativeDeepeningMiniMax(state, minSearchTime);
             S advisedState = selectAdvisedState(advisedPath);
             totalDepth += advisedPath.size();

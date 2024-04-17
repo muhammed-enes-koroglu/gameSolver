@@ -187,9 +187,9 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         // pieces than the opponent, we win.
         if(isGameOver()){
             if(nbOurPieces > nbOpponentPieces){
-                return TwoPersonGameState.MAX_SCORE;
+                return MAX_SCORE;
             } else if(nbOurPieces < nbOpponentPieces){
-                return TwoPersonGameState.MIN_SCORE;
+                return MIN_SCORE;
             } else {
                 return 0;
             }

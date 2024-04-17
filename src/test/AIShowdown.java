@@ -12,8 +12,8 @@ import games.tictactoe.PlayTicTacToe;
 import games.tictactoe.TicTacToeState;
 import interfaces.TwoPersonGameState;
 import interfaces.TwoPersonPlay;
-import search_algorithms.GameAI;
-import search_algorithms.GameSolver;
+import search_algorithms.AStarSearch;
+import search_algorithms.MiniMaxSearch;
 import util.ConsoleColors;
 
 public class AIShowdown {
@@ -28,11 +28,11 @@ public class AIShowdown {
 
     public static void tournament(int nbGames) {
         pprint(ConsoleColors.GREEN, "### AI Showdown ###");
-
+        final float minSearchTime = 10.0f;
         // Simulate a game between Minimax and AStarMinimax
-        PlayReversi game = new PlayReversi();
+        PlayMangala game = new PlayMangala();
         for (int i = 0; i < nbGames; i++) {
-            ReversiState finalState = playGame(game.getInitialState(true), 1, true);
+            MangalaState finalState = playGame(game.getInitialState(true), minSearchTime, true);
             System.out.println("Final state of the game: " + finalState);
             System.out.println("Winner: " + game.getWinnersName(finalState));
             System.out.println("###");
@@ -57,12 +57,12 @@ public class AIShowdown {
             if (currentState.isMaxPlayersTurn() != isAStarMax) {
                 // Minimax takes the turn
                 // System.out.println("Minimax is playing...");
-                List<S> minimaxResult = GameSolver.iterativeDeepeningMiniMax(currentState, minSearchTime);
+                List<S> minimaxResult = MiniMaxSearch.iterativeDeepeningMiniMax(currentState, minSearchTime);
                 currentState = minimaxResult.get(1); // Assume the method returns the path to the best move
             } else {
                 // AStarMinimax takes the turn
                 // System.out.println("AStarMinimax is playing...");
-                List<S> aStarResult = GameAI.aStarMinimax(currentState, minSearchTime);
+                List<S> aStarResult = AStarSearch.aStarMinimaxDepth(currentState, 4);
                 currentState = aStarResult.get(1); // Assume the method returns the path to the best move
             }
             System.out.println("###\n");

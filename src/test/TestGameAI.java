@@ -5,7 +5,7 @@ import util.Board;
 import java.util.List;
 import games.tictactoe.TicTacToeState;
 import interfaces.TwoPersonGameState;
-import search_algorithms.GameAI;
+import search_algorithms.AStarSearch;
 
 public class TestGameAI {
 
@@ -37,7 +37,7 @@ public class TestGameAI {
         for (int i = 0; i < testBoards.length; i++) {
             board = new Board(testBoards[i]);
             ticState = new TicTacToeState(board, isMaxTurn[i]);
-            solution = GameAI.aStarMinimax(ticState, minSearchTime);
+            solution = AStarSearch.aStarMinimax(ticState, minSearchTime);
             
             switch (i) {
                 case 0: case 1: case 2:  // Tests where X is expected to win

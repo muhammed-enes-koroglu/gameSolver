@@ -29,14 +29,14 @@ public class PlayReversi implements TwoPersonPlay<ReversiState>{
     public ReversiState getInitialState(boolean maximizeForWhite) {
         int[][] array = new int[ReversiState.BOARD_SIZE][ReversiState.BOARD_SIZE];
 
-        // Get a random +1 or -1 so that the first player is random.
+        // Uncomment and use the following lines if you want the first player to be random.
         // int random = (int) (Math.random() * 2);
         // int sign = random == 0 ? 1 : -1;
-        int sign = 1;
+        int sign = 1;  // This forces the first player to always be the same.
 
         // Set the initial board.
+        array[3][4] = sign * 1;  // Adjusted index to 0-based from your provided 1-based index.
         array[4][3] = sign * 1;
-        array[3][4] = sign * 1;
         array[3][3] = sign * -1;
         array[4][4] = sign * -1;
 
