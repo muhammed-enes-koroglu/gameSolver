@@ -7,9 +7,9 @@ import java.util.Set;
 
 import interfaces.TwoPersonGameState;
 
-public abstract class GameSolver{
+public abstract class MiniMaxSearch{
 
-    private GameSolver(){
+    private MiniMaxSearch(){
         throw new IllegalStateException("Utility class");
     }
 
