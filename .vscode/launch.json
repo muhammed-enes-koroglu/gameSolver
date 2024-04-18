@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MiniMaxBasic",
+            "request": "launch",
+            "mainClass": "search_algorithms.MiniMaxBasic",
+            "projectName": "gameSolver_f769e67"
+        },
+        {
+            "type": "java",
             "name": "AStarPath",
             "request": "launch",
             "mainClass": "search_algorithms.AStarPath",
