@@ -8,8 +8,8 @@ import java.util.PriorityQueue;
 import util.Board;
 import util.Vector;
 
-public class AStarPath {
-    private AStarPath(){
+public class AStarBasic {
+    private AStarBasic(){
     }
     
     public static List<Node> search(Node start, Node goal, Board board){
@@ -120,17 +120,19 @@ public class AStarPath {
             {1, 1, 1, 1}
         });
     
-        AStarPath pathFinder = new AStarPath();
-        AStarPath.Node goal = pathFinder.new Node(new Vector(board.nbRows-1, board.nbCols-1), 0, null, null);
-        AStarPath.Node start = pathFinder.new Node(new Vector(0, 0), 0, goal, null);
+        // Create start and goal nodes
+        AStarBasic pathFinder = new AStarBasic();
+        AStarBasic.Node goal = pathFinder.new Node(new Vector(board.nbRows-1, board.nbCols-1), 0, null, null);
+        AStarBasic.Node start = pathFinder.new Node(new Vector(0, 0), 0, goal, null);
     
-        List<AStarPath.Node> path = AStarPath.search(start, goal, board);
+        // Search for path
+        List<AStarBasic.Node> path = AStarBasic.search(start, goal, board);
 
+        // Print path
         System.out.println("Path: ");
-        for (AStarPath.Node node : path) {
-            System.out.println(node.getPosition().row + " " + node.getPosition().col);
+        for (AStarBasic.Node node : path) { 
+            System.out.println(node.getPosition());
         }
-
 
         System.out.println("[TESTING] AStarPath COMPLETED");
     }
