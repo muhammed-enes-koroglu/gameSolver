@@ -58,4 +58,9 @@ public class Vector {
     public int hashCode() {
         return 31 * row + col;
     }
+
+    @Override
+    public String toString(){
+        return "(" + row + ", " + col + ")";
+    }
 }
