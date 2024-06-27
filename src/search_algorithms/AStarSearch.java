@@ -1,121 +1,103 @@
 package search_algorithms;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Set;
 
-import games.mangala.MangalaState;
 import interfaces.TwoPersonGameState;
-import interfaces.TwoPersonPlay;
-import util.SigmoidScaler;
+import util.Node;
 
 public class AStarSearch {
-
-    private static final int MAX_DEPTH_LIMIT = 1000;
 
     private AStarSearch() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static <S extends TwoPersonGameState<S>> List<S> aStarMinimax(S startState, float minSearchTime) {
-        long minSearchTimeMilliseconds = (long) (minSearchTime * 1000);
-        long startTime = System.currentTimeMillis();
-
-        PriorityQueue<PathNode<S>> openSet = new PriorityQueue<>();
-        openSet.add(new PathNode<>(null, startState, 0));
-
-        PathNode<S> bestNode = null;
-
-        while (!openSet.isEmpty() && (System.currentTimeMillis() - startTime) < minSearchTimeMilliseconds) {
-            bestNode = getChildren(openSet, bestNode);
+    public static <S extends TwoPersonGameState<S>> Node<S> search(S startState, int maxDepth) {
+        
+        Node<S> startNode = new Node<>(null, startState, 0);
+        Node<S> bestNode;
+        if(startState.isMaxPlayersTurn()){
+            bestNode = search4Max(startNode, maxDepth, -Float.MAX_VALUE, Float.MAX_VALUE);
+        } else {
+            bestNode = search4Min(startNode, maxDepth, -Float.MAX_VALUE, Float.MAX_VALUE);
         }
 
-        return bestNode != null ? bestNode.constructPath() : new ArrayList<>();
-    }
-
-    public static <S extends TwoPersonGameState<S>> List<S> aStarMinimaxDepth(S startState, int depthLimit) {
-        PriorityQueue<PathNode<S>> openSet = new PriorityQueue<>();
-        openSet.add(new PathNode<>(null, startState, 0));
-
-        PathNode<S> bestNode = null;
-
-        int depth = 0;
-        while (!openSet.isEmpty() && depth < depthLimit) {
-            bestNode = getChildren(openSet, bestNode);
-            depth++;
+        if(bestNode == null){
+            throw new IllegalStateException("Best node is null");
         }
+        System.out.println("Number of nodes expanded: " + bestNode.getNbExpansions());
 
-        return bestNode != null ? bestNode.constructPath() : new ArrayList<>();
-    }
-
-
-    private static <S extends TwoPersonGameState<S>> PathNode<S> getChildren(PriorityQueue<PathNode<S>> openSet,
-            PathNode<S> bestNode) {
-        PathNode<S> currentNode = openSet.poll();
-        Set<S> children = currentNode.state.children();
-
-        if (children.isEmpty() || currentNode.depth > MAX_DEPTH_LIMIT) {  // Depth limit for example
-            if (bestNode == null || currentNode.compareTo(bestNode) > 0) {
-                bestNode = currentNode;
-            }
-            return bestNode;
-        }
-
-        for (S child : children) {
-            if (!currentNode.containsState(child)) {
-                float childScore = child.score();
-                float currentScore = currentNode.state.score();
-                float childHeuristic = child.heuristic();
-                float cost = currentNode.cost + (currentNode.heuristic - childHeuristic);
-                PathNode<S> newNode = new PathNode<>(currentNode, child, cost);
-                openSet.add(newNode);
-            }
-        }
         return bestNode;
     }
 
-    private static class PathNode<S extends TwoPersonGameState<S>> implements Comparable<PathNode<S>> {
-        PathNode<S> parent;
-        S state;
-        float cost;
-        float heuristic;
-        float estimatedTotalScore;
-        int depth;
 
-        public PathNode(PathNode<S> parent, S state, float cost) {
-            this.parent = parent;
-            this.state = state;
-            this.cost = cost;
-            this.depth = (parent == null) ? 0 : parent.depth + 1;
-            this.heuristic = state.heuristic();
-            this.estimatedTotalScore = this.cost + this.heuristic;  // f = g + h
+    private static <S extends TwoPersonGameState<S>> Node<S> search4Max(Node<S> node, int maxDepth, float alpha, float beta) {
+        // Base case
+        if(maxDepth == 0 || node.getState().isGameOver()){
+            return node;
         }
 
-        public List<S> constructPath() {
-            List<S> path = new ArrayList<>();
-            PathNode<S> current = this;
-            while (current != null) {
-                path.add(0, current.state);  // Prepend to path
-                current = current.parent;
+        // For each child node, search for the best node
+        Set<Node<S>> children = node.getChildren();
+        Node<S> bestNode = null;
+        Node<S> current;
+        for(Node<S> child : children){
+            current = search4Min(child, maxDepth - 1, alpha, beta);
+            if(current == null){
+                throw new IllegalStateException("Current node is null");
             }
-            return path;
-        }
 
-        public boolean containsState(S state) {
-            PathNode<S> current = this;
-            while (current != null) {
-                if (current.state.equals(state)) {
-                    return true;
-                }
-                current = current.parent;
+            // Update the best node
+            if(bestNode == null || current.getEvaluation() > bestNode.getEvaluation()){
+                bestNode = current;
             }
-            return false;
+
+            // Alpha-beta pruning
+            if(bestNode.getEvaluation() > alpha){
+                alpha = bestNode.getEvaluation();
+            }
+            if(beta <= alpha){
+                break;
+            }
         }
 
-        @Override
-        public int compareTo(PathNode<S> o) {
-            return Float.compare(this.estimatedTotalScore, o.estimatedTotalScore);
-        }
+        // Return the best node
+        return bestNode;
+        
     }
+
+    private static <S extends TwoPersonGameState<S>> Node<S> search4Min(Node<S> node, int maxDepth, float alpha, float beta) {
+        // Base case
+        if(maxDepth == 0 || node.getState().isGameOver()){
+            return node;
+        }
+
+        // For each child node, search for the best node
+        Set<Node<S>> children = node.getChildren();
+        Node<S> bestNode = null;
+        
+        for(Node<S> child : children){
+            Node<S> current = search4Max(child, maxDepth - 1, alpha, beta);
+
+            if(current == null){
+                throw new IllegalStateException("Current node is null");
+            }
+            // Update the best node
+            if(bestNode == null || current.getEvaluation() < bestNode.getEvaluation()){
+                bestNode = current;
+            }
+
+            // Alpha-beta pruning
+            if(bestNode.getEvaluation() < beta){
+                beta = bestNode.getEvaluation();
+            }
+            if(beta <= alpha){
+                break;
+            }
+        }
+
+        // Return the best node
+        return bestNode;
+    }
+        
+        
 }
