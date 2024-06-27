@@ -8,11 +8,17 @@ import util.SigmoidScaler;
 public interface TwoPersonGameState<S>{
     public static final float MAX_SCORE = (float) 1E3;
     public static final float MIN_SCORE = -MAX_SCORE;
-    public static final SigmoidScaler sigmoidScaler = new SigmoidScaler(0, 1, 10f);
+    public static final SigmoidScaler sigmoidScaler = new SigmoidScaler(0, 1, 10f, 1.0f);
 
 
     /** @return A set of all possible child states that follow from this one. */
     public Set<S> children();
+
+    /** Checks if the game is over.
+     * 
+     * @return true if the game is over, false otherwise.
+     */
+    public boolean isGameOver();
 
     /** @return A number indicating how close the maxPlayer is to winning. 
      * The higher the number, the closer maxPlayer in this state is to winning. 
@@ -26,9 +32,17 @@ public interface TwoPersonGameState<S>{
     public float score();
 
     public default float heuristic(){
-        float h = 1 - (this.score() - MIN_SCORE) / (MAX_SCORE - MIN_SCORE);
-        return sigmoidScaler.scale(h);
+        float score = this.score();
+        float h = 1 - (score - MIN_SCORE) / (MAX_SCORE - MIN_SCORE);
+        float scaled = sigmoidScaler.scale(h);
+        return scaled * getAvgGameLength();
     }
+
+    /** Returns the average length of the game.
+     *
+     * @return the average length of the game
+     */
+    public float getAvgGameLength();
 
     /** @return Whether it is the turn of the player for whom we try to maximize. */
     public boolean isMaxPlayersTurn();
