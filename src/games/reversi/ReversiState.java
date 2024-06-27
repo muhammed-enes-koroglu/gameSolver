@@ -2,8 +2,6 @@ package games.reversi;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import interfaces.TwoPersonGameState;
 import util.Vector;
@@ -198,7 +196,8 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         }
     }
 
-    protected boolean isGameOver() {
+    @Override
+    public boolean isGameOver() {
         // If there are no more empty spaces, 
         // or if both players have not been able
         //  to make a move the last turn, 
@@ -333,5 +332,10 @@ public class ReversiState implements TwoPersonGameState<ReversiState>{
         this.whitesPlayedLastTurn = true;
         this.blacksPlayedLastTurn = true;
 
+    }
+
+    @Override
+    public float getAvgGameLength() {
+        return 59;
     }
 }

@@ -60,6 +60,11 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
     }
 
     @Override
+    public boolean isGameOver(){
+        return this.xWon || this.xLost;
+    }
+
+    @Override
     public boolean isMaxPlayersTurn() {
         return this.xIsMaxPlayer == this.xTurn;
     }
@@ -198,6 +203,11 @@ public class TicTacToeState implements TwoPersonGameState<TicTacToeState>{
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public float getAvgGameLength() {
+        return 9;
     }
 
 }
