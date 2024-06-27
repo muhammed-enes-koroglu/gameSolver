@@ -4,10 +4,12 @@ public class SigmoidScaler {
 
     private float k; // steepness factor
     private float midpoint;
+    private float supremum;
 
-    public SigmoidScaler(float min, float max, float k) {
+    public SigmoidScaler(float min, float max, float k, float supremum) {
         this.midpoint = (float) ((min + max) / 2.0);
         this.k = k;
+        this.supremum = supremum;
     }
 
     /**
@@ -16,7 +18,7 @@ public class SigmoidScaler {
      * @return
      */
     public float scale(float x) {
-        return (float) ((float) 100.0 / (1.0 + Math.exp(-k * (x - midpoint))));
+        return (float) ((float) supremum / (1.0 + Math.exp(-k * (x - midpoint))));
     }
 
     public static void main(String[] args) {
@@ -24,7 +26,7 @@ public class SigmoidScaler {
         float max = 100.0f;
         float k = 0.1f;  // Adjust this parameter based on desired sensitivity
 
-        SigmoidScaler scaler = new SigmoidScaler(min, max, k);
+        SigmoidScaler scaler = new SigmoidScaler(min, max, k, 1.0f);
         for (float x = min; x <= max; x += 1.0f) {
             System.out.println(x + ": " + scaler.scale(x));
         }
