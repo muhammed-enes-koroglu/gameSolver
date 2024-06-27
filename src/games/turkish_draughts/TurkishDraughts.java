@@ -612,4 +612,16 @@ public class TurkishDraughts implements TwoPersonGameState<TurkishDraughts>{
             System.out.println(child);
     }
 
+    @Override
+    public boolean isGameOver() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isGameOver'");
+    }
+
+    @Override
+    public float getAvgGameLength() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAvgGameLength'");
+    }
+
 }

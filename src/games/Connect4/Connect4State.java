@@ -403,7 +403,13 @@ public class Connect4State implements TwoPersonGameState<Connect4State> {
         return (float) Math.exp(chainLength);
     }
 
+    @Override
     public boolean isGameOver(){
         return (this.calculatedScore == MAX_SCORE) || (this.calculatedScore == MIN_SCORE);
+    }
+
+    @Override
+    public float getAvgGameLength() {
+        return 42;
     }
 }

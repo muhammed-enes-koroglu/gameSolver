@@ -422,11 +422,17 @@ public class MangalaState implements TwoPersonGameState<MangalaState>{
         System.out.println("    PlayTrench: OK");
     }
 
+    @Override
     public boolean isGameOver() {
         return isWhiteSideEmpty(this.board) || isBlackSideEmpty(this.board);
     }
 
     public boolean isWhitesTurn() {
         return this.whitesTurn;
+    }
+
+    @Override
+    public float getAvgGameLength() {
+        return 47;
     }
 }
