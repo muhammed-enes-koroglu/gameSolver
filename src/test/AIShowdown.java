@@ -6,24 +6,22 @@ import java.util.List;
 
 import games.mangala.MangalaState;
 import games.mangala.PlayMangala;
-import games.reversi.PlayReversi;
-import games.reversi.ReversiState;
-import games.tictactoe.PlayTicTacToe;
-import games.tictactoe.TicTacToeState;
 import interfaces.TwoPersonGameState;
-import interfaces.TwoPersonPlay;
 import search_algorithms.AStarSearch;
 import search_algorithms.MiniMaxSearch;
 import util.ConsoleColors;
+import util.Node;
 
 public class AIShowdown {
+    private static final int MAX_DEPTH = 8;
+
 
     private AIShowdown() {
         // Private constructor to hide the implicit public one
     }
 
     public static void main(String[] args) {
-        tournament(10);
+        tournament(1);
     }
 
     public static void tournament(int nbGames) {
@@ -31,14 +29,25 @@ public class AIShowdown {
         final float minSearchTime = 10.0f;
         // Simulate a game between Minimax and AStarMinimax
         PlayMangala game = new PlayMangala();
+        int aStarMinimaxWon = 0;
+        int miniMaxWon = 0;
         for (int i = 0; i < nbGames; i++) {
-            MangalaState finalState = playGame(game.getInitialState(true), minSearchTime, true);
+            MangalaState initialState = game.getInitialState(true);
+            MangalaState finalState = playGame(initialState, minSearchTime, true);
             System.out.println("Final state of the game: " + finalState);
             System.out.println("Winner: " + game.getWinnersName(finalState));
             System.out.println("###");
+            if (game.getWinnersName(finalState).equals("First Player")) {
+                aStarMinimaxWon++;
+            } else if(game.getWinnersName(finalState).equals("Second Player")) {
+                miniMaxWon++;
             }
+        }
 
         pprint(ConsoleColors.GREEN, "### AI Showdown - DONE ###");
+        pprint(ConsoleColors.GREEN, "### Results ###");
+        pprint(ConsoleColors.GREEN, "AStarMinimax won " + aStarMinimaxWon + " games.");
+        pprint(ConsoleColors.GREEN, "Minimax won " + miniMaxWon + " games.");
     }
 
     /** Simulates a game where two AI strategies take turns playing from a given state.
@@ -48,26 +57,33 @@ public class AIShowdown {
      * @return The winning state of the game.
      */
     public static <S extends TwoPersonGameState<S>> S playGame(S initialState, float minSearchTime, boolean isAStarMax) {
-
         S currentState = initialState;
         int turn = 0;
+
+        pprint(ConsoleColors.GREEN, "minSearchTime: " + minSearchTime);
+        pprint(ConsoleColors.GREEN, "### Playing a game ###");
         while (!currentState.children().isEmpty()) { // Continue until no more moves are possible
             turn++;
+            pprint(ConsoleColors.YELLOW, "Current Algorithm: " + getCurrentAlgorithm(currentState, isAStarMax));
             System.out.println("Turn " + turn + ": " + currentState.toString());
-            if (currentState.isMaxPlayersTurn() != isAStarMax) {
-                // Minimax takes the turn
-                // System.out.println("Minimax is playing...");
-                List<S> minimaxResult = MiniMaxSearch.iterativeDeepeningMiniMax(currentState, minSearchTime);
+            if (!isAStarTurn(currentState, isAStarMax)) {
+                List<S> minimaxResult = MiniMaxSearch.iterativeDeepeningMiniMax(currentState, MAX_DEPTH);
                 currentState = minimaxResult.get(1); // Assume the method returns the path to the best move
             } else {
-                // AStarMinimax takes the turn
-                // System.out.println("AStarMinimax is playing...");
-                List<S> aStarResult = AStarSearch.aStarMinimaxDepth(currentState, 4);
-                currentState = aStarResult.get(1); // Assume the method returns the path to the best move
+                Node<S> aStarResult = AStarSearch.search(currentState, MAX_DEPTH);
+                currentState = aStarResult.getPath().get(1).getState(); // Assume the method returns the path to the best move
             }
             System.out.println("###\n");
         }
 
         return currentState;
     }
+    private static <S extends TwoPersonGameState<S>> boolean isAStarTurn(S currentState, boolean isAStarMax) {
+        return currentState.isMaxPlayersTurn() == isAStarMax;
+    }
+
+    private static <S extends TwoPersonGameState<S>> String getCurrentAlgorithm(S currentState, boolean isAStarMax) {
+        return isAStarTurn(currentState, isAStarMax) ? "AStarMinimax" : "Minimax";
+    }
+    
 }
